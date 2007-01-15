@@ -1,0 +1,7 @@
+<!ENTITY tabPref.undo.title "「タブを閉じる」のやり直し">
+
+<!ENTITY tabPref.undoCache.group   "「タブを閉じる」のやり直し">
+<!ENTITY cacheBlankTab             "空のタブも開き直す">
+<!ENTITY applyOriginalIndex        "タブを元の位置に開き直す">
+<!ENTITY undoCacheMax_before       "各ウィンドウにつき">
+<!ENTITY undoCacheMax_after        "回までやり直し可能にする">

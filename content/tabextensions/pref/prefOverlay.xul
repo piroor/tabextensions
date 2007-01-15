@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE overlay SYSTEM "chrome://tabextensions/locale/">
+
+<?xml-stylesheet href="chrome://tabextensions/content/pref/prefOverlay.css" type="text/css"?>
+
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+<script type="application/x-javascript" src="chrome://global/content/XPCNativeWrapper.js"/>
+<script type="application/x-javascript" src="chrome://tabextensions/content/pXPCNativeWrapper.js"/>
+
+	<script type="application/x-javascript" src="chrome://tabextensions/content/pRDFData.js"/>
+	<script type="application/x-javascript" src="chrome://tabextensions/content/globalOverlay.js"/>
+	<script type="application/x-javascript" src="chrome://tabextensions/content/pref/prefOverlay.js"/>
+
+	<box id="tabextensionsAboutBox" orient="horizontal">
+		<spacer flex="1"/>
+		<!--button label="&about.title;"
+			oncommand="window.openDialog('chrome://tabextensions/content/pref/about.xul', '_blank', 'chrome,dialog,modal');"/-->
+
+		<template id="onTabClickItemsTemplate">
+			<rule><!-- Hide items which have no label -->
+				<conditions>
+					<content uri="?cont"/>
+					<member container="?cont" child="?name"/>
+					<triple subject="?name" predicate="http://white.sakura.ne.jp/~piro/rdf#TestLabel" object="label-"/>
+				</conditions>
+				<bindings/>
+				<action>
+					<menupopup>
+						<menuseparator uri="?name" hidden="true"/>
+					</menupopup>
+				</action>
+			</rule>
+
+			<rule>
+				<conditions>
+					<content uri="?cont"/>
+					<member container="?cont" child="?name"/>
+					<triple subject="?name" predicate="http://white.sakura.ne.jp/~piro/rdf#Type" object="item"/>
+				</conditions>
+				<bindings>
+					<binding subject="?name" predicate="http://white.sakura.ne.jp/~piro/rdf#Label" object="?label"/>
+					<binding subject="?name" predicate="http://white.sakura.ne.jp/~piro/rdf#Id" object="?tabid"/>
+					<binding subject="?name" predicate="http://white.sakura.ne.jp/~piro/rdf#Value" object="?value"/>
+				</bindings>
+				<action>
+					<menupopup>
+						<menuitem uri="?name"
+							tabid="?tabid"
+							label="?label"
+							value="?value"/>
+					</menupopup>
+				</action>
+			</rule>
+			<rule>
+				<menupopup>
+					<menuseparator uri="rdf:*"/>
+				</menupopup>
+			</rule>
+		</template>
+	</box>
+
+</overlay>

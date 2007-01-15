@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://tabextensions/content/pref/prefOverlay.css" type="text/css"?>
+<?xul-overlay href="chrome://tabextensions/content/globalOverlay.xul"?>
+
+<!DOCTYPE page SYSTEM "chrome://tabextensions/locale/pref/links.dtd">
+
+<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	windowtype="tabextensions:advancedStateInheritancePrefs"
+	orient="vertical"
+	title="&advancedStateInheritancePrefs.title;"
+	buttons="accept,cancel"
+	ondialogaccept="apply();"
+	ondialogcancel="cancel();"
+	onload="init();">
+
+
+<script type="application/x-javascript" src="chrome://tabextensions/content/pref/prefOverlay.js"/>
+<script type="application/x-javascript" src="chrome://tabextensions/content/pref/advancedPrefs.js"/>
+
+<script type="application/x-javascript"><![CDATA[
+
+function controlLinkedItemsForInheritance()
+{
+	var check = document.getElementById('inheritOnlySameSite');
+	if (
+		document.getElementById('inheritTextZoom').checked ||
+		document.getElementById('inheritLocked').checked ||
+		document.getElementById('inheritReferrerBlocked').checked ||
+		document.getElementById('inheritAllow').checked
+		)
+		check.removeAttribute('disabled');
+	else
+		check.setAttribute('disabled', true);
+}
+
+var originalInit = window.init;
+window.init = function()
+{
+	originalInit();
+	controlLinkedItemsForInheritance();
+};
+
+]]></script>
+
+<box orient="vertical"
+	oncommand="onCommand(event)">
+
+	<groupbox oncommand="controlLinkedItemsForInheritance();">
+		<caption label="&tabPref.inheritance.group;"/>
+		<grid>
+			<rows>
+				<row/>
+				<row/>
+			</rows>
+			<columns>
+				<column>
+					<checkbox id="inheritTextZoom"
+						label="&inheritTextZoom;"/>
+					<checkbox id="inheritLocked"
+						label="&inheritLocked;"/>
+				</column>
+				<column>
+					<checkbox id="inheritReferrerBlocked"
+						label="&inheritReferrerBlocked;"/>
+					<checkbox id="inheritAllow"
+						label="&inheritAllow;"/>
+				</column>
+			</columns>
+		</grid>
+	</groupbox>
+
+	<checkbox id="inheritOnlySameSite"
+		label="&inheritOnlySameSite;"/>
+
+</box>
+
+</dialog>

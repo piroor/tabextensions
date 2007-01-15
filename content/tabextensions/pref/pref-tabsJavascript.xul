@@ -1,0 +1,120 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
+<?xul-overlay href="chrome://tabextensions/content/pref/prefOverlay.xul"?>
+
+<!DOCTYPE page SYSTEM "chrome://tabextensions/locale/pref/javascript.dtd">
+
+<page
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	orient="vertical"
+	headertitle="&tabPref.javascript.title;"
+	onload="init();">
+
+
+<script type="application/x-javascript"><![CDATA[
+
+if (!('_elementIDs' in window) || !window._elementIDs)
+	var _elementIDs = [];
+
+_elementIDs = _elementIDs.concat([
+	'opentabforJavascript',
+	'loadInBackgroundJavascript'
+]);
+
+function init()
+{
+	window.parent.initPanel(location.href);
+
+
+	var winHookMode = Number(getModifiedValue('browser.tabs.extensions.window_hook_mode', 'chrome://tabextensions/content/pref/pref-tabsGeneral.xul'));
+	var radio = document.getElementById('newWindowRadio');
+	if (winHookMode == 2)
+		radio.setAttribute('disabled', true);
+	else
+		radio.removeAttribute('disabled');
+
+
+	var js = document.getElementById('javascript');
+	var jsItems = js.getElementsByTagName('radio');
+	var jstab = document.getElementById('opentabforJavascript');
+	var jsbg = document.getElementById('loadInBackgroundJavascript');
+	if (jstab.checked || winHookMode == 2) {
+		if (jsbg.checked)
+			js.selectedItem = jsItems[1];
+		else
+			js.selectedItem = jsItems[0];
+	}
+	else
+		js.selectedItem = jsItems[2];
+
+
+	for (i = 0; i < onInitCallbackFuncs.length; i++)
+		if (onInitCallbackFuncs[i] &&
+			typeof onInitCallbackFuncs[i] == 'function')
+			try {
+				onInitCallbackFuncs[i]();
+			}
+			catch(e) {
+			}
+
+
+	onJavascriptChanged();
+}
+if (!('onInitCallbackFuncs' in window))
+	window.onInitCallbackFuncs = [];
+
+
+function onJavascriptChanged()
+{
+	var js = document.getElementById('javascript');
+	var jsItems = js.getElementsByTagName('radio');
+	document.getElementById('opentabforJavascript').checked = (js.selectedItem != jsItems[2]);
+
+	var background = document.getElementById('loadInBackgroundJavascript');
+	if (js.selectedItem == jsItems[0])
+		background.checked = false;
+	else if (js.selectedItem == jsItems[1])
+		background.checked = true;
+
+	for (i = 0; i < onJavascriptChangedCallbackFuncs.length; i++)
+		if (onJavascriptChangedCallbackFuncs[i] &&
+			typeof onJavascriptChangedCallbackFuncs[i] == 'function')
+			try {
+				onJavascriptChangedCallbackFuncs[i]();
+			}
+			catch(e) {
+			}
+}
+if (!('onJavascriptChangedCallbackFuncs' in window))
+	window.onJavascriptChangedCallbackFuncs = [];
+
+
+]]></script>
+
+	<groupbox>
+		<caption label="&tabPref.javascript.group;"/>
+		<vbox>
+		<radiogroup id="javascript"
+			oncommand="onJavascriptChanged()">
+			<radio label="&tabPref.javascript.newtab;"/>
+			<radio label="&tabPref.javascript.newtabBackground;"/>
+			<radio id="newWindowRadio" label="&tabPref.javascript.newwindow;"/>
+			<box id="exceptionRadioBox"/>
+		</radiogroup>
+		<box collapsed="true">
+			<checkbox id="opentabforJavascript"
+				prefstring="browser.tabs.opentabfor.windowopen"/>
+			<checkbox id="loadInBackgroundJavascript"
+				prefstring="browser.tabs.extensions.loadInBackgroundJS"/>
+		</box>
+		<box id="exceptionButtonBox"/>
+		</vbox>
+	</groupbox>
+
+	<spacer flex="1"/>
+
+	<box id="tabextensionsAboutBox"/>
+
+</page>

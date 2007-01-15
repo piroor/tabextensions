@@ -1,0 +1,6 @@
+<!ENTITY tabPref.viewSource.title "ソースの表示">
+
+<!ENTITY tabPref.viewSource.group   "ソースの表示">
+<!ENTITY tabPref.viewSource.normal  "新しいウィンドウで開く">
+<!ENTITY tabPref.viewSource.newtab  "新しいタブで開く">
+<!ENTITY tabPref.viewSource.newtabBackground "新しいバックグラウンドのタブで開く">

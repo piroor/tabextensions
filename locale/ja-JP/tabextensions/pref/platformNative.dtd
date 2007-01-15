@@ -1,0 +1,15 @@
+<!ENTITY tabPref.platformNative.title     "他のアプリケーションからの外部リンク">
+
+<!ENTITY tabPref.platformNative.group     "他のアプリケーションから開かれたリンクの挙動">
+<!ENTITY tabPref.platformNative.normal    "制御しない">
+<!ENTITY tabPref.platformNative.current   "現在のタブで開く">
+<!ENTITY tabPref.platformNative.newtab    "新しいタブで開く">
+<!ENTITY tabPref.platformNative.newtabBackground "新しいバックグラウンドのタブで開く">
+<!ENTITY tabPref.platformNative.newwindow "新しいウィンドウで開く">
+
+<!ENTITY tabPref.platformNative.allowWindowForHomePage "">
+<!ENTITY tabPref.platformNative.focus.backgroundWindow "ブラウザウィンドウをアクティブにしないで読み込む">
+
+<!ENTITY advancedPlatformNativePrefs.go "詳細...">
+<!ENTITY advancedPlatformNativePrefs.title "他のアプリケーションとの連携の詳細">
+<!ENTITY loadInBackgroundPlatformNative   "他のアプリケーションから開かれたタブをバックグラウンドで読み込む">

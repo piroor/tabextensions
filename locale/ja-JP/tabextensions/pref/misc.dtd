@@ -1,0 +1,6 @@
+<!ENTITY tabPref.misc.title     "その他">
+
+<!ENTITY tabPref.misc.group     "全般的な動作">
+
+<!ENTITY backToAncestor      "「戻る」でそのタブを開いた元のタブに戻る">
+<!ENTITY forwardToFollowing  "「進む」でそのタブから開かれたタブに進む">

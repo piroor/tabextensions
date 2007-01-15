@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
+<?xul-overlay href="chrome://tabextensions/content/pref/prefOverlay.xul"?>
+
+<!DOCTYPE overlay SYSTEM "chrome://tabextensions_sessionmanager/locale/">
+
+<overlay
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+	<script type="application/x-javascript"><![CDATA[
+
+if (!('_elementIDs' in window) || !window._elementIDs)
+	var _elementIDs = [];
+
+_elementIDs.push('undoCacheGlobalMax');
+_elementIDs.push('undoCacheSave');
+
+	]]></script>
+
+<box id="undoCachePrefContainer">
+
+	<box orient="horizontal">
+		<label value="&undoCacheGlobalMax_before;"
+			control="undoCacheGlobalMax"/>
+		<textbox id="undoCacheGlobalMax"
+			size="6"
+			preftype="int"
+			prefstring="browser.tabs.extensions.undo_cache.global"
+			oninput="if (Number(this.value) &lt; 0) this.value = 0;"/>
+		<spinbuttons
+			onup="spinButtonsUpDown(event, 'undoCacheGlobalMax');"
+			ondown="spinButtonsUpDown(event, 'undoCacheGlobalMax', 1);"/>
+		<label value="&undoCacheGlobalMax_after;"
+			control="undoCacheGlobalMax"/>
+	</box>
+	<checkbox id="undoCacheSave"
+		label="&undoCacheSave;"
+		prefstring="browser.tabs.extensions.undo_cache.backup.enabled"/>
+
+</box>
+
+
+
+</overlay>

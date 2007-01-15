@@ -1,0 +1,241 @@
+<!ENTITY tabextensions.label    "Tabbrowser Extensions">
+
+
+
+
+<!ENTITY tabPref.ref.advanced   "See &quot;Use Tab&quot; &gt; &quot;Links&quot; in Settings of Tabbrowser Extensions">
+<!ENTITY tabPref.ref.close      "See &quot;Close Tab&quot; in Settings of Tabbrowser Extensions">
+<!ENTITY tabPref.ref.focus      "See &quot;Use Tab&quot; in Settings of Tabbrowser Extensions">
+<!ENTITY tabPref.ref.tabGroup   "See &quot;TabGroup&quot; in Settings of Tabbrowser Extensions">
+
+<!ENTITY tabPref.ref.description.newType  "To customize advanced behaviors of tabbed browsing, use the configuration of Tabbrowser Extensions.">
+<!ENTITY tabPref.ref.goPrefs  "Tabbrowser Extensions Configuration...">
+
+
+
+
+
+
+
+
+
+
+<!-- for old versions which has not this entity -->
+<!ENTITY closeOtherTabs.label "Close Other Tabs">
+
+
+<!ENTITY ontabclick.showcontextmenu "Show Menu">
+<!ENTITY ontabclick.default     "(no reaction)">
+<!ENTITY ontabclick.duplicate   "Duplicate Tab">
+<!ENTITY ontabclick.duplicateInWindow
+                                "Duplicate Tab in New Window">
+<!ENTITY ontabclick.setFixedLabelFor "Set Label">
+<!ENTITY ontabclick.lock        "Lock Tab">
+<!ENTITY ontabclick.lockAll     "Lock All Tabs">
+<!ENTITY ontabclick.blockReferrer "Block Referrer">
+<!ENTITY ontabclick.blockReferrerAll "Block Referrer from All Tabs">
+<!ENTITY ontabclick.autoreload  "Auto Reload...">
+<!ENTITY ontabclick.autoreloadAll "Auto Reload All Tabs...">
+<!ENTITY ontabclick.removeLeft             "Close Left/Above Tabs">
+<!ENTITY ontabclick.removeLeft.horizontal  "Close Left Tabs">
+<!ENTITY ontabclick.removeLeft.vertical    "Close Above Tabs">
+<!ENTITY ontabclick.removeRight            "Close Right/Below Tabs">
+<!ENTITY ontabclick.removeRight.horizontal "Close Right Tabs">
+<!ENTITY ontabclick.removeRight.vertical   "Close Below Tabs">
+<!ENTITY ontabclick.removeAll            "Close All Tabs">
+<!ENTITY ontabclick.removeVisited        "Close All Visited Tabs">
+<!ENTITY ontabclick.removeOther          "&closeOtherTabs.label;">
+<!ENTITY ontabclick.moveLeft             "Move tab Left/Above">
+<!ENTITY ontabclick.moveLeft.horizontal  "Move tab Left">
+<!ENTITY ontabclick.moveLeft.vertical    "Move tab Above">
+<!ENTITY ontabclick.moveRight            "Move tab Right/Below">
+<!ENTITY ontabclick.moveRight.horizontal "Move tab Right">
+<!ENTITY ontabclick.moveRight.vertical   "Move tab Below">
+<!ENTITY ontabclick.undoRemoveTab "Undo Close Tab">
+<!ENTITY ontabclick.removeTabGroup "Close Group of Tabs">
+<!ENTITY ontabclick.highlightGroup "Highlight Group of Tabs">
+<!ENTITY ontabclick.collapseExpandGroup "Collapse/Expand Subgroup">
+<!ENTITY ontabclick.sortTabsByGroup "Sort Tabs by Groups">
+<!ENTITY ontabclick.setTabColor "Change Tab Color...">
+<!ENTITY ontabclick.editBookmark "Edit this Bookmark...">
+<!ENTITY ontabclick.allow       "Permissions">
+<!ENTITY ontabclick.allowPlugins "Allow Plug-ins">
+<!ENTITY ontabclick.allowJavaScript "Allow JavaScript">
+<!ENTITY ontabclick.allowMetaRedirects "Allow auto-loading with Refresh">
+<!ENTITY ontabclick.allowSubframes "Show Frames">
+<!ENTITY ontabclick.allowImages "Show Images">
+
+<!ENTITY ontabclick.editMenu    "Edit Context Menu...">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!ENTITY interval.title         "Interval Setting">
+<!ENTITY interval.label_before  "Reload by Every">
+<!ENTITY interval.label_after   "seconds">
+<!ENTITY interval.30            "30">
+<!ENTITY interval.60            "60 (1min)">
+<!ENTITY interval.90            "90">
+<!ENTITY interval.100           "100">
+<!ENTITY interval.120           "120 (2min)">
+<!ENTITY interval.150           "150">
+<!ENTITY interval.180           "180 (3min)">
+<!ENTITY interval.200           "200">
+<!ENTITY interval.600           "600 (10min)">
+<!ENTITY interval.1800          "1800 (30min)">
+<!ENTITY interval.3600          "3600 (1hour)">
+<!ENTITY interval.7200          "7200 (2hours)">
+<!ENTITY interval.10800         "10800 (3hours)">
+<!ENTITY interval.43200         "43200 (12hours)">
+<!ENTITY interval.86400         "86400 (24hours)">
+
+<!ENTITY textZoom.label_before  "Text Size:">
+<!ENTITY textZoom.label_after   "&#37;">
+
+<!ENTITY fixedLabel.title       "Label of Tab">
+<!ENTITY fixedLabel.label       "New Label:">
+<!ENTITY fixedLabel.clear       "Use Title of the Page">
+<!ENTITY fixedLabel.shouldSave  "Save as the Name of the Bookmark">
+
+<!ENTITY openAllLinksInTabs.label     "Open All Links in New Tabs">
+<!ENTITY openAllLinksInTabs.accesskey "S">
+<!ENTITY openAllLinksInGroup.label    "Open All Links in New Tab Group">
+<!ENTITY openAllLinksInGroup.accesskey "G">
+
+<!ENTITY bookmarkAllLinksAsGroup.label "Bookmark All Links as a Group">
+<!ENTITY bookmarkAllLinksAsGroup.accesskey "G">
+<!ENTITY bookmarkTabGroup.label       "Bookmark Related Group of Tabs">
+<!ENTITY bookmarkTabGroup.accesskey   "G">
+
+<!ENTITY openLinkInNewActiveTab.label     "Open Link in New Active Tab">
+<!ENTITY openLinkInNewActiveTab.accesskey "v">
+<!ENTITY openLinkInThisTab.label          "Open Link in This Tab">
+<!ENTITY openLinkInThisTab.accesskey      "T">
+
+<!ENTITY bookmarkGroup.label              "Bookmark This Group of Tabs">
+
+
+
+<!ENTITY bookmarksProperty.extra.title "Extra properties for &quot;&#37;s&quot;">
+<!ENTITY bookmarksProperty.extra.status.label "Tab Features">
+<!ENTITY bookmarksProperty.extra.status.accesskey "F">
+<!ENTITY bookmarksProperty.extra.extra.label "Referrer and FavIcon">
+<!ENTITY bookmarksProperty.extra.extra.accesskey "R">
+
+<!ENTITY bookmarksProperty.useFixedLabel.label "Show bookmark name as tabs' label">
+<!ENTITY bookmarksProperty.locked.label "Open any link of this page in New Tab (Lock Tab)">
+<!ENTITY bookmarksProperty.referrerBlocked.label "Block to send referrer from this page">
+<!ENTITY bookmarksProperty.autoReload.label "Reload this page automatically (Auto Reload)">
+
+<!ENTITY bookmarksProperty.allow.caption "Available features">
+<!ENTITY bookmarksProperty.allowPlugins.label "Use plug-ins">
+<!ENTITY bookmarksProperty.allowJavascript.label "Use JavaScript">
+<!ENTITY bookmarksProperty.allowMetaRedirects.label "Auto loading with Refresh">
+<!ENTITY bookmarksProperty.allowSubframes.label "Load frames">
+<!ENTITY bookmarksProperty.allowImages.label "Load images">
+
+<!ENTITY bookmarksProperty.iconURI.label     "Icon:">
+<!ENTITY bookmarksProperty.iconURI.clear     "Clear">
+<!ENTITY bookmarksProperty.iconURI.choose    "Choose...">
+<!ENTITY bookmarksProperty.iconURI.description "This settings act on other bookmarks which point same URI to this bookmark.">
+<!ENTITY bookmarksProperty.referrerURI.label "Referrer:">
+
+<!ENTITY bookmarksProperty.disabled.description "To relate this bookmark to tabs, you have to change a setting. If you want this feature to be available, push the button following.">
+<!ENTITY bookmarksProperty.disabled.button "Relate Bookmarks and Tabs">
+
+
+
+
+
+
+<!ENTITY bookmarkGroup.label     "">
+<!ENTITY bookmarkGroup.accesskey "">
+
+<!ENTITY tabMenu.label             "Tab">
+<!ENTITY tabMenu.accesskey         "a">
+<!ENTITY tabMenu.close.label       "Close Tabs">
+<!ENTITY tabMenu.advanced.label    "Tab Features">
+<!ENTITY tabMenu.group.label       "Tab Groups">
+<!ENTITY tabMenu.preferences.label "Tabbrowser Extensions Preferences...">
+
+<!ENTITY tabsList.label          "List of Tabs">
+<!ENTITY tabsList.menu.accesskey "T">
+<!ENTITY tabsList.menu.key       "I">
+<!ENTITY tabsList.tooltip        "List of Tabs">
+<!ENTITY tabsList.sorted         "Sorted List">
+
+
+
+
+
+
+
+<!ENTITY about.title       "About Tabbrowser Extensions">
+<!ENTITY about.name_before "Tabbrowser Extensions Ver.">
+<!ENTITY about.name_after  "">
+<!ENTITY about.ver_before  "Ver.">
+<!ENTITY about.ver_after   "">
+<!ENTITY about.destributed "http://piro.sakura.ne.jp/">
+<!ENTITY about.uninstall   "Uninstall">
+
+
+<!ENTITY operatePrefs   "Settings Sharing">
+<!ENTITY exportPrefs    "Export Settings">
+<!ENTITY importPrefs    "Import Settings">
+<!ENTITY recallPrefs    "Load Preset Settings">
+
+
+
+<!ENTITY preset.title    "Preset Settings of Tabbed Browsing">
+<!ENTITY preset.desc     "Choose configurations of enhanced tabbed browsing:">
+<!ENTITY preset.fromList "Use Preset Settings">
+<!ENTITY preset.fromFile "Import from File">
+
+<!ENTITY preset._restore      "&lt;User Settings&gt;">
+<!ENTITY preset._restore.desc "This is your last setting.">
+
+
+<!ENTITY preset.style         "by your Browsing-Style">
+
+<!ENTITY preset.novice        "For Casual Users">
+<!ENTITY preset.novice.desc   "This activates only minimum features of tabbed-browsing. If you are not too eager to change your browsing-style, this is suit for you.">
+
+<!ENTITY preset.professional      "For Heavy Users">
+<!ENTITY preset.professional.desc "This is fully assisted with useful features of tabbed-browsing. This includes intelligent deciding for some cases. If you wish to get great performance out of tabbed-browsing, this is suit for you.">
+
+<!ENTITY preset.mdi           "MDI Emulation Settings">
+<!ENTITY preset.mdi.desc      "In this mode, you'll see behaviors like a MDI( Multi Document Interface) application. If you have not browsed with tabbed browser yet, this will help you.">
+
+<!ENTITY preset.tree          "Tree Emulation Setting">
+<!ENTITY preset.tree.desc     "In this mode, you'll see behaviors like Tree-Style applications, for example, KIKI, Window List of Sleipnir, STED, Windows Explorer, or others. It will assist your browsing if you use so many tabs.">
+
+<!ENTITY preset.piro          "Author's Settings">
+<!ENTITY preset.piro.desc     "This is usual setting of the author of this extension. This is unrecommended for novice, is only for experts.">
+
+
+<!ENTITY preset.compatible    "by Switching from Other Applications">
+
+<!ENTITY preset.sleipnir      "For &quot;Sleipnir&quot; Users">
+<!ENTITY preset.sleipnir.desc "Emulates the default settings of the tabbed browser &quot;Sleipnir&quot;, famous in Japan. (*Note: this doesn't import your customized settings of Sleipnir.)">
+
+<!ENTITY preset.sleipnir-tree      "For &quot;Sleipnir&quot;, &lt;Window List&gt; Users">
+<!ENTITY preset.sleipnir-tree.desc "Emulates the default settings and &lt;Window List&gt; feature of the tabbed browser &quot;Sleipnir&quot;, famous in Japan. (*Note: this doesn't import your customized settings of Sleipnir.)">
+
+<!ENTITY preset.irider      "For &quot;iRider&quot; Users">
+<!ENTITY preset.irider.desc "Works like the new style browser &quot;iRider&quot;. (*Note: this doesn't import your customized settings of iRider, and requires Fireflx 1.5 or later.)">
+
+

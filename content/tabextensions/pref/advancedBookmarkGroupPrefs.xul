@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://tabextensions/content/pref/prefOverlay.css" type="text/css"?>
+<?xul-overlay href="chrome://tabextensions/content/globalOverlay.xul"?>
+
+<!DOCTYPE page SYSTEM "chrome://tabextensions/locale/pref/group.dtd">
+
+<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	windowtype="tabextensions:advancedBookmarkGroupPrefs"
+	orient="vertical"
+	title="&advancedBookmarkGroupPrefs.title;"
+	buttons="accept,cancel"
+	ondialogaccept="apply();"
+	ondialogcancel="cancel();"
+	onload="init();"
+	style="max-width: 30em;">
+
+
+<script type="application/x-javascript" src="chrome://tabextensions/content/pref/prefOverlay.js"/>
+<script type="application/x-javascript" src="chrome://tabextensions/content/pref/advancedPrefs.js"/>
+
+<box orient="vertical"
+	oncommand="onCommand(event)">
+	<checkbox id="appendInsert"
+		label="&advancedBookmarkGroupPrefs.insert;"/>
+	<checkbox id="appendReplace"
+		label="&advancedBookmarkGroupPrefs.replace;"/>
+</box>
+
+
+</dialog>

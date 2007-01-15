@@ -1,0 +1,100 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://tabextensions/content/pref/prefOverlay.css" type="text/css"?>
+<?xul-overlay href="chrome://tabextensions/content/pref/contextMenuPrefOverlay.xul"?>
+
+<!DOCTYPE dialog [
+<!ENTITY % tabextensionsDTD SYSTEM "chrome://tabextensions/locale/">
+%tabextensionsDTD;
+<!ENTITY % menuDTD SYSTEM "chrome://tabextensions/locale/pref/menuTab.dtd">
+%menuDTD;
+]>
+
+<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+		orient="vertical"
+		title="&tabPref.menu.group;"
+		buttons="accept,cancel"
+		ondialogaccept="onAccept();"
+		ondialogcancel="window.close();"
+		onload="init();"
+		style="width: 18em; height: 32em;"
+		persist="screenX screenY">
+
+<script type="application/x-javascript" src="chrome://global/content/nsUserSettings.js"/>
+<script type="application/x-javascript"><![CDATA[
+
+var gChanged = [];
+
+function init()
+{
+	document.getElementById('contextMenuBox').builder.rebuild();
+	window.setTimeout('initWithDelay();', 0);
+}
+function initWithDelay()
+{
+	var i;
+
+	var checks = document.getElementsByAttribute('prefstring', '*');
+	for (i = 0; i < checks.length; i++)
+		if (nsPreferences.getBoolPref(checks[i].getAttribute('prefstring')))
+			checks[i].setAttribute('checked', true);
+		else
+			checks[i].removeAttribute('checked');
+
+
+	var tabGroupEnabled = nsPreferences.getBoolPref('browser.tabs.extensions.group.enabled');
+	var disabledItems = {
+			duplicateInWindow : (nsPreferences.getIntPref('browser.tabs.extensions.window_hook_mode') == 2),
+			removeTabGroup    : !tabGroupEnabled,
+			sortTabsByGroup   : !tabGroupEnabled,
+			highlightGroup    : !tabGroupEnabled,
+			lockTab           : nsPreferences.getBoolPref('browser.tabs.opentabfor.links.behavior') > 0,
+			lockTabAll        : nsPreferences.getBoolPref('browser.tabs.opentabfor.links.behavior') > 0,
+			blockReferrer     : !nsPreferences.getIntPref('network.http.sendRefererHeader'),
+			blockReferrerAll  : !nsPreferences.getIntPref('network.http.sendRefererHeader')
+		};
+	var j, nodes;
+	for (i in disabledItems)
+	{
+		nodes = document.getElementsByAttribute('tabid', i);
+		for (j = 0; j < nodes.length; j++)
+			if (disabledItems[i])
+				nodes[j].setAttribute('disabled', true);
+			else
+				nodes[j].removeAttribute('disabled');
+	}
+}
+
+function onAccept(aShoudReturnDefault)
+{
+	for (var i in gChanged)
+		if (gChanged[i])
+			nsPreferences.setBoolPref(i, !nsPreferences.getBoolPref(i));
+
+	window.close();
+}
+
+function onCheckboxCheck(aEvent)
+{
+	if (aEvent.target.localName != 'checkbox') return;
+
+	var pref = aEvent.target.getAttribute('prefstring');
+	if (!(pref in gChanged))
+		gChanged[pref] = true;
+	else
+		gChanged[pref] = !gChanged[pref];
+}
+
+]]></script>
+
+<box id="contextMenuBox"
+	orient="vertical"
+	flex="1"
+	class="scrollbox"
+	datasources="chrome://tabextensions/content/tabsContextMenuItems.rdf"
+	ref="chrome://tabextensions/content/tabsContextMenuItems.rdf#urn:tabsContextMenuItems:root"
+	template="contextMenuBoxTemplate"
+	oncommand="onCheckboxCheck(event);"/>
+
+</dialog>

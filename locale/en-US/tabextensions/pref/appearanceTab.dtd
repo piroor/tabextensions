@@ -1,0 +1,115 @@
+<!ENTITY tabPref.appearance.tab.title "Appearance of Tabs">
+
+<!ENTITY tabPrefsDisabled       "Any tab preferences cannot be edited because you set the tab bar to be hidden.">
+
+
+<!ENTITY showTabClosebox         "Closebox in Tabs">
+<!ENTITY showTabClosebox.never   "Disable">
+<!ENTITY showTabClosebox.any     "Show in Any tab Always">
+<!ENTITY showTabClosebox.current "Show only in the Current tab">
+<!ENTITY showTabClosebox.pointed "Show only in the Pointed tab">
+
+<!ENTITY showTabClosebox.advanced.go    "Advanced...">
+<!ENTITY showTabClosebox.advanced.title "Advanced Settings of Closebox in Tabs">
+<!ENTITY showTabClosebox.pointed.delay.group "Delay to show closebox for pointed tabs">
+<!ENTITY showTabClosebox.pointed.delay.label_before "Show closebox after">
+<!ENTITY showTabClosebox.pointed.delay.label_after "msec">
+
+<!ENTITY showTabClosebox.appearance.group    "Appearance">
+<!ENTITY showTabClosebox.appearance.builtin  "Built-in appearance of Tabbrowser Extensions">
+<!ENTITY showTabClosebox.appearance.winstrip "Special Appearance for Firefox Default Theme (Winstrip)">
+<!ENTITY showTabClosebox.appearance.default  "Default Appearance (depend on the current theme)">
+
+
+<!ENTITY tabsWidth.group        "Width of Tabs">
+<!ENTITY tabsWidth.default      "Fit to Window">
+<!ENTITY tabsWidth.fitLabel     "Fit to Title">
+<!ENTITY tabsWidth.fix          "Fix">
+<!ENTITY tabsWidth.width.label_before       "to">
+<!ENTITY tabsWidth.width.label_after        "pixels">
+<!ENTITY tabsWidth.minMaxWidth.label_before "in">
+<!ENTITY tabsWidth.minMaxWidth.label_middle "to">
+<!ENTITY tabsWidth.minMaxWidth.label_after  "pixels">
+
+<!ENTITY tabsCrop.go     "Advanced...">
+<!ENTITY tabsCrop.title  "Format of Omission">
+<!ENTITY tabsCrop.label  "Omit long titles">
+<!ENTITY tabsCrop.start  "at the Start">
+<!ENTITY tabsCrop.center "at the Center">
+<!ENTITY tabsCrop.end    "at the End">
+<!ENTITY tabsCrop.start.sample  "[...foobar]">
+<!ENTITY tabsCrop.center.sample "[foo...bar]">
+<!ENTITY tabsCrop.end.sample    "[foobar...]">
+
+
+<!ENTITY tabPref.appearance.tab.misc.group "Miscellaneous">
+
+<!ENTITY showProgress            "Show Progress Meter in tabs">
+<!ENTITY showProgressInStatusbar "Show Progress Meter in the status bar">
+<!ENTITY highlightCurrentTab     "Highlight Current tab">
+<!ENTITY highlightUnreadTab      "Highlight Unread tabs">
+
+
+<!ENTITY tabPref.appearance.tab.misc.go    "Advanced...">
+<!ENTITY tabPref.appearance.tab.misc.title "Miscellaneous Settings of Tab Appearance">
+
+
+
+<!ENTITY showLinkTextAsLabel    "Show temporary labels while the new tab is loading">
+<!ENTITY showLinkTextAsLabelPermanently "Show temporary labels even after the tab is completely loaded">
+<!ENTITY overlayIcon "Superimpose status icon over Page icon">
+
+
+
+<!ENTITY highlightCurrentTab.style.group        "Highlight Style for Current tab">
+<!ENTITY highlightCurrentTab.style.italic       "Italic">
+<!ENTITY highlightCurrentTab.style.bold         "Bold">
+<!ENTITY highlightCurrentTab.style.underline    "Underline">
+<!ENTITY highlightCurrentTab.style.transparent  "Transparent">
+
+<!ENTITY highlightCurrentTab.style.color.label  "Change Text Color">
+<!ENTITY highlightCurrentTab.style.color.red    "Red">
+<!ENTITY highlightCurrentTab.style.color.blue   "Blue">
+<!ENTITY highlightCurrentTab.style.color.yellow "Yellow">
+<!ENTITY highlightCurrentTab.style.color.green  "Green">
+<!ENTITY highlightCurrentTab.style.color.white  "White">
+<!ENTITY highlightCurrentTab.style.color.gray   "Gray">
+<!ENTITY highlightCurrentTab.style.color.black  "Black">
+<!ENTITY highlightCurrentTab.style.color.purple "Purple">
+<!ENTITY highlightCurrentTab.style.color.aqua   "Aqua">
+<!ENTITY highlightCurrentTab.style.color.highlight "Selection Text">
+<!ENTITY highlightCurrentTab.style.color.info      "Information">
+
+<!ENTITY highlightCurrentTab.style.bg.label       "Change Background Color">
+<!ENTITY highlightCurrentTab.style.bg.desktop     "Desktop">
+<!ENTITY highlightCurrentTab.style.bg.highlight   "Selection Background">
+<!ENTITY highlightCurrentTab.style.bg.3Dhighlight "3D Highlight">
+<!ENTITY highlightCurrentTab.style.bg.3Dshadow    "3D Shadow">
+<!ENTITY highlightCurrentTab.style.bg.info        "Information">
+
+
+<!ENTITY highlightUnreadTab.style.group        "Highlight Style for Unread tabs">
+<!ENTITY highlightUnreadTab.style.italic       "Italic">
+<!ENTITY highlightUnreadTab.style.bold         "Bold">
+<!ENTITY highlightUnreadTab.style.underline    "Underline">
+<!ENTITY highlightUnreadTab.style.transparent  "Transparent">
+
+<!ENTITY highlightUnreadTab.style.color.label  "Change Text Color">
+<!ENTITY highlightUnreadTab.style.color.red    "Red">
+<!ENTITY highlightUnreadTab.style.color.blue   "Blue">
+<!ENTITY highlightUnreadTab.style.color.yellow "Yellow">
+<!ENTITY highlightUnreadTab.style.color.green  "Green">
+<!ENTITY highlightUnreadTab.style.color.white  "White">
+<!ENTITY highlightUnreadTab.style.color.gray   "Gray">
+<!ENTITY highlightUnreadTab.style.color.black  "Black">
+<!ENTITY highlightUnreadTab.style.color.purple "Purple">
+<!ENTITY highlightUnreadTab.style.color.aqua   "Aqua">
+<!ENTITY highlightUnreadTab.style.color.highlight "Selection Text">
+<!ENTITY highlightUnreadTab.style.color.info      "Information">
+
+<!ENTITY highlightUnreadTab.style.bg.label       "Change Background Color">
+<!ENTITY highlightUnreadTab.style.bg.desktop     "Desktop">
+<!ENTITY highlightUnreadTab.style.bg.highlight   "Selection Background">
+<!ENTITY highlightUnreadTab.style.bg.3Dhighlight "3D Highlight">
+<!ENTITY highlightUnreadTab.style.bg.3Dshadow    "3D Shadow">
+<!ENTITY highlightUnreadTab.style.bg.info        "Information">

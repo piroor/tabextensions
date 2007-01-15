@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	hidechrome="true"
+	width="0"
+	height="0"
+	screenX="-100"
+	screenY="-100"
+	style="background-color:transparent">
+
+<script type="application/x-javascript"><![CDATA[
+
+var winman = Components.classes['@mozilla.org/appshell/window-mediator;1'].getService(Components.interfaces.nsIWindowMediator);
+var enumerator = winman.getEnumerator(null);
+
+while (enumerator.hasMoreElements())
+{
+	var domWindow = enumerator.getNext();
+	if (domWindow == window) continue;
+
+	if (('tryToClose' in domWindow) && !domWindow.tryToClose())
+		break;
+
+	domWindow.close();
+}
+
+if (!winman.getMostRecentWindow('navigator:browser'))
+	window.open();
+
+window.close();
+
+]]></script>
+
+</window>

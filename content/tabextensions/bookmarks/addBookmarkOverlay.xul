@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+
+<overlay
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+<script type="application/x-javascript"><![CDATA[
+
+
+// use fixed label instead of the title
+var b = window.opener.TabbrowserService.browser;
+if (window.arguments.length == 1) { // Firefox 1.1 or later
+	if (b &&
+		b.selectedTab.getAttribute('tab-loadingURI') == window.arguments[0].url &&
+		b.selectedTab.getAttribute('tab-fixedLabel'))
+		window.arguments[0].name = b.selectedTab.getAttribute('tab-fixedLabel');
+}
+else { // Firefox 1.0 or before
+	if (b &&
+		b.selectedTab.getAttribute('tab-loadingURI') == window.arguments[1] &&
+		b.selectedTab.getAttribute('tab-fixedLabel'))
+		window.arguments[0] = b.selectedTab.getAttribute('tab-fixedLabel');
+}
+
+
+function initTabextensionsBookmarkGroup()
+{
+	if (
+		( // Firefox 1.0 or before
+			window.arguments.length > 4 &&
+			window.arguments[5] && window.arguments[5].length &&
+			'forceToGroup' in window.arguments[5][0] &&
+			window.arguments[5][0].forceToGroup
+		) ||
+		( // Firefox 1.1 or later
+			window.arguments.length == 1 &&
+			'forceToGroup' in window.arguments[0] &&
+			window.arguments[0].forceToGroup
+		)
+		) {
+		var checkbox = document.getElementById('addgroup');
+		checkbox.checked  = true;
+		checkbox.disabled = true;
+	}
+
+//	window.removeEventListener('load', initTabextensionsBookmarkGroup, false);
+}
+
+window.addEventListener('load', initTabextensionsBookmarkGroup, false);
+
+]]></script>
+
+</overlay>

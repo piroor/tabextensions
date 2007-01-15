@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://tabextensions/content/pref/prefOverlay.css" type="text/css"?>
+<?xul-overlay href="chrome://tabextensions/content/globalOverlay.xul"?>
+
+<!DOCTYPE page SYSTEM "chrome://tabextensions/locale/pref/useTab.dtd">
+
+<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	windowtype="tabextensions:advancedUseTabPrefs"
+	orient="vertical"
+	title="&advancedUseTabPrefs.title;"
+	buttons="accept,cancel"
+	ondialogaccept="apply();"
+	ondialogcancel="cancel();"
+	onload="init();">
+
+
+<script type="application/x-javascript" src="chrome://tabextensions/content/pref/prefOverlay.js"/>
+<script type="application/x-javascript" src="chrome://tabextensions/content/pref/advancedPrefs.js"/>
+
+<box orient="vertical"
+	oncommand="onCommand(event)">
+
+	<checkbox id="reuseCurrentBlankTab"
+		label="&reuseCurrentBlankTab;"/>
+	<checkbox id="ignoreTarget"
+		label="&ignoreTarget;"/>
+	<checkbox id="tabsLimitOverflow"
+		label="&tabsLimit.overflow;"/>
+
+</box>
+
+
+</dialog>

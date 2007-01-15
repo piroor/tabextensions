@@ -1,0 +1,201 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
+<?xul-overlay href="chrome://tabextensions/content/pref/prefOverlay.xul"?>
+
+<!DOCTYPE page [
+<!ENTITY % tabextensionsDTD SYSTEM "chrome://tabextensions/locale/">
+%tabextensionsDTD;
+<!ENTITY % tabextensionsPlatformNativeDTD SYSTEM "chrome://tabextensions/locale/pref/platformNative.dtd">
+%tabextensionsPlatformNativeDTD;
+]>
+
+<page
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	orient="vertical"
+	headertitle="&tabPref.platformNative.title;"
+	onload="init();">
+
+
+<script type="application/x-javascript"><![CDATA[
+
+if (!('_elementIDs' in window) || !window._elementIDs)
+	var _elementIDs = [];
+
+_elementIDs = _elementIDs.concat([
+	'platformNative',
+	'loadInBackgroundPlatformNative',
+	'supportDDEExec',
+	'browser.link.open_external',
+//	'allowWindowForHomePage',
+	'loadInBackgroundWindow',
+	'loadInBackgroundWindowInherit'
+]);
+
+
+var gPlatformNativePrefsData;
+
+function init()
+{
+	window.parent.initPanel(location.href);
+
+
+	var platformNative = document.getElementById('platformNative');
+	var winHookMode = Number(getModifiedValue('browser.tabs.extensions.window_hook_mode', 'chrome://tabextensions/content/pref/pref-tabsGeneral.xul'));
+	if (winHookMode == 2) {
+		if (platformNative.value == 3)
+			platformNative.value = 2;
+
+		platformNative.childNodes[4].setAttribute('disabled', true);
+	}
+	else
+		platformNative.childNodes[4].removeAttribute('disabled');
+
+	var background = document.getElementById('loadInBackgroundPlatformNative');
+	var items = platformNative.getElementsByTagName('radio');
+	if (platformNative.value == 2) {
+		if (background.checked)
+			platformNative.selectedItem = items[3];
+		else
+			platformNative.selectedItem = items[2];
+	}
+
+
+	var loadInBackgroundWindow = document.getElementById('loadInBackgroundWindow');
+	var hiddenCheck = document.getElementById('loadInBackgroundWindowInherit');
+	if (hiddenCheck.checked)
+		loadInBackgroundWindow.checked = getModifiedValue('browser.tabs.extensions.loadInBackgroundWindow', 'chrome://tabextensions/content/pref/pref-tabsUseTab.xul');
+
+
+	gPlatformNativePrefsData = {
+		loadInBackgroundPlatformNative : {
+			node : document.getElementById('loadInBackgroundPlatformNative'),
+			get disabled() {
+				var node = document.getElementById('platformNative');
+				var items = node.getElementsByTagName('radio');
+				return node.selectedItem != items[0];
+			}
+		}
+	};
+
+
+	onNativeAppChanged();
+}
+
+function onNativeAppChanged()
+{
+	var group          = document.getElementById('platformNative');
+	var items          = group.getElementsByTagName('radio');
+	var supportDDEExec = document.getElementById('supportDDEExec');
+	var openExternal = document.getElementById('browser.link.open_external');
+//	var allowWindow  = document.getElementById('allowWindowForHomePage');
+
+	var nsIBrowserDOMWindow = 'nsIBrowserDOMWindow' in Components.interfaces ? Components.interfaces.nsIBrowserDOMWindow : 'nsIBrowserWindow' in Components.interfaces ? Components.interfaces.nsIBrowserWindow : null ;
+
+	switch (Number(group.value))
+	{
+		case 0:
+			var winHookMode = Number(getModifiedValue('browser.tabs.extensions.window_hook_mode', 'chrome://tabextensions/content/pref/pref-tabsGeneral.xul'));
+			if (nsIBrowserDOMWindow)
+				openExternal.value = winHookMode == 0 ? nsIBrowserDOMWindow.OPEN_CURRENTWINDOW : nsIBrowserDOMWindow.OPEN_NEWTAB ;
+			supportDDEExec.checked = true;
+//			allowWindow.removeAttribute('disabled');
+			break;
+		case 1:
+			if (nsIBrowserDOMWindow)
+				openExternal.value = nsIBrowserDOMWindow.OPEN_CURRENTWINDOW;
+			supportDDEExec.checked = true;
+//			allowWindow.setAttribute('disabled', true);
+			break;
+		case 2:
+			if (nsIBrowserDOMWindow)
+				openExternal.value = nsIBrowserDOMWindow.OPEN_NEWTAB;
+			supportDDEExec.checked = false;
+//			allowWindow.removeAttribute('disabled');
+			break;
+		case 3:
+			if (nsIBrowserDOMWindow)
+				openExternal.value = nsIBrowserDOMWindow.OPEN_NEWWINDOW;
+			supportDDEExec.checked = false;
+//			allowWindow.setAttribute('disabled', true);
+			break;
+	}
+
+	var background = document.getElementById('loadInBackgroundPlatformNative');
+	if (group.selectedItem == items[2])
+		background.checked = false;
+	else if (group.selectedItem == items[3])
+		background.checked = true;
+
+
+	var button = document.getElementById('advancedPlatformNativePrefs');
+	if (group.selectedItem != items[0])
+		button.setAttribute('disabled', true);
+	else
+		button.removeAttribute('disabled');
+}
+
+
+function onLoadInBackgroundWindowChanged()
+{
+	var checkbox    = document.getElementById('loadInBackgroundWindow');
+	var hiddenCheck = document.getElementById('loadInBackgroundWindowInherit');
+
+	hiddenCheck.checked = (getModifiedValue('browser.tabs.extensions.loadInBackgroundWindow', 'chrome://tabextensions/content/pref/pref-tabsUseTab.xul') == checkbox.checked);
+
+	onModified(hiddenCheck.getAttribute('prefstring'), hiddenCheck.checked);
+}
+
+
+]]></script>
+
+	<groupbox>
+		<caption label="&tabPref.platformNative.group;"/>
+		<vbox>
+		<radiogroup id="platformNative"
+			prefstring="browser.tabs.extensions.platform_native.behavior"
+			preftype="int"
+			oncommand="onNativeAppChanged()">
+			<box orient="horizontal">
+				<radio value="0" label="&tabPref.platformNative.normal;"/>
+				<button id="advancedPlatformNativePrefs"
+					label="&advancedPlatformNativePrefs.go;"
+					oncommand="advancedPrefs('chrome://tabextensions/content/pref/advancedPlatformNativePrefs.xul', gPlatformNativePrefsData);"/>
+			</box>
+			<radio value="1" label="&tabPref.platformNative.current;"/>
+			<radio value="2" label="&tabPref.platformNative.newtab;"/>
+			<radio value="2" label="&tabPref.platformNative.newtabBackground;"/>
+			<radio value="3" label="&tabPref.platformNative.newwindow;"/>
+		</radiogroup>
+		<box collapsed="true">
+			<checkbox id="loadInBackgroundPlatformNative"
+				prefstring="browser.tabs.extensions.loadInBackgroundPlatformNative"/>
+			<checkbox id="supportDDEExec"
+				prefstring="advanced.system.supportDDEExec"/>
+			<textbox id="browser.link.open_external"
+				prefstring="browser.link.open_external"
+				preftype="int"
+				value="1"/>
+		</box>
+		<separator/>
+		<!--checkbox id="allowWindowForHomePage"
+			label="&tabPref.platformNative.allowWindowForHomePage;"
+			prefstring="browser.tabs.extensions.platform_native.allow_window_for_homepage"/-->
+		<checkbox id="loadInBackgroundWindow"
+			label="&tabPref.platformNative.focus.backgroundWindow;"
+			prefstring="browser.tabs.extensions.loadInBackgroundWindow.platformNative"
+			oncommand="onLoadInBackgroundWindowChanged();"/>
+		<box collapsed="true">
+			<checkbox id="loadInBackgroundWindowInherit"
+				prefstring="browser.tabs.extensions.loadInBackgroundWindow.platformNative.inherit"/>
+		</box>
+		</vbox>
+	</groupbox>
+
+
+	<spacer flex="1"/>
+
+	<box id="tabextensionsAboutBox"/>
+
+</page>

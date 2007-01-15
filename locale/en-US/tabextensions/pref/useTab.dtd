@@ -1,0 +1,25 @@
+<!ENTITY tabPref.useTab.title   "Use Cases of Tabs">
+
+
+<!ENTITY tabPref.useTab.focus.group "New Tabs">
+
+<!ENTITY loadInForeground           "Load in the Foreground">
+<!ENTITY loadInBackground           "Load in the Background">
+<!ENTITY loadInBackground.desc      "*Note: Individual settings take precedence over this">
+
+<!ENTITY backgroundWindow "Keep window in the background">
+
+
+<!ENTITY tabPref.useTab.misc.group   "Miscellaneous Behavior">
+
+<!ENTITY preventSameURITab           "Block to open multiple tabs for the same URI">
+<!ENTITY preventSameURITab.showAlert "Show notifier popup for blocked tabs">
+<!ENTITY tabsLimit                   "Maximum number of tabs in one window (0=unlimited):">
+
+
+<!ENTITY advancedUseTabPrefs.go    "Advanced...">
+<!ENTITY advancedUseTabPrefs.title "Advance Settings of Use Cases">
+
+<!ENTITY reuseCurrentBlankTab   "Reuse the current blank tab instead of opening a new tab">
+<!ENTITY ignoreTarget           "Ignore target windows/tabs (excluding frames) of links and JavaScript">
+<!ENTITY tabsLimit.overflow     "Open too may tabs in new window">

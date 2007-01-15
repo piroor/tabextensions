@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
+
+<!DOCTYPE page [
+<!ENTITY % versionDTD SYSTEM "chrome://tabextensions/content/_version.dtd">
+%versionDTD;
+<!ENTITY % tabextensionsDTD SYSTEM "chrome://tabextensions/locale/">
+%tabextensionsDTD;
+]>
+
+<page
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	orient="vertical"
+	headertitle="&tabextensions.label;"
+	onload="window.parent.initPanel(location.href);">
+
+
+	<script type="application/x-javascript"><![CDATA[
+
+var _elementIDs = [];
+
+function prefCall()
+{
+window.openDialog(
+	'chrome://tabextensions/content/pref/prefDialog.xul',
+	'',
+	'chrome,all,dependent'
+);
+
+}
+
+
+	]]></script>
+
+
+
+<hbox flex="1">
+	<spacer flex="1"/>
+	<vbox flex="1">
+		<spacer flex="5"/>
+		<description>&tabPref.ref.description.newType;</description>
+		<button flex="1"
+			label="&tabPref.ref.goPrefs;"
+			oncommand="prefCall();"/>
+		<spacer flex="5"/>
+	</vbox>
+	<spacer flex="1"/>
+</hbox>
+
+</page>

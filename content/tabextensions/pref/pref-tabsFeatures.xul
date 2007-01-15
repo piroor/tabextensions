@@ -1,0 +1,165 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
+<?xul-overlay href="chrome://tabextensions/content/pref/prefOverlay.xul"?>
+<?xml-stylesheet href="chrome://tabextensions/content/pref/pref-tabsFeatures.css" type="text/css"?>
+
+<!DOCTYPE page [
+<!ENTITY % tabextensionsDTD SYSTEM "chrome://tabextensions/locale/">
+%tabextensionsDTD;
+<!ENTITY % featuresDTD SYSTEM "chrome://tabextensions/locale/pref/features.dtd">
+%featuresDTD;
+]>
+
+<page
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	orient="vertical"
+	headertitle="&tabPref.features.title;"
+	onload="init();">
+
+
+	<script type="application/x-javascript"><![CDATA[
+
+if (!('_elementIDs' in window) || !window._elementIDs)
+	var _elementIDs = [];
+
+_elementIDs = _elementIDs.concat([
+	'allowPlugins',
+	'allowMetaRedirects',
+
+	'slowAutoreloadBackgoundTabs',
+	'slowAutoreloadBackgoundTabs_rate',
+
+	'keepStatus'
+]);
+
+var gBackgoundAutoreloadPrefs;
+var gKeepStatus
+
+function init()
+{
+	gKeepStatus = document.getElementById('keepStatus');
+
+	var disabledItems = {
+			locked          : getModifiedValue('browser.tabs.opentabfor.anylink', 'chrome://tabextensions/content/pref/pref-tabsUse.xul'),
+			referrerBlocked : !TabbrowserService.getPref('network.http.sendRefererHeader'),
+			allowJavascript : !TabbrowserService.getPref('javascript.enabled'),
+			allowSubframes  : !TabbrowserService.getPref('browser.frames.enabled'),
+			allowImages     : (TabbrowserService.getPref('network.image.imageBehavior') == 2),
+		},
+		node;
+	for (var i in disabledItems)
+	{
+		node = document.getElementById(i);
+		if (disabledItems[i]) {
+			node.setAttribute('disabled', true);
+			node.removeAttribute('checked');
+		}
+		else {
+			node.removeAttribute('disabled');
+			_elementIDs.push(i);
+		}
+	}
+
+	window.parent.initPanel(location.href);
+
+	gBackgoundAutoreloadPrefs = {
+		slowAutoreloadBackgoundTabs_rate : {
+			node : document.getElementById('slowAutoreloadBackgoundTabs_rate')
+		}
+	};
+
+	document.getElementById('keepStatusCheck').checked = !gKeepStatus.checked;
+	controlLinkedItems(document.getElementById('slowAutoreloadBackgoundTabs'));
+}
+
+
+	]]></script>
+
+
+	<groupbox>
+		<caption label="&enabledFeatures.default.caption;"/>
+		<box orient="vertical">
+		<checkbox id="locked" flex="1"
+			label="&enabledFeatures.locked.label;"
+			prefstring="browser.tabs.extensions.locked.enabled"
+			class="tab-locked"/>
+		<checkbox id="referrerBlocked" flex="1"
+			label="&enabledFeatures.referrerBlocked.label;"
+			prefstring="browser.tabs.extensions.referrerBlocked.enabled"
+			class="tab-referrerblocked"/>
+		<separator/>
+		<grid>
+			<rows>
+				<row/>
+				<row/>
+				<row/>
+			</rows>
+			<columns>
+				<column>
+					<checkbox id="allowPlugins"
+						label="&bookmarksProperty.allowPlugins.label;"
+						prefstring="browser.tabs.extensions.allowPlugins.enabled"
+						class="tab-allow"/>
+					<checkbox id="allowJavascript"
+						label="&bookmarksProperty.allowJavascript.label;"
+						prefstring="browser.tabs.extensions.allowJavascript.enabled"
+						class="tab-allow"/>
+					<checkbox id="allowMetaRedirects"
+						label="&bookmarksProperty.allowMetaRedirects.label;"
+						prefstring="browser.tabs.extensions.allowMetaRedirects.enabled"
+						class="tab-allow"/>
+				</column>
+				<column>
+					<checkbox id="allowSubframes"
+						label="&bookmarksProperty.allowSubframes.label;"
+						prefstring="browser.tabs.extensions.allowSubframes.enabled"
+						class="tab-allow"/>
+					<checkbox id="allowImages"
+						label="&bookmarksProperty.allowImages.label;"
+						prefstring="browser.tabs.extensions.allowImages.enabled"
+						class="tab-allow"/>
+					<spacer/>
+				</column>
+			</columns>
+		</grid>
+		</box>
+	</groupbox>
+
+	<groupbox>
+		<caption label="&tabPref.features.misc.group;"/>
+
+		<vbox>
+		<box orient="horizontal">
+			<checkbox id="slowAutoreloadBackgoundTabs"
+				label="&slowAutoreloadBackgoundTabs;"
+				prefstring="browser.tabs.extensions.slow_down_autoreload_in_background.enabled"
+				oncommand="onModified(this.getAttribute('prefstring'), this.checked); controlLinkedItems(this);"
+				linked="slowAutoreloadBackgoundTabsButton"/>
+			<button id="slowAutoreloadBackgoundTabsButton"
+				label="&advancedBackgoundAutoreloadPrefs.go;"
+				oncommand="advancedPrefs('chrome://tabextensions/content/pref/advancedBackgoundAutoreloadPrefs.xul', gBackgoundAutoreloadPrefs);"/>
+			<box collapsed="true">
+				<textbox id="slowAutoreloadBackgoundTabs_rate"
+					preftype="int"
+					prefstring="browser.tabs.extensions.slow_down_autoreload_in_background.rate"/>
+			</box>
+		</box>
+
+		<checkbox id="keepStatusCheck"
+			label="&keepStatusCheck;"
+			oncommand="gKeepStatus.checked = !this.checked"/>
+		<box collapsed="true">
+			<checkbox id="keepStatus"
+				prefstring="browser.tabs.extensions.keep_tab_status"/>
+		</box>
+
+		</vbox>
+	</groupbox>
+
+	<spacer flex="1"/>
+
+	<box id="tabextensionsAboutBox"/>
+
+</page>

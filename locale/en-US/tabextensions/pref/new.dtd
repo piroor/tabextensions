@@ -1,0 +1,26 @@
+<!ENTITY tabPref.new.title "Default Setting of New Tabs">
+
+<!ENTITY tabPref.new.startup.group "Default Page">
+
+<!ENTITY tabStartup.blank   "Blank page">
+<!ENTITY tabStartup.home    "Home page">
+<!ENTITY tabStartup.last    "Last page visited">
+<!ENTITY tabStartup.inherit "Default page of Browser">
+
+
+<!ENTITY tabPref.new.focus.group "Result of &quot;New Tab&quot; command">
+<!ENTITY loadInForeground "Open a new tab">
+<!ENTITY loadInBackground "Open a new Background tab">
+
+
+<!ENTITY tabPref.new.position.group "Location of New Tab">
+<!ENTITY openTabIn.inherit          "Default">
+<!ENTITY openTabIn.start.horizontal "Leftmost">
+<!ENTITY openTabIn.left.horizontal  "Just Left">
+<!ENTITY openTabIn.right.horizontal "Just Right">
+<!ENTITY openTabIn.end.horizontal   "Rightmost">
+<!ENTITY openTabIn.start.vertical   "Top">
+<!ENTITY openTabIn.left.vertical    "Just Above">
+<!ENTITY openTabIn.right.vertical   "Just Below">
+<!ENTITY openTabIn.end.vertical     "Bottom">
+<!ENTITY openTabIn.desc             "*In the TabGroup Mode, this setting takes effect for each group">

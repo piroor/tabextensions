@@ -1,0 +1,22 @@
+<!ENTITY tabPref.appearance.thumbnail.title "Thumbnail of Tabs">
+
+
+<!ENTITY thumbnail.enabled           "Thumbnail (*Firefox 1.5 later only)">
+<!ENTITY thumbnail.caption           "Thumbnail">
+<!ENTITY thumbnail.width             "Width:">
+<!ENTITY thumbnail.width.auto        "Auto">
+<!ENTITY thumbnail.width.fix         "Fix">
+<!ENTITY thumbnail.width.fix.before  "">
+<!ENTITY thumbnail.width.fix.after   "px">
+<!ENTITY thumbnail.height            "Height:">
+<!ENTITY thumbnail.height.auto       "Auto">
+<!ENTITY thumbnail.height.fix        "Fix">
+<!ENTITY thumbnail.height.fix.before "">
+<!ENTITY thumbnail.height.fix.after  "px">
+<!ENTITY thumbnail.power.before      "">
+<!ENTITY thumbnail.power.after       "&#37; of tab">
+
+
+
+<!ENTITY thumbnail.dummy.tabLabel "(no title)">
+<!ENTITY thumbnail.dummy.desc     "Customize the size of thumbnails by dragging on edges of the box above.">

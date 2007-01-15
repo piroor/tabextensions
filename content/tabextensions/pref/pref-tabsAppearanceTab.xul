@@ -1,0 +1,365 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
+<?xul-overlay href="chrome://tabextensions/content/pref/prefOverlay.xul"?>
+
+<!DOCTYPE page SYSTEM "chrome://tabextensions/locale/pref/appearanceTab.dtd">
+
+<page
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	orient="vertical"
+	headertitle="&tabPref.appearance.tab.title;"
+	onload="init();">
+
+
+<script type="application/x-javascript"><![CDATA[
+
+if (!('_elementIDs' in window) || !window._elementIDs)
+	var _elementIDs = [];
+
+_elementIDs = _elementIDs.concat([
+	'showTabClosebox',
+	'delayToShowClosebox',
+	'closeboxAppearance',
+
+	'tabsWidthType',
+	'tabsWidth',
+	'tabsMaxWidth',
+	'tabsMinWidth',
+	'tabsCrop',
+
+	'highlightCurrentTab',
+	'highlightCurrentTabStyle',
+	'highlightUnreadTab',
+	'highlightUnreadTabStyle',
+	'showProgress',
+	'showProgressInStatusbar',
+	'showLinkTextAsLabel',
+	'showLinkTextAsLabelPermanently',
+	'overlayIcon'
+]);
+
+var gTabCloseBoxPrefsData;
+var gTabsCropData;
+var gMiscData;
+
+function init()
+{
+	initMacLabel();
+
+	window.parent.initPanel(location.href);
+
+	var type = document.getElementById('tabsWidthType');
+
+	var tabbarPlace = Number(getModifiedValue('browser.tabs.extensions.tabbar_place', 'chrome://tabextensions/content/pref/pref-tabsAppearanceTabbar.xul'));
+	if (tabbarPlace > 1) {
+		type.childNodes[0].firstChild.setAttribute('disabled', true);
+		type.childNodes[1].firstChild.setAttribute('disabled', true);
+		type.selectedItem = type.childNodes[2].firstChild;
+	}
+	else {
+		type.childNodes[0].firstChild.removeAttribute('disabled');
+		type.childNodes[1].firstChild.removeAttribute('disabled');
+	}
+	document.getElementById('tabPrefsDeck').selectedIndex = (tabbarPlace < 0) ? 1 : 0 ;
+
+	gTabCloseBoxPrefsData = {
+		closeboxAppearance : {
+			node : document.getElementById('closeboxAppearance')
+		},
+
+		delayToShowCloseboxGroupLabel : {
+			node     : null,
+			get disabled() {
+				return document.getElementById('showTabClosebox').value != 2
+			}
+		},
+		delayToShowClosebox : {
+			node     : document.getElementById('delayToShowClosebox'),
+			get disabled() {
+				return document.getElementById('showTabClosebox').value != 2
+			}
+		},
+		delayToShowCloseboxSpinButtons : {
+			node     : null,
+			get disabled() {
+				return document.getElementById('showTabClosebox').value != 2
+			}
+		},
+		delayToShowCloseboxLabelBefore : {
+			node     : null,
+			get disabled() {
+				return document.getElementById('showTabClosebox').value != 2
+			}
+		},
+		delayToShowCloseboxLabelAfter : {
+			node     : null,
+			get disabled() {
+				return document.getElementById('showTabClosebox').value != 2
+			}
+		}
+	};
+
+	gTabsCropData = {
+		tabsCrop : {
+			node : document.getElementById('tabsCrop')
+		}
+	};
+
+	gMiscData = {
+		showLinkTextAsLabel : {
+			node : document.getElementById('showLinkTextAsLabel')
+		},
+		showLinkTextAsLabelPermanently : {
+			node : document.getElementById('showLinkTextAsLabelPermanently'),
+			get disabled() {
+				return document.getElementById('showLinkTextAsLabel').disabled
+			}
+		},
+		overlayIcon : {
+			node : document.getElementById('overlayIcon')
+		},
+		highlightCurrentTabStyle : {
+			node : document.getElementById('highlightCurrentTabStyle')
+		},
+		highlightUnreadTabStyle : {
+			node : document.getElementById('highlightUnreadTabStyle')
+		}
+	};
+
+
+	onShowTabCloseboxChange();
+	onTabsWidthTypeChange();
+}
+
+function onShowTabCloseboxChange()
+{
+	var button = document.getElementById('advancedTabCloseBoxPrefsButton');
+
+	var group = document.getElementById('showTabClosebox');
+	var items = group.getElementsByTagName('radio');
+	if (group.selectedItem != items[0])
+		button.removeAttribute('disabled');
+	else
+		button.setAttribute('disabled', true);
+}
+
+function onTabsWidthTypeChange()
+{
+	var group = document.getElementById('tabsWidthType');
+	var button;
+	var nodes;
+	var i;
+	var index = Number(group.value);
+
+	button = document.getElementById('tabsCropButtonFlex');
+	nodes = group.firstChild.childNodes;
+	if (index != 0) {
+		button.setAttribute('disabled', true);
+		for (i = 1; i < nodes.length; i++)
+			nodes[i].setAttribute('disabled', true);
+	}
+	else {
+		button.removeAttribute('disabled');
+		for (i = 1; i < nodes.length; i++)
+			nodes[i].removeAttribute('disabled');
+	}
+
+	button = document.getElementById('tabsCropButtonFix');
+	nodes = group.lastChild.childNodes;
+	if (index != 2) {
+		button.setAttribute('disabled', true);
+		for (i = 1; i < nodes.length; i++)
+			nodes[i].setAttribute('disabled', true);
+	}
+	else {
+		button.removeAttribute('disabled');
+		for (i = 1; i < nodes.length; i++)
+			nodes[i].removeAttribute('disabled');
+	}
+}
+
+function onChangeShowProgress()
+{
+	var tab    = document.getElementById('showProgress');
+	var status = document.getElementById('showProgressInStatusbar');
+	controlLinkedItems(tab);
+
+	if (!tab.checked && !status.checked)
+		status.checked = true;
+}
+
+]]></script>
+
+
+<deck id="tabPrefsDeck">
+<box orient="vertical">
+
+
+	<groupbox>
+		<caption label="&showTabClosebox;"/>
+		<radiogroup id="showTabClosebox"
+			prefstring="browser.tabs.extensions.show_closebox.tab"
+			preftype="int"
+			oncommand="onShowTabCloseboxChange();">
+			<grid>
+				<rows>
+					<row/>
+					<row/>
+					<row/>
+				</rows>
+				<columns>
+					<column>
+						<radio value="-1" label="&showTabClosebox.never;"/>
+						<spacer/>
+						<spacer/>
+					</column>
+					<column>
+						<radio value="0"  label="&showTabClosebox.any;"/>
+						<radio value="1"  label="&showTabClosebox.current;"/>
+						<radio value="2"  label="&showTabClosebox.pointed;"/>
+					</column>
+				</columns>
+			</grid>
+		</radiogroup>
+		<box orient="horizontal">
+			<spacer flex="1"/>
+			<button id="advancedTabCloseBoxPrefsButton"
+				label="&showTabClosebox.advanced.go;"
+				oncommand="advancedPrefs('chrome://tabextensions/content/pref/advancedTabCloseBoxPrefs.xul', gTabCloseBoxPrefsData);"/>
+		</box>
+		<box collapsed="true">
+			<textbox id="closeboxAppearance"
+				prefstring="browser.tabs.extensions.show_closebox.tab.appearance"
+				preftype="string"/>
+			<textbox id="delayToShowClosebox"
+				prefstring="browser.tabs.extensions.show_closebox.tab.delay"
+				preftype="int"/>
+		</box>
+
+	</groupbox>
+
+	<groupbox>
+		<caption label="&tabsWidth.group;"/>
+
+		<radiogroup id="tabsWidthType"
+			prefstring="browser.tabs.extensions.tabs_width_type"
+			preftype="int"
+			oncommand="onTabsWidthTypeChange();">
+			<box orient="horizontal">
+				<radio value="0" label="&tabsWidth.default;"/>
+				<label value="&tabsWidth.minMaxWidth.label_before;"
+					control="tabsMinWidth"/>
+				<textbox id="tabsMinWidth"
+					prefstring="browser.tabs.extensions.tabs_min_width"
+					preftype="int"
+					size="5"/>
+				<spinbuttons id="tabsMinWidth-spinButtons"
+					onup="spinButtonsUpDown(event, 'tabsMinWidth');"
+					ondown="spinButtonsUpDown(event, 'tabsMinWidth', 0);"/>
+				<label value="&tabsWidth.minMaxWidth.label_middle;"
+					control="tabsMaxWidth"/>
+				<textbox id="tabsMaxWidth"
+					prefstring="browser.tabs.extensions.tabs_max_width"
+					preftype="int"
+					size="5"/>
+				<spinbuttons id="tabsMaxWidth-spinButtons"
+					onup="spinButtonsUpDown(event, 'tabsMaxWidth');"
+					ondown="spinButtonsUpDown(event, 'tabsMaxWidth', 0);"/>
+				<label value="&tabsWidth.minMaxWidth.label_after;"
+					control="tabsMaxWidth"/>
+				<button id="tabsCropButtonFlex"
+					label="&tabsCrop.go;"
+					oncommand="advancedPrefs('chrome://tabextensions/content/pref/advancedTabsCropPrefs.xul', gTabsCropData);"/>
+			</box>
+			<box orient="horizontal">
+				<radio value="1" label="&tabsWidth.fitLabel;"/>
+			</box>
+			<box orient="horizontal">
+				<radio value="2" label="&tabsWidth.fix;"/>
+				<label id="tabsWidth-label-before"
+					value="&tabsWidth.width.label_before;"
+					control="tabsWidth"/>
+				<textbox id="tabsWidth"
+					prefstring="browser.tabs.extensions.tabs_width"
+					preftype="int"
+					size="5"/>
+				<spinbuttons id="tabsWidth-spinButtons"
+					onup="spinButtonsUpDown(event, 'tabsWidth');"
+					ondown="spinButtonsUpDown(event, 'tabsWidth', 0);"/>
+				<label id="tabsWidth-label-after"
+					value="&tabsWidth.width.label_after;"
+					control="tabsWidth"/>
+				<button id="tabsCropButtonFix"
+					label="&tabsCrop.go;"
+					oncommand="advancedPrefs('chrome://tabextensions/content/pref/advancedTabsCropPrefs.xul', gTabsCropData);"/>
+			</box>
+		</radiogroup>
+		<box collapsed="true">
+			<textbox id="tabsCrop"
+				prefstring="browser.tabs.extensions.tabs_title_crop"
+				preftype="int"/>
+		</box>
+	</groupbox>
+
+
+
+	<groupbox>
+		<caption label="&tabPref.appearance.tab.misc.group;"/>
+		<box orient="vertical" id="miscBox">
+
+		<checkbox id="showProgress"
+			label="&showProgress;"
+			prefstring="browser.tabs.extensions.show_progress.tab"
+			oncommand="onChangeShowProgress();"
+			linked="showProgressInStatusbar"/>
+		<hbox>
+			<spacer style="width:1em;"/>
+			<checkbox id="showProgressInStatusbar"
+				label="&showProgressInStatusbar;"
+				prefstring="browser.tabs.extensions.show_progress.status"/>
+		</hbox>
+		<checkbox id="highlightCurrentTab"
+			label="&highlightCurrentTab;"
+			prefstring="browser.tabs.extensions.highlight_current"/>
+		<box orient="horizontal">
+			<checkbox id="highlightUnreadTab"
+				label="&highlightUnreadTab;"
+				prefstring="browser.tabs.extensions.highlight_unread"/>
+			<spacer flex="1"/>
+			<button label="&tabPref.appearance.tab.misc.go;"
+				oncommand="advancedPrefs('chrome://tabextensions/content/pref/advancedApparanceTabMiscPrefs.xul', gMiscData);"/>
+		</box>
+		<box collapsed="true">
+			<checkbox id="showLinkTextAsLabel"
+				prefstring="browser.tabs.extensions.show_link_text_as_label"/>
+			<checkbox id="showLinkTextAsLabelPermanently"
+				prefstring="browser.tabs.extensions.show_link_text_as_label_permanently"/>
+			<checkbox id="overlayIcon"
+				prefstring="browser.tabs.extensions.overlay_icon"/>
+
+			<textbox id="highlightCurrentTabStyle"
+				prefstring="browser.tabs.extensions.highlight_current.style"/>
+			<textbox id="highlightUnreadTabStyle"
+				prefstring="browser.tabs.extensions.highlight_unread.style"/>
+		</box>
+
+		</box>
+	</groupbox>
+
+
+</box>
+<box orient="vertical">
+	<description flex="1">
+		&tabPrefsDisabled;
+	</description>
+</box>
+</deck>
+
+	<spacer flex="1"/>
+
+
+	<box id="tabextensionsAboutBox"/>
+
+</page>

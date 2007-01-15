@@ -1,0 +1,6 @@
+<!ENTITY tabPref.viewSource.title "View Page Source">
+
+<!ENTITY tabPref.viewSource.group   "View Page Source">
+<!ENTITY tabPref.viewSource.normal  "Open in New Window">
+<!ENTITY tabPref.viewSource.newtab  "Open in New Tab">
+<!ENTITY tabPref.viewSource.newtabBackground "Open in New Background Tab">

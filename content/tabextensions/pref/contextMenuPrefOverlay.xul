@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+<box id="contextMenuBox">
+	<template id="contextMenuBoxTemplate">
+
+	<rule><!-- Hide items which have no label -->
+		<conditions>
+			<content uri="?cont"/>
+			<member container="?cont" child="?name"/>
+			<triple subject="?name" predicate="http://white.sakura.ne.jp/~piro/rdf#TestLabel" object="label-"/>
+		</conditions>
+		<bindings/>
+		<action>
+			<spacer uri="?name" hidden="true"/>
+		</action>
+	</rule>
+
+	<rule><!-- hide submenu items -->
+		<conditions>
+			<content uri="?cont"/>
+			<member container="?cont" child="?name"/>
+			<triple subject="?name" predicate="http://white.sakura.ne.jp/~piro/rdf#Submenu" object="true"/>
+			<triple subject="?name" predicate="http://white.sakura.ne.jp/~piro/rdf#Type" object="separator"/>
+		</conditions>
+		<bindings>
+			<binding subject="?name" predicate="http://white.sakura.ne.jp/~piro/rdf#Label" object="?label"/>
+			<binding subject="?name" predicate="http://white.sakura.ne.jp/~piro/rdf#Id" object="?idstring"/>
+		</bindings>
+		<action>
+			<checkbox uri="?name"
+				id="?idstring"
+				tabid="?idstring"
+				label="?label"
+				prefstring="browser.tabs.extensions.show_item.?idstring"/>
+		</action>
+	</rule>
+	<rule>
+		<conditions>
+			<content uri="?cont"/>
+			<member container="?cont" child="?name"/>
+			<triple subject="?name" predicate="http://white.sakura.ne.jp/~piro/rdf#Submenu" object="true"/>
+		</conditions>
+		<bindings/>
+		<action/>
+	</rule>
+
+	<rule>
+		<conditions>
+			<content uri="?cont"/>
+			<member container="?cont" child="?name"/>
+			<triple subject="?name" predicate="http://white.sakura.ne.jp/~piro/rdf#Type" object="separator"/>
+		</conditions>
+		<bindings/>
+		<action>
+			<separator uri="?name"/>
+		</action>
+	</rule>
+
+	<rule>
+		<conditions>
+			<content uri="?cont"/>
+			<member container="?cont" child="?name"/>
+		</conditions>
+		<bindings>
+			<binding subject="?name" predicate="http://white.sakura.ne.jp/~piro/rdf#Label" object="?label"/>
+			<binding subject="?name" predicate="http://white.sakura.ne.jp/~piro/rdf#Id" object="?idstring"/>
+		</bindings>
+		<action>
+			<checkbox uri="?name"
+				id="?idstring"
+				tabid="?idstring"
+				label="?label"
+				prefstring="browser.tabs.extensions.show_item.?idstring"/>
+		</action>
+	</rule>
+
+	</template>
+
+</box>
+
+</overlay>

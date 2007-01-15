@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
+<?xul-overlay href="chrome://tabextensions/content/pref/prefOverlay.xul"?>
+
+<!DOCTYPE page SYSTEM "chrome://tabextensions/locale/pref/viewSource.dtd">
+
+<page
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	orient="vertical"
+	headertitle="&tabPref.viewSource.title;"
+	onload="init();">
+
+
+	<script type="application/x-javascript"><![CDATA[
+
+if (!('_elementIDs' in window) || !window._elementIDs)
+	var _elementIDs = [];
+
+_elementIDs = _elementIDs.concat([
+	'viewSourceTab',
+	'loadInBackgroundViewSource'
+]);
+
+function init()
+{
+	window.parent.initPanel(location.href);
+
+	var vs    = document.getElementById('viewSource');
+	var items = vs.childNodes;
+	var anyvs = document.getElementById('viewSourceTab');
+	var vsbg = document.getElementById('loadInBackgroundViewSource');
+	if (anyvs.checked) {
+		if (vsbg.checked)
+			vs.selectedItem = items[2];
+		else
+			vs.selectedItem = items[1];
+	}
+	else
+		vs.selectedItem = items[0];
+
+	onViewSourceChanged();
+}
+
+
+function onViewSourceChanged()
+{
+	var vs = document.getElementById('viewSource');
+	var index = Number(vs.value);
+	document.getElementById('viewSourceTab').checked = (index > 0);
+
+	var background = document.getElementById('loadInBackgroundViewSource');
+	if (index == 1)
+		background.checked = false;
+	else if (index == 2)
+		background.checked = true;
+}
+	]]></script>
+
+	<groupbox>
+		<caption label="&tabPref.viewSource.group;"/>
+		<vbox>
+		<radiogroup id="viewSource"
+			oncommand="onViewSourceChanged()">
+			<radio value="0" label="&tabPref.viewSource.normal;"/>
+			<radio value="1" label="&tabPref.viewSource.newtab;"/>
+			<radio value="2" label="&tabPref.viewSource.newtabBackground;"/>
+		</radiogroup>
+		<box collapsed="true">
+			<checkbox id="viewSourceTab"
+				prefstring="browser.tabs.extensions.view_source_tab"/>
+			<checkbox id="loadInBackgroundViewSource"
+				prefstring="browser.tabs.extensions.loadInBackgroundViewSource"/>
+		</box>
+		</vbox>
+	</groupbox>
+
+	<spacer flex="1"/>
+
+	<box id="tabextensionsAboutBox"/>
+
+</page>

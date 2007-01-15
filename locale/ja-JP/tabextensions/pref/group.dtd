@@ -1,0 +1,56 @@
+<!ENTITY tabPref.group.title    "タブモード">
+
+
+<!ENTITY tabPref.group.caption  "タブモード">
+
+<!ENTITY tabPref.group.flat     "フラットモード：すべてのタブを同列に扱う">
+<!ENTITY tabPref.group.group    "グループモード：関連するタブをグループとして扱う">
+<!ENTITY tabPref.group.tree     "ツリーモード：タブのグループをツリー状に扱う">
+
+
+<!ENTITY advancedTabGroupPrefs.go    "詳細...">
+
+<!ENTITY advancedTabGroupPrefs.title "タブグループモードの詳細">
+
+<!ENTITY advancedTabGroupPrefs.group.tab     "グループモードとツリーモード">
+<!ENTITY advancedTabGroupPrefs.group.caption "グループモードとツリーモード">
+
+<!ENTITY autoPurge                  "別のサイトに移動したとき自動的にタブをグループから解放する">
+<!ENTITY autoSetGroupColor          "グループ化したタブに自動的に色を付ける">
+<!ENTITY editGroupBySimpleDragDrop  "タブのドラッグ＆ドロップだけでグループを編集する（通常はCtrl-ドラッグ）">
+<!ENTITY editGroupBySimpleDragDrop.mac "タブのドラッグ＆ドロップだけでグループを編集する（通常はCommand-ドラッグ）">
+<!ENTITY openGroupAsTabGroup        "ブックマークグループをタブグループとして開く">
+
+<!ENTITY advancedTabGroupPrefs.inheritance.caption "親のタブの設定を変更した時、サブグループのタブに以下の設定を継承する">
+<!ENTITY inheritTextZoom        "文字の拡大率">
+<!ENTITY inheritLocked          "ロックの状態">
+<!ENTITY inheritReferrerBlocked "HTTP_REFERERのブロックの状態">
+<!ENTITY inheritAllow           "機能の許可の状態">
+
+<!ENTITY advancedTabGroupPrefs.tree.tab     "ツリーモード">
+<!ENTITY advancedTabGroupPrefs.tree.caption "ツリーモード">
+
+<!ENTITY treeMaxLevel.label_before "グループのネストの深さを">
+<!ENTITY treeMaxLevel.label_after  "段までに制限する">
+<!ENTITY animateCollapseExpand     "サブグループの開閉時にアニメーションさせる">
+<!ENTITY simpleOperation           "タブのクリックでサブグループを展開し、サブグループは常に一つだけ展開する（他のサブグループを自動的にたたむ）">
+<!ENTITY onSubgroupRootRemoved.group  "子タブを持っているタブを閉じたときの動作">
+<!ENTITY onSubgroupRootRemoved.keep   "子タブを残す">
+<!ENTITY onSubgroupRootRemoved.remove "子タブを全て閉じる">
+<!ENTITY onSubgroupRootRemoved.desc   "※サブグループを閉じた状態でタブを閉じた場合は、常にサブグループに含まれるすべてのタブを閉じます">
+
+
+
+<!ENTITY bookmarkGroupBehavior.label  "ブックマークグループの挙動">
+
+<!ENTITY bookmarkGroupBehavior.append.item       "現在のタブに追加して開く">
+
+<!ENTITY bookmarkGroupBehavior.replace.item  "現在のタブと入れ替えて開く">
+<!ENTITY bookmarkGroupBehavior.replace.all   "全てのタブを入れ替える">
+<!ENTITY bookmarkGroupBehavior.replace.group "現在のタブグループだけ入れ替える">
+
+
+<!ENTITY advancedBookmarkGroupPrefs.go      "詳細...">
+<!ENTITY advancedBookmarkGroupPrefs.title   "ブックマークグループの挙動の詳細">
+<!ENTITY advancedBookmarkGroupPrefs.insert  "現在のグループに追加する">
+<!ENTITY advancedBookmarkGroupPrefs.replace "タブが一つだけの時もしくはグループ化されていないタブの時は、そのタブと置き換えて開く">

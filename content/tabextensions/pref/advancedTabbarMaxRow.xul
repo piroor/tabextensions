@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://tabextensions/content/pref/prefOverlay.css" type="text/css"?>
+<?xul-overlay href="chrome://tabextensions/content/globalOverlay.xul"?>
+
+<!DOCTYPE page SYSTEM "chrome://tabextensions/locale/pref/appearanceTabbar.dtd">
+
+<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	windowtype="tabextensions:advancedTabbarMaxRow"
+	orient="vertical"
+	title="&tabScroller.multirow.max.title;"
+	buttons="accept,cancel"
+	ondialogaccept="apply();"
+	ondialogcancel="cancel();"
+	onload="init();">
+
+
+<script type="application/x-javascript" src="chrome://tabextensions/content/pref/prefOverlay.js"/>
+<script type="application/x-javascript" src="chrome://tabextensions/content/pref/advancedPrefs.js"/>
+
+<box orient="horizontal" align="center">
+	<label value="&tabScroller.multirow.max.label_before;"
+		control="tabbarMaxRow"/>
+	<textbox id="tabbarMaxRow"
+		size="4"
+		oninput="onCommand(event)"/>
+	<spinbuttons
+		onup="spinButtonsUpDown(event, 'tabbarMaxRow'); inputToTextField('tabbarMaxRow');"
+		ondown="spinButtonsUpDown(event, 'tabbarMaxRow', 0); inputToTextField('tabbarMaxRow');"/>
+	<label value="&tabScroller.multirow.max.label_after;"
+		control="tabbarMaxRow"/>
+</box>
+
+
+</dialog>

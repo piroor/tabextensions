@@ -1,0 +1,167 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
+<?xul-overlay href="chrome://tabextensions/content/pref/prefOverlay.xul"?>
+<?xul-overlay href="chrome://tabextensions/content/pref/contextMenuPrefOverlay.xul"?>
+
+<!DOCTYPE page [
+<!ENTITY % tabextensionsDTD SYSTEM "chrome://tabextensions/locale/">
+%tabextensionsDTD;
+<!ENTITY % tabBrowserDTD SYSTEM "chrome://global/locale/tabbrowser.dtd">
+%tabBrowserDTD;
+<!ENTITY % menuDTD SYSTEM "chrome://tabextensions/locale/pref/menuTab.dtd">
+%menuDTD;
+]>
+
+<page
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	orient="vertical"
+	headertitle="&tabPref.menuTab.title;"
+	onload="init();">
+
+
+	<script type="application/x-javascript"><![CDATA[
+
+var _elementIDs = [
+		'newTab',
+		'reloadTab',
+		'reloadAll',
+		'moveLeft',
+		'moveRight',
+		'duplicateTab',
+		'duplicateInWindow',
+		'setFixedLabelFor',
+		'lockTab',
+		'lockTabAll',
+		'blockReferrer',
+		'blockReferrerAll',
+		'autoreload',
+		'autoreloadAll',
+		'allow',
+		'removeTab',
+		'removeTabGroup',
+		'removeLeft',
+		'removeRight',
+		'removeAll',
+		'removeVisited',
+		'removeOther',
+		'undoRemoveTab',
+		'sortTabsByGroup',
+		'highlightGroup',
+		'setTabColorFor',
+		'bookmarkGroup',
+		'editBookmark',
+		'editMenu',
+
+		// failsafe
+		'urn:tabsContextMenuItems:newTab',
+		'urn:tabsContextMenuItems:reloadTab',
+		'urn:tabsContextMenuItems:reloadAll',
+		'urn:tabsContextMenuItems:moveLeft',
+		'urn:tabsContextMenuItems:moveRight',
+		'urn:tabsContextMenuItems:duplicateTab',
+		'urn:tabsContextMenuItems:duplicateInWindow',
+		'urn:tabsContextMenuItems:setFixedLabelFor',
+		'urn:tabsContextMenuItems:lockTab',
+		'urn:tabsContextMenuItems:lockTabAll',
+		'urn:tabsContextMenuItems:blockReferrer',
+		'urn:tabsContextMenuItems:blockReferrerAll',
+		'urn:tabsContextMenuItems:autoreload',
+		'urn:tabsContextMenuItems:autoreloadAll',
+		'urn:tabsContextMenuItems:allow',
+		'urn:tabsContextMenuItems:removeTab',
+		'urn:tabsContextMenuItems:removeTabGroup',
+		'urn:tabsContextMenuItems:removeLeft',
+		'urn:tabsContextMenuItems:removeRight',
+		'urn:tabsContextMenuItems:removeAll',
+		'urn:tabsContextMenuItems:removeVisited',
+		'urn:tabsContextMenuItems:removeOther',
+		'urn:tabsContextMenuItems:undoRemoveTab',
+		'urn:tabsContextMenuItems:sortTabsByGroup',
+		'urn:tabsContextMenuItems:highlightGroup',
+		'urn:tabsContextMenuItems:setTabColorFor',
+		'urn:tabsContextMenuItems:bookmarkGroup',
+		'urn:tabsContextMenuItems:editBookmark',
+		'urn:tabsContextMenuItems:editMenu'
+	];
+
+function init()
+{
+	document.getElementById('contextMenuBox').builder.rebuild();
+
+	window.setTimeout('initWithDelay();', 0);
+}
+function initWithDelay()
+{
+//	var rearrangable = getModifiedValue('browser.tabs.extensions.tab_scroller', 'chrome://tabextensions/content/pref/pref-tabsTabbar.xul') != 3;
+
+	var tabGroupEnabled = getModifiedValue('browser.tabs.extensions.group.enabled', 'chrome://tabextensions/content/pref/pref-tabsGroup.xul');
+	var disabledItems = {
+			duplicateInWindow : (getModifiedValue('browser.tabs.extensions.window_hook_mode', 'chrome://tabextensions/content/pref/pref-tabsAdvanced.xul') == 2),
+			removeTabGroup    : !tabGroupEnabled,
+			sortTabsByGroup   : (!tabGroupEnabled/* || !rearrangable*/),
+			highlightGroup    : !tabGroupEnabled,
+//			moveLeft          : !rearrangable,
+//			moveRight         : !rearrangable,
+			lockTab           : getModifiedValue('browser.tabs.opentabfor.anylink', 'chrome://tabextensions/content/pref/pref-tabsUse.xul'),
+			lockTabAll        : getModifiedValue('browser.tabs.opentabfor.anylink', 'chrome://tabextensions/content/pref/pref-tabsUse.xul'),
+			blockReferrer     : !TabbrowserService.getPref('network.http.sendRefererHeader'),
+			blockReferrerAll  : !TabbrowserService.getPref('network.http.sendRefererHeader')
+		};
+	var j, nodes;
+	for (i in disabledItems)
+	{
+		nodes = document.getElementsByAttribute('tabid', i);
+		for (j = 0; j < nodes.length; j++)
+			if (disabledItems[i])
+				nodes[j].setAttribute('disabled', true);
+			else
+				nodes[j].removeAttribute('disabled');
+	}
+
+
+	window.parent.initPanel(location.href);
+
+	var tabGroupPrefs = [
+			'removeTabGroup',
+			'sortTabsByGroup',
+			'highlightGroup',
+			'urn:tabsContextMenuItems:removeTabGroup',
+			'urn:tabsContextMenuItems:sortTabsByGroup',
+			'urn:tabsContextMenuItems:highlightGroup'
+		],
+		i;
+	if (tabGroupEnabled)
+		for (i in tabGroupPrefs)
+			try {
+				document.getElementById(tabGroupPrefs[i]).removeAttribute('disabled');
+			}
+			catch(e) {
+			}
+	else
+		for (i in tabGroupPrefs)
+			try {
+				document.getElementById(tabGroupPrefs[i]).setAttribute('disabled', true);
+			}
+			catch(e) {
+			}
+
+}
+
+	]]></script>
+
+	<groupbox flex="1">
+		<caption label="&tabPref.menu.group;"/>
+		<box id="contextMenuBox"
+			orient="vertical"
+			flex="1"
+			class="scrollbox"
+			datasources="chrome://tabextensions/content/tabsContextMenuItems.rdf"
+			ref="chrome://tabextensions/content/tabsContextMenuItems.rdf#urn:tabsContextMenuItems:root"
+			template="contextMenuBoxTemplate"/>
+	</groupbox>
+
+	<box id="tabextensionsAboutBox"/>
+
+</page>

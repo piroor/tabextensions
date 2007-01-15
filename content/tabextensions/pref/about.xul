@@ -1,0 +1,148 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
+<!DOCTYPE window [
+<!ENTITY % versionDTD SYSTEM "chrome://tabextensions/content/_version.dtd">
+%versionDTD;
+<!ENTITY % tabextensionsDTD SYSTEM "chrome://tabextensions/locale/">
+%tabextensionsDTD;
+]>
+<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+		title="&about.title;"
+		orient="vertical"
+		buttonpack="center"
+		buttonalign="center"
+		buttonorient="vertical"
+		ondialogaccept="window.close();"
+		ondialogextra1="Unregister();"
+		buttons="accept,extra1"
+		onload="onLoad();">
+
+<script type="application/x-javascript" src="chrome://tabextensions/content/pref/exUnregisterer.js"/>
+<script type="application/x-javascript"><![CDATA[
+
+
+
+
+
+const ID = '{0B0B0DA8-08BA-4bc6-987C-6BC9F4D8A81E}';
+
+
+
+
+
+
+const WindowManager = Components.classes['@mozilla.org/appshell/window-mediator;1'].getService(Components.interfaces.nsIWindowMediator);
+function opener()
+{
+	return WindowManager.getMostRecentWindow('navigator:browser');
+}
+
+function loadURI(uri)
+{
+	if (opener())
+		opener().loadURI(uri);
+	else
+		window.open(uri);
+}
+
+function onLoad() {
+	var button = document.documentElement.getButton('extra1');
+	button.label = document.getElementById('extra1-label').getAttribute('label');
+
+	try {
+		const ExtensionManager = Components.classes['@mozilla.org/extensions/manager;1'].getService(Components.interfaces.nsIExtensionManager);
+		var item = ExtensionManager.getItemList(ID, Components.interfaces.nsIUpdateItem.TYPE_EXTENSION, {});
+
+		if (item && item[0] && item[0].version) {
+			button.setAttribute('disabled', true);
+			button.setAttribute('hidden', true);
+			return;
+		}
+		else {
+			button.removeAttribute('disabled');
+			button.removeAttribute('hidden');
+		}
+	}
+	catch(e) {
+	}
+
+
+	unreg = new exUnregisterer(
+		'chrome://tabextensions/content/contents.rdf',
+		'jar:%chromeFolder%tabextensions.jar!/locale/en-US/tabextensions/contents.rdf',
+		msg.GetStringFromName('uninstall_lang_tabextensions'),
+		'jar:%chromeFolder%tabextensions.jar!/skin/classic/tabextensions/contents.rdf',
+
+		'chrome://tabextensions_sessionmanager/content/contents.rdf',
+		'jar:%chromeFolder%tabextensions.jar!/locale/en-US/sessionManager/contents.rdf',
+		msg.GetStringFromName('uninstall_lang_sessionManager'),
+
+		'chrome://tabextensions_ctrlpopup/content/contents.rdf',
+		'jar:%chromeFolder%tabextensions.jar!/locale/en-US/ctrlPopup/contents.rdf',
+		msg.GetStringFromName('uninstall_lang_ctrlPopup')
+	);
+}
+
+
+var unreg;
+var STRBUNDLE = Components.classes['@mozilla.org/intl/stringbundle;1'].getService(Components.interfaces.nsIStringBundleService);
+var msg = STRBUNDLE.createBundle('chrome://tabextensions/locale/tabextensions.properties');
+
+
+function Unregister()
+{
+	if (!confirm(msg.GetStringFromName('uninstall_confirm'))) return;
+
+	if (!confirm(msg.GetStringFromName('uninstall_prefs_confirm'))) {
+		window.unreg.removePrefs('browser.tabs.extensions');
+		window.unreg.removePrefs('browser.tabs.opentabfor.ualbar_always');
+		window.unreg.removePrefs('browser.tabs.opentabfor.bookmarks');
+		window.unreg.removePrefs('browser.tabs.opentabfor.history');
+		window.unreg.removePrefs('browser.tabs.opentabfor.bookmarks_folder_as_group');
+		window.unreg.removePrefs('browser.tabs.opentabfor.linkclick');
+		window.unreg.removePrefs('browser.tabs.opentabfor.windowopen');
+		window.unreg.removePrefs('browser.tabs.opentabfor.anylink');
+		window.unreg.removePrefs('browser.tabs.opentabfor.anybookmark');
+
+		var dsourceFile = Components.classes['@mozilla.org/file/local;1'].createInstance(Components.interfaces.nsILocalFile);
+		var ProfD = window.unreg.getURISpecFromKey('ProfD');
+		if (!ProfD.match(/\/$/)) ProfD += '/';
+		dsourceFile.initWithPath(window.unreg.getFilePathFromURLSpec(ProfD+'tabextensions.rdf'));
+		if (dsourceFile.exists()) dsourceFile.remove(true);
+	}
+
+	window.unreg.unregister();
+
+	alert(
+		msg.GetStringFromName('uninstall_removefile').replace(/%S/i,
+			window.unreg.getFilePathFromURLSpec(
+				(window.unreg.exists(window.unreg.UChrome+'tabextensions.jar') ? window.unreg.UChrome+'tabextensions.jar' : window.unreg.Chrome+'tabextensions.jar' )
+			)
+		)
+	);
+
+	window.close();
+}
+
+]]></script>
+
+<box orient="vertical">
+	<box orient="horizontal">
+		<spacer flex="1"/>
+		<description value="&about.name_before;&version;&about.name_after;"/>
+		<spacer flex="1"/>
+	</box>
+	<box orient="horizontal">
+		<spacer flex="1"/>
+		<description value="&about.destributed;"
+			href="&about.destributed;"
+			onclick="loadURI(this.getAttribute('href'));"
+			class="text-link"/>
+		<spacer flex="1"/>
+	</box>
+</box>
+
+<data id="extra1-label" label="&about.uninstall;"/>
+
+</dialog>

@@ -1,0 +1,4 @@
+<!ENTITY tabPref.appearance.title   "Appearance of Tabbed Browser">
+
+<!ENTITY showTabMenu.group "Menubar">
+<!ENTITY showTabMenu       "Show &quot;Tab&quot; menu">

@@ -1,0 +1,605 @@
+/* drag-and-drop of tabs */ 
+	
+tab[dragover-at="this"] 
+{
+	color: black;
+	background: #EFEFEF;
+}
+ 
+tab[dragover-at="this"][tab-color]:not([tab-color="default"]) label 
+{
+	-moz-opacity: 0.5;
+}
+ 
+/* Indicate drop position: new style */ 
+	
+[tabid="tab-drop-indicator-bar"] { 
+	height: 9px;
+	margin-top: -9px;
+	-moz-box-orient: horizontal;
+}
+
+tabbox[orient="horizontal"] [tabid="tab-drop-indicator-bar"] {
+	width: auto;
+	margin-top: auto;
+
+	width: 9px;
+	margin-left: -9px;
+	-moz-box-orient: vertical;
+}
+
+tabbrowser.tabbrowser-tabbar-right tabbox[orient="horizontal"] [tabid="tab-drop-indicator-bar"] {
+	width: 0;
+	margin-left: 0;
+}
+ 
+[tabid="tab-drop-indicator"] { 
+	height: 9px;
+	width: 9px;
+	margin-bottom: -5px;
+	background: url('./tabDragIndicator.png') 50% 50% no-repeat;
+}
+	
+tabbox[orient="horizontal"] [tabid="tab-drop-indicator-bar"] > [tabid="tab-drop-indicator"] { 
+	margin-bottom: 0;
+	margin-right: -9px;
+}
+
+tabbrowser.tabbrowser-tabbar-right tabbox[orient="horizontal"] [tabid="tab-drop-indicator-bar"] > [tabid="tab-drop-indicator"] {
+	margin-left: -9px;
+	margin-right: 0;
+}
+  
+/* Firefox 1.1 Indicator */ 
+[id="tab-drop-indicator-bar"][orient="vertical"] {
+	height: auto !important;
+	margin-top: auto !important;
+	width: 9px !important;
+	margin-left: -9px !important;
+}
+tabbrowser.tabbrowser-tabbar-right [id="tab-drop-indicator-bar"][orient="vertical"] {
+	width: 0 !important;
+	margin-left: 0 !important;
+}
+
+[id="tab-drop-indicator-bar"][orient="vertical"] > [id="tab-drop-indicator"] {
+	height: 9px !important;
+	margin-right: -9px !important;
+}
+tabbrowser.tabbrowser-tabbar-right [id="tab-drop-indicator-bar"][orient="vertical"] > [id="tab-drop-indicator"] {
+	margin-left: -9px !important;
+	margin-right: 0 !important;
+}
+  
+/* Indicate drop position: old style */ 
+	
+.tab-drag-indicator-left, 
+.tab-drag-indicator-right
+{
+	display: none;
+	width: 10px;
+	height: 12px;
+	background: transparent no-repeat 50% 50%;
+}
+tabbrowser.tabbrowser-tabbar-left .tab-drag-indicator-left,
+tabbrowser.tabbrowser-tabbar-left .tab-drag-indicator-right,
+tabbrowser.tabbrowser-tabbar-right .tab-drag-indicator-left,
+tabbrowser.tabbrowser-tabbar-right .tab-drag-indicator-right
+{
+	width: 12px;
+	height: 10px;
+}
+ 
+tabbrowser.tabbrowser-tabbar-top[tab-drop-indicator-type="old"] tab[dragover-at="before"] .tab-drag-indicator-left, 
+tabbrowser.tabbrowser-tabbar-bottom[tab-drop-indicator-type="old"] tab[dragover-at="before"] .tab-drag-indicator-left
+{
+	display: -moz-box;
+	background-image: url("chrome://tabextensions/skin/dropmarker-left.png");
+	margin-right: 2px;
+}
+tabbrowser.tabbrowser-tabbar-top[tab-drop-indicator-type="old"] tab[dragover-at="after"] .tab-drag-indicator-right,
+tabbrowser.tabbrowser-tabbar-bottom[tab-drop-indicator-type="old"] tab[dragover-at="after"] .tab-drag-indicator-right
+{
+	display: -moz-box;
+	background-image: url("chrome://tabextensions/skin/dropmarker-right.png");
+	margin-left: 2px;
+}
+tabbrowser.tabbrowser-tabbar-left[tab-drop-indicator-type="old"] tab[dragover-at="before"] .tab-drag-indicator-left,
+tabbrowser.tabbrowser-tabbar-right[tab-drop-indicator-type="old"] tab[dragover-at="before"] .tab-drag-indicator-left
+{
+	display: -moz-box;
+	background-image: url("chrome://tabextensions/skin/dropmarker-up.png");
+	margin-right: 2px;
+}
+tabbrowser.tabbrowser-tabbar-left[tab-drop-indicator-type="old"] tab[dragover-at="after"] .tab-drag-indicator-left,
+tabbrowser.tabbrowser-tabbar-right[tab-drop-indicator-type="old"] tab[dragover-at="after"] .tab-drag-indicator-left
+{
+	display: -moz-box;
+	background-image: url("chrome://tabextensions/skin/dropmarker-down.png");
+	margin-right: 2px;
+}
+   
+/* tab bar */ 
+	
+tabbrowser tab.tab-left, 
+tabbrowser tab.tab-right
+{
+	min-height: 0;
+	height: 2.5em;
+	max-height: 2.5em;
+}
+tabbrowser tab.tab-left .tab-icon,
+tabbrowser tab.tab-right .tab-icon
+{
+	min-height: 16px;
+	height: 16px;
+}
+tabbrowser tab.tab-left[selected="true"] .tab-icon,
+tabbrowser tab.tab-right[selected="true"] .tab-icon
+{
+	margin-top: -2px;
+	margin-bottom: -2px;
+}
+ 
+/* side tab bar */ 
+tabbrowser.tabbrowser-tabbar-left .tabs-left,
+tabbrowser.tabbrowser-tabbar-left .tabs-right,
+tabbrowser.tabbrowser-tabbar-right .tabs-left,
+tabbrowser.tabbrowser-tabbar-right .tabs-right
+{
+	-moz-box-flex: 1;
+	width: auto;
+	height: auto;
+	max-height: 100%;
+}
+
+tabbrowser.tabbrowser-tabbar-left .tabbrowser-tabs,
+tabbrowser.tabbrowser-tabbar-right .tabbrowser-tabs
+{
+	width: 25%;
+	max-width: 25%;
+}
+	
+/* left */ 
+
+tabbrowser tab.tab-left
+{
+	-moz-appearance: none;
+	margin: 0 0 0 2px;
+	padding: 2px 4px;
+	border-top: solid 2px;
+	border-right: solid 1px;
+	border-bottom: solid 2px;
+	border-left: solid 2px;
+	-moz-border-top-colors: ThreeDHighlight ThreeDLightShadow;
+	-moz-border-right-colors: ThreeDHighlight;
+	-moz-border-bottom-colors: ThreeDShadow ThreeDLightShadow;
+	-moz-border-left-colors: ThreeDHighlight ThreeDLightShadow;
+	-moz-border-radius-topleft: 2px;
+	-moz-border-radius-topright: 0;
+	-moz-border-radius-bottomright: 1px;
+	-moz-border-radius-bottomleft: 2px;
+}
+
+tabbrowser tab.tab-left[selected="true"]
+{
+	margin-right: 0;
+	-moz-border-right-colors: transparent;
+	padding: 6px 1px 6px 4px;
+}
+
+tabbrowser tab.tab-left[beforeselected="true"]
+{
+	-moz-border-radius-bottomright: 0;
+	border-bottom: none;
+}
+
+tabbrowser tab.tab-left[afterselected="true"]
+{
+	-moz-border-radius-topright: 0;
+	border-top: none;
+}
+
+tabbrowser .tabbrowser-tabs-left tab.tabs-left,
+tabbrowser .tabbrowser-tabs-left tab.tabs-right
+{
+	border-right: 2px solid;
+	-moz-border-right-colors: ThreeDHighlight ThreeDLightShadow;
+	border-top: none;
+	border-bottom: none;
+}
+
+tabbrowser .tabbrowser-strip-left
+{
+	border-bottom: none;
+	border-right: 1px solid ThreeDShadow;
+	padding-right: 1px;
+}
+ 
+/* right */ 
+
+tabbrowser tab.tab-right
+{
+	-moz-appearance: none;
+	margin: 0 2px 0 0;
+	padding: 2px 4px;
+	border-top: solid 2px;
+	border-right: solid 2px;
+	border-bottom: solid 2px;
+	border-left: solid 2px;
+	-moz-border-top-colors: ThreeDHighlight ThreeDLightShadow;
+	-moz-border-right-colors: ThreeDShadow ThreeDLightShadow;
+	-moz-border-bottom-colors: ThreeDShadow ThreeDLightShadow;
+	-moz-border-left-colors: transparent ThreeDShadow;
+	-moz-border-radius-topleft: 0;
+	-moz-border-radius-topright: 2px;
+	-moz-border-radius-bottomright: 2px;
+	-moz-border-radius-bottomleft: 1px;
+}
+
+tabbrowser tab.tab-right[selected="true"]
+{
+	margin-left: 0;
+	-moz-border-left-colors: transparent;
+	padding: 6px 4px 6px 1px;
+}
+
+tabbrowser tab.tab-right[beforeselected="true"]
+{
+	-moz-border-radius-bottomleft: 0;
+	border-bottom: none;
+}
+
+tabbrowser tab.tab-right[afterselected="true"]
+{
+	-moz-border-radius-topleft: 0;
+	border-top: none;
+}
+
+tabbrowser .tabbrowser-tabs-right tab.tabs-left,
+tabbrowser .tabbrowser-tabs-right tab.tabs-right
+{
+	border-left: 2px solid;
+	-moz-border-left-colors: ThreeDLightShadow ThreeDShadow;
+	border-top: none;
+	border-bottom: none;
+}
+
+tabbrowser .tabbrowser-strip-right
+{
+	border-bottom: none;
+	border-left: 1px solid ThreeDHighlight;
+	padding-left: 1px;
+}
+  
+/* bottom */ 
+
+.tabbrowser-tabs-bottom .tabs-left,
+.tabbrowser-tabs-bottom .tabs-right
+{
+	border-top: 1px solid ThreeDShadow;
+	border-bottom: none;
+}
+ 
+[tab-scrollbar="multirow"] [tabs-scrollbox="true"], 
+[tab-scrollbar="multirow"] tab
+{
+	vertical-align: bottom;
+}
+	
+[tab-scrollbar="multirow"].tabbrowser-tabbar-bottom [tabs-scrollbox="true"], 
+[tab-scrollbar="multirow"].tabbrowser-tabbar-bottom  tab
+{
+	vertical-align: top;
+}
+   
+/* scroll buttons */ 
+[tabid="scroll-buttons"]
+{
+	padding: 0 2px;
+	border-left: thin -moz-bg-inset;
+}
+[tabid="scroll-button-start"]
+{
+	list-style-image: url("chrome://tabextensions/skin/left.png");
+	padding: 6px 3px;
+}
+[tabid="scroll-button-end"]
+{
+	list-style-image: url("chrome://tabextensions/skin/right.png");
+	padding: 6px 3px;
+}
+[tabid="scroll-button-start"][disabled="true"]
+{
+	list-style-image: url("chrome://tabextensions/skin/left-disabled.png");
+}
+[tabid="scroll-button-end"][disabled="true"]
+{
+	list-style-image: url("chrome://tabextensions/skin/right-disabled.png");
+}
+
+.tabbrowser-strip-left [tabid="scroll-buttons"],
+.tabbrowser-strip-right [tabid="scroll-buttons"]
+{
+	padding: 2px 0;
+	border-top: thin -moz-bg-inset;
+	border-left: none;
+}
+.tabbrowser-strip-left [tabid="scroll-button-start"],
+.tabbrowser-strip-right [tabid="scroll-button-start"]
+{
+	list-style-image: url("chrome://tabextensions/skin/up.png");
+	padding: 3px 6px;
+	margin-top: 3px;
+	margin-left: 0;
+}
+.tabbrowser-strip-left [tabid="scroll-button-end"],
+.tabbrowser-strip-right [tabid="scroll-button-end"]
+{
+	list-style-image: url("chrome://tabextensions/skin/down.png");
+	padding: 3px 6px;
+}
+.tabbrowser-strip-left [tabid="scroll-button-start"][disabled="true"],
+.tabbrowser-strip-right [tabid="scroll-button-start"][disabled="true"]
+{
+	list-style-image: url("chrome://tabextensions/skin/up-disabled.png");
+}
+.tabbrowser-strip-left [tabid="scroll-button-end"][disabled="true"],
+.tabbrowser-strip-right [tabid="scroll-button-end"][disabled="true"]
+{
+	list-style-image: url("chrome://tabextensions/skin/down-disabled.png");
+}
+
+[tabid="scroll-buttons-spacer"],
+[tabid="tabbar-closebox-spacer"]
+{
+	display: none;
+}
+.tabbrowser-strip-left [tabid="scroll-buttons-spacer"],
+.tabbrowser-strip-right [tabid="scroll-buttons-spacer"],
+[tab-scrollbar="multirow"][tabs-overflow="true"] [tabid="tabbar-closebox-spacer"]
+{
+	display: -moz-box;
+}
+ 
+/* colored labels */ 
+	
+tab[tab-color]:not([tab-color="default"]) .tab-text 
+{
+	padding-left: 0.2em;
+	padding-right: 0.2em;
+}
+  
+/* closeboxes in tabs */ 
+	
+/* General */ 
+	
+tabbrowser[tabbrowser-tab-closebox-style="builtin"] tab toolbarbutton.tabs-closebutton.close-button 
+{
+	-moz-appearance: none;
+	margin: -1px !important;
+	padding: 1px !important;
+	margin-top: -2px !important;
+	margin-bottom: -2px !important;
+	width: auto !important;
+	height: auto !important;
+	min-width: 0 !important;
+	min-height: 0 !important;
+
+	list-style-image: url("chrome://tabextensions/skin/close-background.png");
+	-moz-image-region: rect(0px, 14px, 14px, 0px);
+
+	border: none;
+	outline: none;
+	-moz-outline: none;
+	opacity: 1;
+	-moz-opacity: 1;
+	background: none;
+}
+
+tabbrowser[tabbrowser-tab-closebox-style="builtin"] tab toolbarbutton.tabs-closebutton.close-button.showhover
+{
+	background: ButtonFace;
+	-moz-border-radius: 2px;
+}
+ 
+tabbrowser[tabbrowser-tab-closebox-style="builtin"] tab[selected="true"] toolbarbutton.tabs-closebutton.close-button 
+{
+	margin-top: -2px !important;
+	margin-bottom: -2px !important;
+
+	list-style-image: url("chrome://tabextensions/skin/close-foreground.png");
+
+	outline: none;
+	-moz-outline: none;
+	opacity: 1;
+	-moz-opacity: 1;
+	background: none;
+}
+
+tabbrowser[tabbrowser-tab-closebox-style="builtin"] tab[selected="true"] toolbarbutton.tabs-closebutton.close-button.showhover
+{
+	background: ButtonFace;
+}
+ 
+tabbrowser[tabbrowser-tab-closebox-style="builtin"] tab[tab-hover="true"][tab-closebox-hover="true"] toolbarbutton.tabs-closebutton.close-button 
+{
+	-moz-image-region: rect(0px, 28px, 14px, 14px);
+
+	outline: none;
+	-moz-outline: none;
+	opacity: 1;
+	-moz-opacity: 1;
+	background: none;
+}
+
+tabbrowser[tabbrowser-tab-closebox-style="builtin"] tab[tab-hover="true"][tab-closebox-hover="true"] toolbarbutton.tabs-closebutton.close-button.showhover
+{
+	background: ButtonHighlight;
+}
+ 
+tabbrowser[tabbrowser-tab-closebox-style="builtin"] tab[tab-hover="true"][tab-closebox-hover="true"]:active toolbarbutton.tabs-closebutton.close-button, 
+tabbrowser[tabbrowser-tab-closebox-style="builtin"] tab[tab-hover="true"][tab-closebox-hover="true"][tab-closebox-active="true"] toolbarbutton.tabs-closebutton.close-button
+{
+	-moz-image-region: rect(0px, 42px, 14px, 28px);
+
+	outline: none;
+	-moz-outline: none;
+	opacity: 1;
+	-moz-opacity: 1;
+	background: none;
+}
+
+tabbrowser[tabbrowser-tab-closebox-style="builtin"] tab[tab-hover="true"][tab-closebox-hover="true"]:active toolbarbutton.tabs-closebutton.close-button.showhover,
+tabbrowser[tabbrowser-tab-closebox-style="builtin"] tab[tab-hover="true"][tab-closebox-hover="true"][tab-closebox-active="true"] toolbarbutton.tabs-closebutton.close-button.showhover
+{
+	background: ButtonHighlight;
+}
+  
+/* Winstrip */ 
+	
+tabbrowser[tabbrowser-tab-closebox-style="winstrip"] tab toolbarbutton.tabs-closebutton.close-button 
+{
+	list-style-image: url("chrome://tabextensions/skin/close-background-winstrip.png");
+	-moz-image-region: rect(0px, 16px, 16px, 0px);
+
+	-moz-appearance: none;
+	margin: -1px !important;
+	padding: 1px !important;
+	width: auto;
+	height: auto;
+
+	border: none;
+	outline: none;
+	-moz-outline: none;
+	opacity: 1;
+	-moz-opacity: 1;
+	background: none;
+}
+ 
+tabbrowser[tabbrowser-tab-closebox-style="winstrip"] tab[selected="true"] toolbarbutton.tabs-closebutton.close-button 
+{
+	list-style-image: url("chrome://tabextensions/skin/close-foreground-winstrip.png");
+
+	outline: none;
+	-moz-outline: none;
+	opacity: 1;
+	-moz-opacity: 1;
+	background: none;
+}
+ 
+tabbrowser[tabbrowser-tab-closebox-style="winstrip"] tab[tab-hover="true"][tab-closebox-hover="true"] toolbarbutton.tabs-closebutton.close-button 
+{
+	-moz-image-region: rect(0px, 32px, 16px, 16px);
+
+	outline: none;
+	-moz-outline: none;
+	opacity: 1;
+	-moz-opacity: 1;
+	background: none;
+}
+ 
+tabbrowser[tabbrowser-tab-closebox-style="winstrip"] tab[tab-hover="true"][tab-closebox-hover="true"]:active toolbarbutton.tabs-closebutton.close-button, 
+tabbrowser[tabbrowser-tab-closebox-style="winstrip"] tab[tab-hover="true"][tab-closebox-hover="true"][tab-closebox-active="true"] toolbarbutton.tabs-closebutton.close-button
+{
+	-moz-image-region: rect(0px, 48px, 16px, 32px);
+
+	outline: none;
+	-moz-outline: none;
+	opacity: 1;
+	-moz-opacity: 1;
+	background: none;
+}
+  
+tab[tab-ready-to-close="true"] .close-button { 
+	outline: -moz-bg-inset 2px !important;
+	-moz-outline: -moz-bg-inset 2px !important;
+	outline-offset: -1px !important;
+	-moz-outline-offset: -1px !important;
+}
+  
+/* tree mode */ 
+	
+.tab-twisty { 
+	-moz-appearance: none;
+	margin: -2px -3px -2px -4px;
+	padding: 1px;
+	width: auto;
+	height: auto;
+
+	border: none;
+	outline: none;
+	-moz-outline: none;
+	opacity: 1;
+	-moz-opacity: 1;
+	background: none;
+
+	list-style-image: url("chrome://tabextensions/skin/tree-twisty-expanded.png");
+}
+tabbrowser[tab-tree-enabled="true"] tab:not([tab-childTabs-count]) .tab-twisty {
+	display: none !important;
+}
+tab[tab-subgroup-collapsed="true"] .tab-twisty {
+	list-style-image: url("chrome://tabextensions/skin/tree-twisty-collapsed.png");
+}
+.tab-twisty[selected="true"] {
+	margin-top: -3px;
+	margin-bottom: -3px;
+}
+
+tabbrowser[tab-appearance-inverted="true"] .tab-twisty { 
+	margin-left: 2px;
+	margin-right: -9px;
+}
+
+ 
+tabbrowser.tabbrowser-tabbar-left[tab-tree-narrow-tab="true"] tab.tab-left, 
+tabbrowser.tabbrowser-tabbar-right[tab-tree-narrow-tab="true"] tab.tab-right
+{
+	min-height: 0;
+	height: auto;
+	max-height: none;
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+tabbrowser.tabbrowser-tabbar-left[tab-tree-narrow-tab="true"] tab.tab-left[selected="true"],
+tabbrowser.tabbrowser-tabbar-right[tab-tree-narrow-tab="true"] tab.tab-right[selected="true"]
+{
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+tabbrowser.tabbrowser-tabbar-left[tab-tree-narrow-tab="true"] tab[selected="true"] toolbarbutton.tabs-closebutton.close-button,
+tabbrowser.tabbrowser-tabbar-right[tab-tree-narrow-tab="true"] tab[selected="true"] toolbarbutton.tabs-closebutton.close-button
+{
+	margin-top: -2px;
+	margin-bottom: -2px;
+}
+  
+#tabextensions-alert-popup 
+{
+	-moz-appearance: tooltip;
+	padding: 0.5em;
+	background-color: InfoBackground;
+	color: InfoText;
+	font: message-box;
+	border: thin solid;
+}
+	
+#tabextensions-alert-popup * 
+{
+	min-width: 0;
+	min-height: 0;
+}
+  
+/* Compatibility to Toolbar Enhancements (tbx) 
+   http://extensionroom.mozdev.org/clav/#tbx
+   http://firefox.geckodev.org/?Toolbar%20Enhancements (with JLP)
+*/
+
+.tabbrowser-tabbar-left .tbx-toolbox-belowtabs toolbar,
+.tabbrowser-tabbar-right .tbx-toolbox-belowtabs toolbar {
+	-moz-binding: url("chrome://tbx/content/bindings.xml#toolbar") !important;
+	-moz-box-orient: vertical !important;
+	min-width: 16px;
+}
+ 

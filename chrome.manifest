@@ -1,0 +1,47 @@
+content	tabextensions_eventhandler	jar:chrome/tabextensions.jar!/content/eventhandler/	xpcnativewrappers=no
+
+overlay	chrome://global/content/globalOverlay.xul	chrome://tabextensions/content/globalOverlay.xul
+overlay	chrome://global/content/hiddenWindow.xul	chrome://tabextensions/content/globalOverlay.xul
+overlay	chrome://navigator/content/navigatorOverlay.xul	chrome://tabextensions/content/browserOverlay.xul
+overlay	chrome://communicator/content/history/historyTreeOverlay.xul	chrome://tabextensions/content/globalOverlay.xul
+overlay	chrome://communicator/content/bookmarks/addBookmark.xul	chrome://tabextensions/content/bookmarks/addBookmarkOverlay.xul
+overlay	chrome://communicator/content/bookmarks/bm-props.xul	chrome://tabextensions/content/bookmarks/bookmarksPropertyOverlay.xul
+overlay	chrome://communicator/content/pref/preftree.xul	chrome://tabextensions/content/pref/prefDialogOverlay.xul
+overlay	chrome://communicator/content/pref/pref-tabs.xul	chrome://tabextensions/content/pref/pref-tabsOverlay.xul
+overlay	chrome://browser/content/browser.xul	chrome://tabextensions/content/globalOverlay.xul
+overlay	chrome://browser/content/browser.xul	chrome://tabextensions/content/browserOverlay.xul
+overlay	chrome://browser/content/bookmarks/addBookmark.xul	chrome://tabextensions/content/bookmarks/addBookmarkOverlay.xul
+overlay	chrome://browser/content/bookmarks/addBookmark2.xul	chrome://tabextensions/content/bookmarks/addBookmarkOverlay.xul
+overlay	chrome://browser/content/bookmarks/bookmarksProperties.xul	chrome://tabextensions/content/bookmarks/bookmarksPropertyOverlay.xul
+overlay	chrome://browser/content/bookmarks/bookmarksPanel.xul	chrome://tabextensions/content/globalOverlay.xul
+overlay	chrome://browser/content/history/history-panel.xul	chrome://tabextensions/content/globalOverlay.xul
+overlay	chrome://global/content/customizeToolbar.xul	chrome://tabextensions/content/buttonsOverlay.xul
+overlay	chrome://browser/content/pref/pref-tabs.xul	chrome://tabextensions/content/pref/pref-tabsOverlay.xul
+content	tabextensions	jar:chrome/tabextensions.jar!/content/tabextensions/
+
+overlay	chrome://tabextensions/content/globalOverlay.xul	chrome://tabextensions_sessionmanager/content/globalOverlay.xul
+overlay	chrome://tabextensions/content/browserOverlay.xul	chrome://tabextensions_sessionmanager/content/browserOverlay.xul
+overlay	chrome://tabextensions/content/pref/pref-tabsMisc.xul	chrome://tabextensions_sessionmanager/content/pref-tabsMisc.xul
+overlay	chrome://tabextensions/content/pref/pref-tabsUndo.xul	chrome://tabextensions_sessionmanager/content/pref-tabsUndo.xul
+overlay	chrome://tabextensions/content/pref/prefDialogOverlay.xul	chrome://tabextensions_sessionmanager/content/preftreeOverlay.xul
+content	tabextensions_sessionmanager	jar:chrome/tabextensions.jar!/content/sessionManager/
+
+overlay	chrome://tabextensions/content/globalOverlay.xul	chrome://tabextensions_ctrlpopup/content/globalOverlay.xul
+overlay	chrome://tabextensions/content/pref/pref-tabsJavascript.xul	chrome://tabextensions_ctrlpopup/content/pref-tabsJavascript.xul
+content	tabextensions_ctrlpopup	jar:chrome/tabextensions.jar!/content/ctrlPopup/
+
+skin	tabextensions	classic/1.0	jar:chrome/tabextensions.jar!/skin/classic/tabextensions/
+style	chrome://browser/content/browser.xul	chrome://tabextensions/skin/buttons.css
+style	chrome://global/content/customizeToolbar.xul	chrome://tabextensions/skin/buttons.css
+
+locale	tabextensions	en-US	jar:chrome/tabextensions.jar!/locale/en-US/tabextensions/
+
+locale	tabextensions	ja-JP	jar:chrome/tabextensions.jar!/locale/ja-JP/tabextensions/
+
+locale	tabextensions_sessionmanager	en-US	jar:chrome/tabextensions.jar!/locale/en-US/sessionManager/
+
+locale	tabextensions_sessionmanager	ja-JP	jar:chrome/tabextensions.jar!/locale/ja-JP/sessionManager/
+
+locale	tabextensions_ctrlpopup	en-US	jar:chrome/tabextensions.jar!/locale/en-US/ctrlPopup/
+
+locale	tabextensions_ctrlpopup	ja-JP	jar:chrome/tabextensions.jar!/locale/ja-JP/ctrlPopup/

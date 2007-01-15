@@ -1,0 +1,7 @@
+<!ENTITY tabPref.undo.title "Undo &quot;Close Tab&quot;">
+
+<!ENTITY tabPref.undoCache.group   "Undo Close Tab">
+<!ENTITY cacheBlankTab             "Cache blank tabs too">
+<!ENTITY applyOriginalIndex        "Reopen closed tab to its original position">
+<!ENTITY undoCacheMax_before       "Store undo caches for">
+<!ENTITY undoCacheMax_after        "closed tabs on each window">

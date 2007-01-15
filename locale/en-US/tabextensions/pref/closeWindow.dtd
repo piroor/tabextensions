@@ -1,0 +1,9 @@
+<!ENTITY tabPref.closeWindow.title "Behavior for Window Closing">
+
+<!ENTITY windowCloseBehavior.label       "Behavior for Window Closing">
+<!ENTITY windowCloseBehavior.confirm     "Ask me always if it's OK to close the window">
+<!ENTITY windowCloseBehavior.forbid      "Don't Close the Window when there are several tabs (Close Window when only one tab is open)">
+<!ENTITY windowCloseBehavior.allow       "Close All Tabs and the Window always">
+<!ENTITY windowCloseBehavior.allowOneTab "Close the Current Tab instead of the Window">
+
+<!ENTITY confirmOnlyForMultipleTabs      "Only when there are several tabs">

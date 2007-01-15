@@ -1,0 +1,6 @@
+<!ENTITY tabPref.javascript.title "ポップアップの挙動">
+
+<!ENTITY tabPref.javascript.group  "ページ内のスクリプトで開かれるポップアップ">
+<!ENTITY tabPref.javascript.newtab           "新しいタブで開く">
+<!ENTITY tabPref.javascript.newtabBackground "新しいバックグラウンドのタブで開く">
+<!ENTITY tabPref.javascript.newwindow        "新しいウィンドウで開く">

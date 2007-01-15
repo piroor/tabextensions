@@ -1,0 +1,383 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
+<?xul-overlay href="chrome://tabextensions/content/pref/prefOverlay.xul"?>
+
+<!DOCTYPE page SYSTEM "chrome://tabextensions/locale/pref/group.dtd">
+
+<page
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	orient="vertical"
+	headertitle="&tabPref.group.title;"
+	onload="init();">
+
+
+<script type="application/x-javascript"><![CDATA[
+
+if (!('_elementIDs' in window) || !window._elementIDs)
+	var _elementIDs = [];
+
+_elementIDs = _elementIDs.concat([
+	'groupMode',
+	'treeMode',
+	'autoPurge',
+	'autoSetGroupColor',
+	'editGroupBySimpleDragDrop',
+	'inheritTextZoom',
+	'inheritLocked',
+	'inheritReferrerBlocked',
+	'inheritAllow',
+	'treeMaxLevel',
+	'animateCollapseExpand',
+	'simpleOperation',
+	'onSubgroupRootRemoved',
+	'openGroupAsTabGroup',
+	'bookmarkGroupBehavior'
+]);
+
+var gGroupCheck;
+var gTreeCheck;
+
+var gTabGroupPrefsData;
+var gTabBookmarkGroupPrefsData;
+
+var gBookmarkGroupBehavior;
+var gAppendInsert;
+var gAppendReplace;
+var gReplaceGroup;
+
+function init()
+{
+	gBookmarkGroupBehavior = document.getElementById('bookmarkGroupBehavior');
+	gAppendInsert          = document.getElementById('appendInsert');
+	gAppendReplace         = document.getElementById('appendReplace');
+	gReplaceGroup          = document.getElementById('replaceGroup');
+
+	window.parent.initPanel(location.href);
+
+
+	gGroupCheck = document.getElementById('groupMode');
+	gTreeCheck  = document.getElementById('treeMode');
+	document.getElementById('tabMode').selectedItem =
+		(gGroupCheck.checked && gTreeCheck.checked) ? document.getElementById('tabMode-tree') :
+		(gGroupCheck.checked && !gTreeCheck.checked) ? document.getElementById('tabMode-group') :
+		document.getElementById('tabMode-flat');
+
+
+	gTabGroupPrefsData = {
+		openGroupAsTabGroup : {
+			node : document.getElementById('openGroupAsTabGroup')
+		},
+		autoPurge : {
+			node : document.getElementById('autoPurge')
+		},
+		autoSetGroupColor : {
+			node : document.getElementById('autoSetGroupColor')
+		},
+		editGroupBySimpleDragDrop : {
+			node : document.getElementById('editGroupBySimpleDragDrop'),
+			get disabled()
+			{
+				return gTreeCheck.checked;
+			}
+		},
+		inheritTextZoom : {
+			node : document.getElementById('inheritTextZoom')
+		},
+		inheritLocked : {
+			node : document.getElementById('inheritLocked')
+		},
+		inheritReferrerBlocked : {
+			node : document.getElementById('inheritReferrerBlocked')
+		},
+		inheritAllow : {
+			node : document.getElementById('inheritAllow')
+		},
+		treeMaxLevel : {
+			node : document.getElementById('treeMaxLevel'),
+			get disabled()
+			{
+				return !gTreeCheck.checked;
+			}
+		},
+		animateCollapseExpand : {
+			node : document.getElementById('animateCollapseExpand'),
+			get disabled()
+			{
+				return !gTreeCheck.checked;
+			}
+		},
+		simpleOperation : {
+			node : document.getElementById('simpleOperation'),
+			get disabled()
+			{
+				return !gTreeCheck.checked;
+			}
+		},
+		onSubgroupRootRemoved : {
+			node : document.getElementById('onSubgroupRootRemoved'),
+			get disabled()
+			{
+				return !gTreeCheck.checked;
+			}
+		}
+	};
+
+	gTabBookmarkGroupPrefsData = {
+		appendInsert : {
+			node : gAppendInsert,
+			get disabled() {
+				return this.node.disabled;
+			}
+		},
+		appendReplace : {
+			node : gAppendReplace
+		}
+	};
+
+	onTabModeChange()
+	updateBookmarkGroupBehaviorCheck();
+}
+
+
+function onTabModeChange()
+{
+	switch (document.getElementById('tabMode').selectedItem.id)
+	{
+		default:
+		case 'tabMode-flat':
+			gGroupCheck.checked = false;
+			gTreeCheck.checked  = false;
+			break;
+		case 'tabMode-group':
+			gGroupCheck.checked = true;
+			gTreeCheck.checked  = false;
+			break;
+		case 'tabMode-tree':
+			gGroupCheck.checked = true;
+			gTreeCheck.checked  = true;
+			break;
+	}
+
+	controlLinkedItems(gGroupCheck);
+	updateBookmarkGroupBehaviorCheck();
+	onModified(gGroupCheck.getAttribute('prefstring'), gGroupCheck.checked);
+	onModified(gTreeCheck.getAttribute('prefstring'), gTreeCheck.checked);
+}
+
+
+function optimizeTabModePrefs()
+{
+	var ps = TabbrowserService.PromptService;
+	var result = ps.confirmEx(
+			window,
+			TabbrowserService.strbundle.GetStringFromName('confirm_autosetting_group_prefs_title'),
+			TabbrowserService.strbundle.GetStringFromName('confirm_autosetting_group_prefs_text'),
+			(ps.BUTTON_TITLE_YES * ps.BUTTON_POS_0) +
+			(ps.BUTTON_TITLE_NO * ps.BUTTON_POS_1),
+			null, null, null,
+			null, {}
+		);
+
+	var tabPanel = 'chrome://tabextensions/content/pref/pref-tabsAppearanceTab.xul';
+	var tabbarPanel = 'chrome://tabextensions/content/pref/pref-tabsAppearanceTabbar.xul';
+	var thumbnailPanel = 'chrome://tabextensions/content/pref/pref-tabsThumbnail.xul';
+
+	if (result == 0) {
+		if (gTreeCheck.checked) {
+			document.getElementById('openGroupAsTabGroup').checked = true;
+			document.getElementById('autoPurge').checked           = false;
+			document.getElementById('autoSetGroupColor').checked   = false;
+			document.getElementById('inheritReferrerBlocked').checked = true;
+			document.getElementById('inheritAllow').checked           = true;
+
+			onModified('browser.tabs.extensions.tabs_width_type', 2, tabPanel);
+			onModified('browser.tabs.extensions.tabbar_place', 2, tabbarPanel);
+			onModified('browser.tabs.extensions.tab_scroller', 1, tabbarPanel);
+			onModified('browser.tabs.extensions.vertical.narrow_tabs', true, tabbarPanel);
+			if (Number(getModifiedValue('browser.tabs.extensions.thumbnail.width', thumbnailPanel)) > -1) {
+				onModified('browser.tabs.extensions.thumbnail.width', -1, thumbnailPanel);
+			}
+		}
+		else {
+			if (gGroupCheck.checked) {
+				document.getElementById('openGroupAsTabGroup').checked = true;
+				document.getElementById('autoSetGroupColor').checked   = true;
+			}
+
+			onModified('browser.tabs.extensions.tabs_width_type', 0, tabPanel);
+			onModified('browser.tabs.extensions.tabbar_place', 0, tabbarPanel);
+			onModified('browser.tabs.extensions.tab_scroller', 3, tabbarPanel);
+			if (Number(getModifiedValue('browser.tabs.extensions.thumbnail.width', thumbnailPanel)) < 0) {
+				onModified('browser.tabs.extensions.thumbnail.width',
+					TabbrowserService.getPref('browser.tabs.extensions.thumbnail.width.default'),
+					thumbnailPanel);
+			}
+		}
+	}
+}
+
+
+function updateBookmarkGroupBehaviorCheck()
+{
+	var value = gBookmarkGroupBehavior.value;
+
+	var isGroupMode = document.getElementById('groupMode').checked;
+	if (!isGroupMode && value % 2 != 0) {
+		if (value == 1)
+			value = 0;
+		else if (value == 11)
+			value = 10;
+		else if (value == 21)
+			value = 20;
+
+		gBookmarkGroupBehavior.value = value;
+	}
+
+
+	var group = document.getElementById('bookmarkGroupBehaviorCheck');
+	var items = group.getElementsByAttribute('class', 'bookmarkGroupBehaviorCheckItem');
+
+	if (!gReplaceGroup.selectedItem)
+		gReplaceGroup.selectedItem = gReplaceGroup.childNodes[0];
+
+
+	if (
+		(value == 10 || value == 11) &&
+		isGroupMode
+		) {
+		gReplaceGroup.firstChild.removeAttribute('disabled');
+		gReplaceGroup.lastChild.removeAttribute('disabled');
+	}
+	else {
+		gReplaceGroup.firstChild.setAttribute('disabled', true);
+		gReplaceGroup.lastChild.setAttribute('disabled', true);
+	}
+
+	if (value == 10 || value == 11) {
+		group.selectedItem = items[1];
+
+		gReplaceGroup.selectedItem = gReplaceGroup.childNodes[value == 11 ? 1 : 0 ];
+	}
+	else {
+		group.selectedItem = items[0];
+
+		gAppendInsert.checked  = (value == 1 || value == 21);
+		gAppendReplace.checked = (value == 20 || value == 21);
+	}
+}
+
+
+]]></script>
+
+	<groupbox>
+		<caption label="&tabPref.group.caption;"/>
+		<radiogroup id="tabMode"
+			orient="vertical"
+			oncommand="onTabModeChange(); optimizeTabModePrefs();">
+			<radio id="tabMode-flat"
+				src="chrome://tabextensions/content/res/tabmode-flat.png"
+				label="&tabPref.group.flat;"/>
+			<radio id="tabMode-group"
+				src="chrome://tabextensions/content/res/tabmode-group.png"
+				label="&tabPref.group.group;"/>
+			<radio id="tabMode-tree"
+				src="chrome://tabextensions/content/res/tabmode-tree.png"
+				label="&tabPref.group.tree;"/>
+		</radiogroup>
+		<hbox>
+			<spacer flex="1"/>
+			<button id="advancedTabGroupPrefs"
+				label="&advancedTabGroupPrefs.go;"
+				oncommand="advancedPrefs('chrome://tabextensions/content/pref/advancedTabGroupPrefs.xul', gTabGroupPrefsData);"/>
+		</hbox>
+		<box collapsed="true">
+			<checkbox id="groupMode"
+				prefstring="browser.tabs.extensions.group.enabled"
+				linked="advancedTabGroupPrefs appendInsert"/>
+			<checkbox id="treeMode"
+				prefstring="browser.tabs.extensions.group.tree.enabled"/>
+
+			<checkbox id="openGroupAsTabGroup"
+				prefstring="browser.tabs.extensions.group.open_bookmarkgroup_as_group"/>
+			<checkbox id="autoPurge"
+				prefstring="browser.tabs.extensions.group.auto_purge"/>
+			<checkbox id="autoSetGroupColor"
+				prefstring="browser.tabs.extensions.group.auto_color"/>
+			<checkbox id="editGroupBySimpleDragDrop"
+				prefstring="browser.tabs.extensions.group.edit_simple_dragdrop"/>
+
+			<checkbox id="inheritTextZoom"
+				prefstring="browser.tabs.extensions.inherit.tree.textZoom"/>
+			<checkbox id="inheritLocked"
+				prefstring="browser.tabs.extensions.inherit.tree.locked"/>
+			<checkbox id="inheritReferrerBlocked"
+				prefstring="browser.tabs.extensions.inherit.tree.referrerBlocked"/>
+			<checkbox id="inheritAllow"
+				prefstring="browser.tabs.extensions.inherit.tree.allow"/>
+
+			<textbox id="treeMaxLevel"
+				preftype="int"
+				prefstring="browser.tabs.extensions.group.tree.max_level"/>
+			<checkbox id="animateCollapseExpand"
+				prefstring="browser.tabs.extensions.group.tree.animation.collapse_expand"/>
+			<checkbox id="simpleOperation"
+				prefstring="browser.tabs.extensions.group.tree.simple_operation"/>
+			<textbox id="onSubgroupRootRemoved"
+				preftype="int"
+				prefstring="browser.tabs.extensions.group.tree.on_subgroup_root_removed"/>
+		</box>
+	</groupbox>
+
+	<groupbox>
+		<caption label="&bookmarkGroupBehavior.label;"/>
+		<radiogroup orient="vertical" id="bookmarkGroupBehaviorCheck"
+			oncommand="updateBookmarkGroupBehaviorCheck();">
+			<box orient="horizontal"
+				oncommand="gBookmarkGroupBehavior.value = (gAppendInsert.checked ? 1 : 0) + (gAppendReplace.checked ? 20 : 0);">
+				<radio label="&bookmarkGroupBehavior.append.item;"
+					class="bookmarkGroupBehaviorCheckItem"/>
+				<button id="advancedBookmarkGroupPrefs"
+					label="&advancedBookmarkGroupPrefs.go;"
+					oncommand="
+						advancedPrefs('chrome://tabextensions/content/pref/advancedBookmarkGroupPrefs.xul', gTabBookmarkGroupPrefsData);
+						eval(this.parentNode.getAttribute('oncommand'));
+					"/>
+				<box collapsed="true">
+					<checkbox id="appendInsert"/>
+					<checkbox id="appendReplace"/>
+				</box>
+			</box>
+			<box orient="vertical"
+				oncommand="gBookmarkGroupBehavior.value = 10 + (Number(gReplaceGroup.value) == 1 ? 1 : 0);">
+				<radio label="&bookmarkGroupBehavior.replace.item;"
+					class="bookmarkGroupBehaviorCheckItem"/>
+				<box orient="horizontal">
+					<spacer style="width: 1em;"/>
+					<radiogroup id="replaceGroup">
+						<radio value="0" label="&bookmarkGroupBehavior.replace.all;"/>
+						<radio value="1" label="&bookmarkGroupBehavior.replace.group;"/>
+					</radiogroup>
+				</box>
+			</box>
+		</radiogroup>
+		<box collapsed="true">
+			<radiogroup id="bookmarkGroupBehavior"
+				prefstring="browser.tabs.extensions.bookmarkgroup_behavior"
+				preftype="int">
+				<radio value="0"  id="bookmarkGroupBehavior.append"/>
+				<radio value="1"  id="bookmarkGroupBehavior.insert"/>
+				<radio value="20" id="bookmarkGroupBehavior.onetab_append"/>
+				<radio value="21" id="bookmarkGroupBehavior.onetab_insert"/>
+				<radio value="10" id="bookmarkGroupBehavior.replace"/>
+				<radio value="11" id="bookmarkGroupBehavior.replace_group"/>
+			</radiogroup>
+		</box>
+	</groupbox>
+
+	<spacer flex="1"/>
+
+	<box id="tabextensionsAboutBox"/>
+
+</page>

@@ -1,0 +1,18 @@
+<!ENTITY tabPref.features.title "Tab Features">
+
+<!ENTITY enabledFeatures.default.caption       "Enable following features by default">
+<!ENTITY enabledFeatures.locked.label          "Lock (forces links to be opened in new tabs)">
+<!ENTITY enabledFeatures.referrerBlocked.label "Block to send HTTP Referrer">
+
+
+<!ENTITY tabPref.features.misc.group             "Miscellaneous">
+
+<!ENTITY slowAutoreloadBackgoundTabs             "Slow down auto-reloading for background tabs">
+<!ENTITY keepStatusCheck "Initialize tab status when other pages are loaded">
+
+
+<!ENTITY advancedBackgoundAutoreloadPrefs.go    "Advanced...">
+<!ENTITY advancedBackgoundAutoreloadPrefs.title "Interval of Auto-Reloading">
+
+<!ENTITY slowAutoreloadBackgoundTabs_rate_before "Reload background tabs with">
+<!ENTITY slowAutoreloadBackgoundTabs_rate_after  "times interval of normal">

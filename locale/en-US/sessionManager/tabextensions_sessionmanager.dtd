@@ -1,0 +1,55 @@
+<!ENTITY loadTabSession.menu.label          "Load Tab Session">
+<!ENTITY loadTabSession.menu.accesskey      "L">
+<!ENTITY loadTabSession.menu.key            "L">
+<!ENTITY loadTabSession.full.label          "More...">
+<!ENTITY loadTabSession.full.accesskey      "M">
+<!ENTITY loadTabSession.save.label          "Save Current Tab Session">
+<!ENTITY loadTabSession.save.accesskey      "S">
+<!ENTITY loadTabSession.save.key            "T">
+<!ENTITY loadTabSession.rename.label        "Rename">
+<!ENTITY loadTabSession.rename.accesskey    "R">
+<!ENTITY loadTabSession.delete.label        "Delete">
+<!ENTITY loadTabSession.delete.accesskey    "D">
+<!ENTITY loadTabSession.deleteAll.label     "Delete All">
+<!ENTITY loadTabSession.deleteAll.accesskey "A">
+
+<!ENTITY closedTabsHistory.menu.label      "Recent Closed Tabs">
+<!ENTITY closedTabsHistory.menu.accesskey  "C">
+<!ENTITY closedTabsHistory.flush.label     "Flush history">
+<!ENTITY closedTabsHistory.flush.accesskey "F">
+<!ENTITY closedTabsHistory.menu.key        "R">
+<!ENTITY closedTabsHistory.blank.label     "(blank)">
+<!ENTITY closedTabsHistory.full.label      "More...">
+<!ENTITY closedTabsHistory.full.accesskey  "M">
+
+
+
+
+<!ENTITY tabPref.startup.tree   "Startup">
+<!ENTITY tabPref.startup.title  "Advanced Startup">
+
+<!ENTITY startupActionOverlay      "Startup Contents of Browser">
+<!ENTITY startupActionOverlay.none "Load Startup page of Browser Normally">
+<!ENTITY startupActionOverlay.lastSession "Restore the last tab session">
+<!ENTITY startupActionOverlay.storedSession "Load the selected tab session">
+<!ENTITY selectedSession         "Load">
+<!ENTITY selectedSession.default "(choose)">
+<!ENTITY selectedSession.noitem  "(no item)">
+<!ENTITY selectedSession.onetime "Only once per days">
+
+<!ENTITY ignoreStartedWithOpenURLRequests "Don't save tab session for temporary windows called by other applications">
+
+<!ENTITY tabPref.backupTabs.group  "Backup Tab Session">
+<!ENTITY backupTabs "Restore tab session, on the next startup of crash">
+
+
+
+
+
+<!ENTITY tabPref.session.group  "Tab Sessions">
+<!ENTITY saveBlankTabSession    "Save and restore blank tabs too">
+<!ENTITY reloadRestoredSession  "Reload tabs of restored sessions automatically">
+
+<!ENTITY undoCacheGlobalMax_before "Store the history of &quot;Recent Closed Tabs&quot; for">
+<!ENTITY undoCacheGlobalMax_after  "items">
+<!ENTITY undoCacheSave             "Save the history of &quot;Recent Closed Tabs&quot; on exit browser">

@@ -1,0 +1,54 @@
+<!ENTITY tabPref.bookmarks.title "ブックマークの挙動">
+
+
+<!ENTITY tabPref.bookmarks.load.group   "ブックマークを開く時の動作">
+<!ENTITY tabPref.bookmarks.load.current "現在のタブで開く">
+<!ENTITY tabPref.bookmarks.load.newtab  "新しいタブで開く">
+<!ENTITY tabPref.bookmarks.load.newtabBackground "新しいバックグラウンドのタブで開く">
+
+<!ENTITY advancedBookmarksPrefs.go    "詳細...">
+<!ENTITY advancedBookmarksPrefs.title "ブックマークの詳細">
+
+<!ENTITY tabPref.bookmarks.middleClick.group   "ブックマークを中クリックまたはCtrl-クリックしたときの動作">
+<!ENTITY tabPref.bookmarks.middleClick.group.mac "ブックマークを中クリックまたはCommand-クリックしたときの動作">
+<!ENTITY tabPref.bookmarks.middleClick.none    "何もしない">
+<!ENTITY tabPref.bookmarks.middleClick.current "現在のタブで開く">
+<!ENTITY tabPref.bookmarks.middleClick.newtab  "新しいタブで開く">
+<!ENTITY tabPref.bookmarks.middleClick.newtabBackground "新しいバックグラウンドのタブで開く">
+
+<!ENTITY openChildFolders            "ブックマークグループを再帰的に開く">
+
+
+<!ENTITY advancedBookmarksPrefs.menu.group "ブックマークの上でのコンテキストメニュー">
+
+<!ENTITY showThisTabItemBookmark "新しいタブで開かれるブックマークについて、メニューに「このタブで開く」を表示する">
+<!ENTITY showNewActiveTabItemBookmark "バックグラウンドのタブで開かれるブックマークについて、メニューに「アクティブなタブで開く」を表示する">
+
+
+<!ENTITY tabPref.bookmarks.appearance.group "タブの表示">
+
+<!ENTITY useFixedLabelForAnyBookmark "タブのラベルに常にブックマークの名前を表示する">
+
+
+<!ENTITY tabPref.bookmarks.tabs.group "ブックマークに記憶するタブの状態">
+
+<!ENTITY saveBookmarksTextZoom    "ズームイン・アウトの状態">
+<!ENTITY saveBookmarksStatus      "拡張機能の状態（ロック, 自動リロード他）">
+<!ENTITY saveBookmarksPermissions "機能の許可の状態">
+
+
+
+<!ENTITY tabPref.livemark.tab           "ライブマーク本体">
+<!ENTITY tabPref.livemark.behavior      "ライブマークを中クリックまたはCtrl-クリックで開く時の動作">
+<!ENTITY tabPref.livemark.behavior.mac  "ライブマークを中クリックまたはCommand-クリックで開く時の動作">
+<!ENTITY tabPref.livemark.behavior.current "現在のタブで開く">
+<!ENTITY tabPref.livemark.behavior.newtab  "新しいタブで開く">
+<!ENTITY tabPref.livemark.behavior.newtabBackground "新しいバックグラウンドのタブで開く">
+<!ENTITY tabPref.livemark.behavior.group   "ブックマークグループとして全ての項目を開く">
+
+<!ENTITY tabPref.livemarkItem.tab           "ライブマークの項目">
+<!ENTITY tabPref.livemarkItem.behavior      "ライブマークの項目を開く時の動作">
+<!ENTITY tabPref.livemarkItem.behavior.inherit "ブックマークの動作に合わせる">
+<!ENTITY tabPref.livemarkItem.behavior.current "現在のタブで開く">
+<!ENTITY tabPref.livemarkItem.behavior.newtab  "新しいタブで開く">
+<!ENTITY tabPref.livemarkItem.behavior.newtabBackground "新しいバックグラウンドのタブで開く">

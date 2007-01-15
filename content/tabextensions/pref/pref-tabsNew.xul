@@ -1,0 +1,184 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
+<?xul-overlay href="chrome://tabextensions/content/pref/prefOverlay.xul"?>
+
+<!DOCTYPE page SYSTEM "chrome://tabextensions/locale/pref/new.dtd">
+
+<page id="prefPage"
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	orient="vertical"
+	headertitle="&tabPref.new.title;"
+	onload="init();">
+
+
+<script type="application/x-javascript"><![CDATA[
+
+if (!('_elementIDs' in window) || !window._elementIDs)
+	var _elementIDs = [];
+
+_elementIDs = _elementIDs.concat([
+	'tabStartup',
+	'newTabLoadInBackground',
+	'openTabIn'
+]);
+
+var gOpenTabInCheck;
+
+function init()
+{
+	// for 1.4a or earlier
+	if (TabbrowserService.getPref('browser.tabs.loadOnNewTab') === null) {
+		document.getElementById('tabStartup').setAttribute('prefstring', 'browser.tabs.extensions.startup.page');
+	}
+	else {
+		document.getElementById('tabStartup').setAttribute('prefstring', 'browser.tabs.loadOnNewTab');
+	}
+
+
+	var openTabInHorizontal = document.getElementById('openTabInHorizontal'),
+		openTabInVertical   = document.getElementById('openTabInVertical'),
+		hiddenNode;
+	if (getModifiedValue('browser.tabs.extensions.tabbar_place', 'chrome://tabextensions/content/pref/pref-tabsAppearanceTabbar.xul') < 2) {
+		gOpenTabInCheck = openTabInHorizontal;
+		hiddenNode = openTabInVertical;
+	}
+	else {
+		gOpenTabInCheck = openTabInVertical;
+		hiddenNode = openTabInHorizontal;
+	}
+	gOpenTabInCheck.removeAttribute('collapsed');
+	hiddenNode.setAttribute('collapsed', true);
+
+
+	window.parent.initPanel(location.href);
+
+
+	var tabTreeEnabled = getModifiedValue('browser.tabs.extensions.group.enabled', 'chrome://tabextensions/content/pref/pref-tabsGroup.xul') &&
+				getModifiedValue('browser.tabs.extensions.group.tree.enabled', 'chrome://tabextensions/content/pref/pref-tabsGroup.xul');
+	var treeModeItems = {
+			'openTabInHorizontal'           : false,
+			'openTabInHorizontal-leftmost'  : false,
+			'openTabInHorizontal-left'      : false,
+			'openTabInHorizontal-right'     : false,
+			'openTabInHorizontal-rightmost' : false,
+			'openTabInVertical'             : false,
+			'openTabInVertical-leftmost'    : false,
+			'openTabInVertical-left'        : false,
+			'openTabInVertical-right'       : false,
+			'openTabInVertical-rightmost'   : false
+		};
+	for (var i in treeModeItems)
+	{
+		if (
+			(tabTreeEnabled && !treeModeItems[i]) ||
+			(!tabTreeEnabled && treeModeItems[i])
+			)
+			document.getElementById(i).setAttribute('disabled', true);
+		else
+			document.getElementById(i).removeAttribute('disabled');
+	}
+
+
+
+/*
+	var nodes = gOpenTabInCheck.childNodes;
+	var value = (getModifiedValue('browser.tabs.extensions.tab_scroller', 'chrome://tabextensions/content/pref/pref-tabsAppearanceTabbar.xul') == 3);
+	if (value) {
+		for (i = 0; i < nodes.length; i++)
+			nodes[i].setAttribute('disabled', true);
+	}
+	else {
+		for (i = 0; i < nodes.length; i++)
+			nodes[i].removeAttribute('disabled');
+	}
+*/
+
+	gOpenTabInCheck.selectedItem = gOpenTabInCheck.getElementsByAttribute('value', document.getElementById('openTabIn').value)[0];
+
+	onOpenTabInChange();
+}
+
+function onOpenTabInChange()
+{
+	document.getElementById('openTabIn').value = gOpenTabInCheck.value;
+}
+
+
+]]></script>
+
+	<groupbox>
+		<caption label="&tabPref.new.focus.group;"/>
+		<radiogroup orient="horizontal" id="newTabLoadInBackground"
+			prefstring="browser.tabs.extensions.loadInBackgroundNewTab"
+			preftype="bool">
+			<radio value="false" label="&loadInForeground;"/>
+			<radio value="true"  label="&loadInBackground;"/>
+		</radiogroup>
+	</groupbox>
+
+	<groupbox>
+		<caption label="&tabPref.new.startup.group;"/>
+		<radiogroup orient="vertical" id="tabStartup"
+			preftype="int"
+			oncommand="controlLinkedItems(this, this.value == 0);">
+			<box orient="horizontal">
+				<radio value="0"  label="&tabStartup.blank;"/>
+				<radio value="1"  label="&tabStartup.home;"/>
+				<radio value="2"  label="&tabStartup.last;"/>
+			</box>
+			<radio value="-1" label="&tabStartup.inherit;"/>
+		</radiogroup>
+	</groupbox>
+
+	<groupbox
+		oncommand="onOpenTabInChange();">
+		<caption label="&tabPref.new.position.group;"/>
+		<vbox>
+		<radiogroup id="openTabInHorizontal"
+			orient="horizontal">
+			<radio id="openTabInHorizontal-leftmost"
+				value="0"
+				label="&openTabIn.start.horizontal;"/>
+			<radio id="openTabInHorizontal-left"
+				value="1"
+				label="&openTabIn.left.horizontal;"/>
+			<radio id="openTabInHorizontal-right"
+				value="2"
+				label="&openTabIn.right.horizontal;"/>
+			<radio id="openTabInHorizontal-rightmost"
+				value="3"
+				label="&openTabIn.end.horizontal;"/>
+		</radiogroup>
+		<radiogroup id="openTabInVertical"
+			orient="horizontal">
+			<radio id="openTabInVertical-leftmost"
+				value="0"
+				label="&openTabIn.start.vertical;"/>
+			<radio id="openTabInVertical-left"
+				value="1"
+				label="&openTabIn.left.vertical;"/>
+			<radio id="openTabInVertical-right"
+				value="2"
+				label="&openTabIn.right.vertical;"/>
+			<radio id="openTabInVertical-rightmost"
+				value="3"
+				label="&openTabIn.end.vertical;"/>
+		</radiogroup>
+		<description flex="1">&openTabIn.desc;</description>
+		<box collapsed="true">
+			<textbox id="openTabIn"
+				prefstring="browser.tabs.extensions.open_tab_in"
+				preftype="int"/>
+		</box>
+		</vbox>
+	</groupbox>
+
+
+	<spacer flex="1"/>
+
+	<box id="tabextensionsAboutBox"/>
+
+
+</page>

@@ -1,0 +1,6337 @@
+<?xml version="1.0" encoding="Shift_JIS"?> 
+ 
+<bindings id="tabbrowserExtensionsBindings" 
+	xmlns="http://www.mozilla.org/xbl"
+	xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	xmlns:xbl="http://www.mozilla.org/xbl"
+	xmlns:html="http://www.w3.org/1999/xhtml">
+	
+<!-- The binding bound at first is ignored...why? This is a dummy to avoid this problem. --> 
+<binding id="dummy"/>
+ 
+<!-- tab --> 
+<binding id="tab"
+	extends="chrome://global/content/bindings/tabbox.xml#tab">
+	
+	<content> 
+		<xul:image class="tab-icon"
+			tabclass="tab-icon-hidden"
+			xbl:inherits="src=image"/>
+		<xul:hbox class="tab-image-left tab-startcap tab-left tab-left-border" xbl:inherits="selected,hover"/>
+		<xul:hbox class="tab-middle tab-image-middle tab-body box-inherit"
+			xbl:inherits="align,dir,pack,orient,selected"
+			align="center"
+			flex="1">
+			<xul:hbox class="tab-drag-indicator-left"/>
+			<xul:stack class="tab-icon" xbl:inherits="src=image">
+				<xul:image xbl:inherits="validate,src=image"
+					class="tab-icon-image"
+					tabclass="tab-icon-active"/>
+				<xul:image class="tab-extra-status"/>
+				<xul:toolbarbutton class="tab-twisty"
+					xbl:inherits="selected"/>
+				<xul:spacer/>
+			</xul:stack>
+			<xul:vbox class="tab-thumbnail-container">
+				<html:canvas class="tab-thumbnail-canvas"/>
+			</xul:vbox>
+			<xul:stack class="tab-text-container" flex="1">
+				<xul:hbox class="tab-text-background" flex="1"/>
+				<xul:progressmeter class="tab-progress"
+					flex="1"
+					mode="normal" value="0"
+					xbl:inherits="value=tab-progress"/>
+				<xul:hbox flex="1" class="tab-text-customstyle-target">
+					<xul:label class="tab-text"
+						flex="1"
+						xbl:inherits="value=label,accesskey,crop,disabled"/>
+					<xul:hbox class="tab-collapsed-tree-children-count"
+						>
+						<xul:label value="("/>
+						<xul:label xbl:inherits="value=tab-descendantTabs-count"/>
+						<xul:label value=")"/>
+					</xul:hbox>
+				</xul:hbox>
+ 				<xul:hbox class="tab-closebutton-container">
+					<xul:spacer flex="1"/>
+					<xul:toolbarbutton tabclass="tab-closebutton-hover"
+						class="tabs-closebutton close-button showhover"/>
+				</xul:hbox>
+			</xul:stack>
+			<xul:toolbarbutton tabclass="tab-closebutton-always"
+				class="tabs-closebutton close-button always"/>
+		</xul:hbox>
+		<xul:hbox class="tab-drag-indicator-right"/>
+		<xul:hbox class="tab-image-right tab-endcap tab-right tab-right-border" xbl:inherits="selected,hover"/>
+	</content>
+ 
+	<implementation> 
+	
+		<property name="tabId" readonly="true" 
+			onget="return this.getAttribute('tab-id');"/>
+		<!-- "_tPos" is for Firefox 1.1 or later. -->
+		<property name="tabIndex"
+			onset="this._tPos = val; return val;"
+			onget="return (this._tPos === void(0)) ? -1 : this._tPos ;"/>
+ 
+		<property name="mTabBrowser" readonly="true"> 
+			<getter><![CDATA[
+				if (!this._mTabBrowser) {
+					var node = this.parentNode;
+					while (node.localName != 'tabbrowser')
+						node = node.parentNode;
+
+					this._mTabBrowser = node;
+				}
+
+				return this._mTabBrowser;
+			]]></getter>
+		</property>
+		<field name="_mTabBrowser">
+			null
+		</field>
+ 
+		<property name="mBrowser" readonly="true"> 
+			<getter><![CDATA[
+				if (!this._mBrowser)
+					this._mBrowser = this.mTabBrowser.getBrowserForTab(this);
+
+				return this._mBrowser;
+			]]></getter>
+			<setter><![CDATA[
+				this._mBrowser = val;
+				return this._mBrowser;
+			]]></setter>
+		</property>
+		<field name="_mBrowser">
+			null
+		</field>
+ 
+		<property name="mThumbnail" readonly="true"> 
+			<getter><![CDATA[
+				if (!this._mThumbnail)
+					this._mThumbnail = document.getAnonymousElementByAttribute(this, 'class', 'tab-thumbnail-canvas');
+
+				return this._mThumbnail;
+			]]></getter>
+			<setter><![CDATA[
+				this._mThumbnail = val;
+				return this._mThumbnail;
+			]]></setter>
+		</property>
+		<field name="_mThumbnail">
+			null
+		</field>
+ 
+		<field name="mTabInfo"> 
+			false
+		</field>
+ 
+		<property name="browserName" 
+			onget="return this.getAttribute('tab-browserName') || null ;"
+			onset="if (val) this.setAttribute('tab-browserName', val); else this.removeAttribute('tab-browserName'); return this.browserName"/>
+ 
+<!-- tabgroup --> 
+	
+		<property name="childTabs" readonly="true"> 
+			<getter><![CDATA[
+				var children         = [];
+				var existingChildren = [];
+				var cid              = this.mChildTabs;
+				var t;
+				for (var i in cid)
+				{
+					t = this.mTabBrowser.getTabByTabId(cid[i])
+					if (t) {
+						children.push(t);
+						existingChildren.push(cid[i]);
+					}
+				}
+
+				// correct broken list!
+				if (children.length < cid.length) {
+					this.setAttribute('tab-childTabs', existingChildren.join('|'));
+					if (existingChildren.length)
+						this.setAttribute('tab-childTabs-count', existingChildren.length);
+					else
+						this.removeAttribute('tab-childTabs-count');
+
+					this.mUpdateDescendantTabsCount();
+				}
+
+				return children;
+			]]></getter>
+		</property>
+		<property name="mChildTabs" readonly="true">
+			<getter><![CDATA[
+				var cid = this.getAttribute('tab-childTabs');
+				return (cid) ? cid.split('|') : [] ;
+			]]></getter>
+		</property>
+		<method name="mUpdateDescendantTabsCount">
+			<body><![CDATA[
+				var tab = this;
+				var count;
+				do {
+					count = tab.descendantTabs.length;
+					if (count)
+						tab.setAttribute('tab-descendantTabs-count', count);
+					else
+						tab.removeAttribute('tab-descendantTabs-count');
+
+					tab = tab.parentTab;
+				} while (tab);
+			]]></body>
+		</method>
+ 
+		<method name="hasChildTabs"> 
+			<body><![CDATA[
+				return this.getAttribute('tab-childTabs') ? true : false ;
+			]]></body>
+		</method>
+ 
+		<property name="parentTab"> 
+			<getter><![CDATA[
+				return this.mTabBrowser.getTabByTabId(this.getAttribute('tab-parentTab'));
+			]]></getter>
+			<setter><![CDATA[
+				if (!val ||
+					String(val).search(/^\[object XUL ?Element\]$/) < 0 ||
+					val.localName != 'tab')
+					this.mTabBrowser.detachTab(this, true);
+				else
+					this.mTabBrowser.attachTabTo(this, val);
+
+				return this.parentTab;
+			]]></setter>
+		</property>
+ 
+		<property name="rootTab" readonly="true"> 
+			<getter><![CDATA[
+				var root = this;
+				while (root.parentTab) root = root.parentTab;
+
+				return (root == this ? null : root );
+			]]></getter>
+		</property>
+ 
+		<property name="groupNestingLevel" readonly="true"> 
+			<getter><![CDATA[
+				var level = 0;
+				var root = this;
+				while (root.parentTab)
+				{
+					root = root.parentTab;
+					level++;
+				}
+				return level;
+			]]></getter>
+		</property>
+ 
+		<property name="descendantTabs" readonly="true" 
+			onget="return this.mTabBrowser.getDescendantTabsOf(this);"/>
+		<!-- old name -->
+		<property name="allChildTabs" readonly="true"
+			onget="return this.descendantTabs;"/>
+ 
+		<property name="ownerGroup" readonly="true" 
+			onget="return this.mTabBrowser.gatherGroupTabsOf(this);"/>
+ 
+		<property name="sameColorGroup" readonly="true" 
+			onget="return this.mTabBrowser.gatherGroupedSameColorTabsOf(this);"/>
+ 
+		<method name="isInSameGroup"> 
+			<parameter name="aTab"/>
+			<body><![CDATA[
+				return (
+						this.rootTab == aTab.rootTab ||
+						this == aTab.rootTab ||
+						this.rootTab == aTab
+						);
+			]]></body>
+		</method>
+ 
+		<property name="tabCollapsed"> 
+			<getter><![CDATA[
+				return this.getAttribute('tab-collapsed') == 'true';
+			]]></getter>
+			<setter><![CDATA[
+				if (!this.mTabBrowser.tabGroupTreeAvailable) {
+					this.removeAttribute('tab-collapsed');
+					return false;
+				}
+				this.mCollapseExpand(this, val);
+
+				return this.tabCollapsed;
+			]]></setter>
+		</property>
+		<method name="mCollapseExpand">
+			<parameter name="aTab"/>
+			<parameter name="aValue"/>
+			<body><![CDATA[
+				if (aTab.mTabBrowser.mTabTreeUpdating) {
+					window.setTimeout(arguments.callee, 0, aTab, aValue);
+					return;
+				}
+
+				if (aTab.mCollapseExpandInternal(!aValue)) {
+					var subgroupCollapsed = aTab.tabSubgroupCollapsed;
+					var tabs = aTab.childTabs;
+					var max  = tabs.length;
+					for (var i = 0; i < max; i++)
+					{
+						if (!subgroupCollapsed)
+							tabs[i].tabCollapsed = aValue;
+					}
+					if (aTab.mShouldUpdateThumbnailOnExpand) aTab.updateThumbnail();
+					aTab.mTabBrowser.checkTabsOverflow();
+				}
+			]]></body>
+		</method>
+		<method name="mCollapseExpandInternal">
+			<parameter name="aExpand"/>
+			<body><![CDATA[
+				if (this.mTabBrowser.getAttribute('tab-animation-disabled') != 'true' &&
+					this.mTabBrowser.mPrefs.getBoolPref('browser.tabs.extensions.group.tree.animation.collapse_expand')) {
+					this.mCollapseExpandStopTimer();
+
+					if (this.tabCollapsed == !aExpand) return false;
+
+					if (this.boxObject.height &&
+						this.mCollapseExpandMaxHeight != this.boxObject.height)
+						this.mCollapseExpandMaxHeight = this.boxObject.height;
+
+					this.mCollapseExpandTimeoutInfo = {
+							tab        : this,
+							original   : this.getAttribute('style'),
+							height     : (aExpand ? 0 : this.mCollapseExpandMaxHeight ),
+							endHeight  : (aExpand ? this.mCollapseExpandMaxHeight : 0 ),
+							opacity    : (aExpand ? 0 : 1 ),
+							step       : (aExpand ? 1 : -1 ) * parseInt(this.mCollapseExpandMaxHeight/5),
+							expand     : aExpand,
+							interval   : 25
+						};
+					this.setAttribute('tab-collapseExpand-animating', true);
+					this.mCollapseExpandTimeout(this);
+				}
+				else {
+					if (aExpand)
+						this.removeAttribute('tab-collapsed');
+					else
+						this.setAttribute('tab-collapsed', true);
+				}
+				return true;
+			]]></body>
+		</method>
+		<field name="mCollapseExpandMaxHeight">
+			0
+		</field>
+		<field name="mCollapseExpandTimer">
+			null
+		</field>
+		<field name="mCollapseExpandTimeoutInfo">
+			null
+		</field>
+		<method name="mCollapseExpandTimeout">
+			<parameter name="aTab"/>
+			<body><![CDATA[
+				var info = aTab.mCollapseExpandTimeoutInfo;
+				if (!info) return;
+
+				aTab.setAttribute('style',
+					[
+						info.original,
+						'max-height: '+Math.max(0, info.height)+'px !important',
+						'opacity: '+Math.max(0, info.opacity)+' !important',
+						'-moz-opacity: '+Math.max(0, Math.min(1, info.opacity))+' !important'
+					].join(';')
+				);
+
+				info.height  += info.step;
+				info.opacity = info.height/aTab.mCollapseExpandMaxHeight;
+				if ((info.step > 0) ? (info.height >= info.endHeight) : (info.height <= info.endHeight)) {
+					aTab.mCollapseExpandTimeoutFinish();
+				}
+				else {
+					aTab.mCollapseExpandTimer = window.setTimeout(aTab.mCollapseExpandTimeout, info.interval, aTab);
+				}
+			]]></body>
+		</method>
+		<method name="mCollapseExpandTimeoutFinish">
+			<body><![CDATA[
+				var info = this.mCollapseExpandTimeoutInfo;
+				if (info) {
+					if (info.expand)
+						this.removeAttribute('tab-collapsed');
+					else
+						this.setAttribute('tab-collapsed', true);
+
+					if (info.original)
+						this.setAttribute('style', info.original);
+					else
+						this.removeAttribute('style');
+				}
+
+				if (aTab.mShouldUpdateThumbnailOnExpand) this.updateThumbnail();
+
+				this.mTabBrowser.checkTabsOverflow();
+
+				this.mCollapseExpandTimeoutInfo = null;
+				this.removeAttribute('tab-collapseExpand-animating');
+			]]></body>
+		</method>
+		<method name="mCollapseExpandStopTimer">
+			<body><![CDATA[
+				if (this.mCollapseExpandTimer) {
+					this.mCollapseExpandTimeoutFinish();
+					window.clearTimeout(this.mCollapseExpandTimer);
+					this.mCollapseExpandTimer = null;
+				}
+			]]></body>
+		</method>
+ 
+		<property name="tabSubgroupCollapsed"> 
+			<getter><![CDATA[
+				return this.getAttribute('tab-subgroup-collapsed') == 'true';
+			]]></getter>
+			<setter><![CDATA[
+				if (this.tabSubgroupCollapsed == val)
+					return this.tabSubgroupCollapsed;
+
+				if (val && this.hasChildTabs())
+					this.setAttribute('tab-subgroup-collapsed', true);
+				else
+					this.removeAttribute('tab-subgroup-collapsed');
+
+				var tabs = this.childTabs;
+				var max  = tabs.length;
+				for (var i = 0; i < max; i++)
+					tabs[i].tabCollapsed = val;
+
+				if (!val && this.mTabBrowser.mAllowAutoScrollTabGroup)
+					this.mTabBrowser.scrollTabbarToTabGroupOf(this);
+
+				this.mTabBrowser.mAllowAutoScrollTabGroup = false;
+
+				var event = document.createEvent('Events');
+				event.initEvent('XULTabbrowserTabCollapseExpand', false, true);
+				this.dispatchEvent(event);
+
+				return this.tabSubgroupCollapsed;
+			]]></setter>
+		</property>
+		<method name="collapseOtherSubgroups">
+			<parameter name="aForceToCloseOtherGroups"/>
+			<body><![CDATA[
+				try {
+					var expression = 'child::*[local-name() = "tab"]';
+					var parent     = this.parentTab;
+					var expandeds  = {};
+					if (aForceToCloseOtherGroups) {
+						expression += '[(not(@selected) or not(@selected="true"))]';
+						parent = this;
+						while (parent)
+						{
+							expandeds[parent.tabId] = true;
+							parent.tabSubgroupCollapsed = false;
+							parent = parent.parentTab;
+						}
+					}
+					else if (parent) {
+						var tabs = parent.descendantTabs;
+						expression += '[(position() > '+(parent.tabIndex+1)+') and (position() < '+(tabs[tabs.length-1].tabIndex+2)+')]';
+					}
+
+					expression += '[(not(@tab-subgroup-collapsed) or not(@tab-subgroup-collapsed="true")) and (not(@tab-collapsed) or not(@tab-collapsed="true"))]';
+
+					var xpathResult = this.mTabBrowser.evaluateXPath(expression, this.mTabBrowser.mTabContainer);
+					if (xpathResult && xpathResult.snapshotLength) {
+						max = xpathResult.snapshotLength;
+						var node;
+						for (i = 0; i < max; i++)
+						{
+							node = xpathResult.snapshotItem(i);
+							if (!(node.tabId in expandeds))
+								node.tabSubgroupCollapsed = true;
+						}
+					}
+				}
+				catch(e) {
+				}
+			]]></body>
+		</method>
+  
+		<property name="nextTab" readonly="true"> 
+			<getter><![CDATA[
+				try {
+					var xpathResult = this.mTabBrowser.evaluateXPath('following-sibling::*[local-name() = "tab" and (not(@collapsed) or not(@collapsed="true")) and (not(@tab-collapsed) or not(@tab-collapsed="true"))]', this, XPathResult.FIRST_ORDERED_NODE_TYPE);
+					return xpathResult.singleNodeValue || null ;
+				}
+				catch(e) {
+				}
+				var tabs  = this.mTabBrowser.mTabs;
+				var index = this.tabIndex+1;
+				return index <= tabs.length-1 ? tabs[index] : null ;
+			]]></getter>
+		</property>
+
+		<property name="previousTab" readonly="true">
+			<getter><![CDATA[
+				try {
+					var xpathResult = this.mTabBrowser.evaluateXPath('preceding-sibling::*[local-name() = "tab" and (not(@collapsed) or not(@collapsed="true")) and (not(@tab-collapsed) or not(@tab-collapsed="true"))]', this);
+					return xpathResult && xpathResult.snapshotLength ? xpathResult.snapshotItem(xpathResult.snapshotLength-1) : null ;
+				}
+				catch(e) {
+				}
+				var tabs  = this.mTabBrowser.mTabs;
+				var index = this.tabIndex-1;
+				return index > -1 ? tabs[index] : null ;
+			]]></getter>
+		</property>
+ 
+<!-- features --> 
+	
+		<property name="locked" 
+			onget="return this.getAttribute('tab-locked') == 'true';"
+			onset="if (val) { this.mTabBrowser.lockTab(this, 'ANY'); } else { this.mTabBrowser.unlockTab(this, true); } return this.locked;"/>
+ 
+		<property name="referrerBlocked" 
+			onget="return this.getAttribute('tab-referrerblocked') == 'true';"
+			onset="if (val) { this.mTabBrowser.blockReferrerForTab(this, 'ANY'); } else { this.mTabBrowser.unblockReferrerForTab(this, true); } return this.referrerBlocked;"/>
+ 
+		<property name="autoReloadInterval" 
+			onget="return Number(this.getAttribute('tab-autoReloadInterval') || 0);"
+			onset="if (val &amp;&amp; Number(val || 0)) { this.mTabBrowser.setAutoReloadTab(this, Number(val || 0), 'ANY'); } else { this.mTabBrowser.cancelAutoReloadTab(this, true); } return this.autoReloadInterval;"/>
+ 
+		<property name="allowPlugins" 
+			onget="return (this.mBrowser ? this.mBrowser.docShell.allowPlugins : this.mTabBrowser.mPrefs.getBoolPref('browser.tabs.extensions.allowPlugins.enabled'));"
+			onset="this.mTabBrowser.setDocShellPropertyFor(this, 'allowPlugins', Boolean(val), 'ANY', true); return this.allowPlugins;"/>
+ 
+		<property name="allowJavascript" 
+			onget="return (this.mBrowser ? this.mBrowser.docShell.allowJavascript : this.mTabBrowser.mPrefs.getBoolPref('browser.tabs.extensions.allowJavascript.enabled'));"
+			onset="this.mTabBrowser.setDocShellPropertyFor(this, 'allowJavascript', Boolean(val), 'ANY', true); return this.allowJavascript;"/>
+ 
+		<property name="allowMetaRedirects" 
+			onget="return (this.mBrowser ? this.mBrowser.docShell.allowMetaRedirects : this.mTabBrowser.mPrefs.getBoolPref('browser.tabs.extensions.allowMetaRedirects.enabled'));"
+			onset="this.mTabBrowser.setDocShellPropertyFor(this, 'allowMetaRedirects', Boolean(val), 'ANY', true); return this.allowMetaRedirects;"/>
+ 
+		<property name="allowSubframes" 
+			onget="return (this.mBrowser ? this.mBrowser.docShell.allowSubframes : this.mTabBrowser.mPrefs.getBoolPref('browser.tabs.extensions.allowSubframes.enabled'));"
+			onset="this.mTabBrowser.setDocShellPropertyFor(this, 'allowSubframes', Boolean(val), 'ANY', true); return this.allowSubframes;"/>
+ 
+		<property name="allowImages" 
+			onget="return (this.mBrowser ? this.mBrowser.docShell.allowImages : this.mTabBrowser.mPrefs.getBoolPref('browser.tabs.extensions.allowImages.enabled'));"
+			onset="this.mTabBrowser.setDocShellPropertyFor(this, 'allowImages', Boolean(val), 'ANY', true); return this.allowImages;"/>
+ 
+		<property name="textZoom" 
+			onget="return this.mBrowser.docShell.contentViewer ? parseInt(this.mBrowser.markupDocumentViewer.textZoom*100) : Number(this.getAttribute('tab-textZoom') || 100);"
+			onset="this.mTabBrowser.setTextZoomFor(this, parseInt(val), 'ANY'); return this.textZoom;"/>
+ 
+		<property name="fixedLabel" 
+			onget="return this.getAttribute('tab-fixedLabel');"
+			onset="this.mTabBrowser.setFixedLabelFor(this, String(val), 'ANY'); return this.fixedLabel;"/>
+ 
+		<property name="tabForbidden" readonly="true"> 
+			<getter><![CDATA[
+				if (this.mTabBrowser) {
+					return !(this.allowPlugins && this.allowJavascript && this.allowMetaRedirects && this.allowSubframes && this.allowImages);
+				}
+				else
+					return false;
+			]]></getter>
+		</property>
+  
+		<field name="mHiddenIcon"> 
+			null
+		</field>
+		<field name="mActiveIcon">
+			null
+		</field>
+		<field name="mLabel">
+			null
+		</field>
+		<field name="mTwisty">
+			null
+		</field>
+		<property name="mCloseBox" readonly="true">
+			<getter><![CDATA[
+				return document.getAnonymousElementByAttribute(
+						this,
+						'tabclass',
+						(this.mTabBrowser.getAttribute('tabbrowser-tab-closebox') == 'any' ? 'tab-closebutton-always' : 'tab-closebutton-hover' )
+					);
+			]]></getter>
+		</property>
+ 
+<!-- status --> 
+	
+		<property name="shouldPurgeChildren" 
+			onget="return this.getAttribute('tab-shouldPurgeChildren') == 'true';"
+			onset="if (val) this.setAttribute('tab-shouldPurgeChildren', val); else this.removeAttribute('tab-shouldPurgeChildren'); return this.shouldPurgeChildren"/>
+ 
+		<field name="mIsLabelChanging"> 
+			false
+		</field>
+		<field name="mIsHover">
+			false
+		</field>
+ 
+		<property name="isCurrentlyBlank" readonly="true"> 
+			<getter><![CDATA[
+				try {
+					return this.isReallyBlank ||
+							(
+								this.getAttribute('busy') != 'true' &&
+								this.mBrowser.currentURI.spec == 'about:blank'
+							);
+				}
+				catch(e) {
+					// this instance is not initialized yet!!
+				}
+				return true;
+			]]></getter>
+		</property>
+ 
+		<property name="isReallyBlank" readonly="true"> 
+			<getter><![CDATA[
+				try{
+					return (
+							this.getAttribute('busy') != 'true' &&
+							(
+								!this.mBrowser ||
+								!this.mBrowser.sessionHistory ||
+								(
+									this.mBrowser.sessionHistory.count < 2 &&
+									(
+										!this.getAttribute('tab-loadingURI') ||
+										this.getAttribute('tab-loadingURI') == 'about:blank'
+									)
+								)
+							)
+						);
+				}
+				catch(e) {
+					// this instance is not initialized yet!!
+				}
+				return true;
+			]]></getter>
+		</property>
+ 
+		<property name="shoudShowCloseboxWithMouseoverDelay" readonly="true"> 
+			<getter><![CDATA[
+				try {
+					return this.mTabBrowser.mPrefs.getIntPref('browser.tabs.extensions.show_closebox.tab.delay');
+				}
+				catch(e) {
+					return 0;
+				}
+			]]></getter>
+		</property>
+		<property name="shoudHideCloseboxWithMouseoverDelay" readonly="true">
+			<getter><![CDATA[
+				var delay = 0;
+				try {
+					delay = this.mTabBrowser.mPrefs.getIntPref('browser.tabs.extensions.show_closebox.tab.delay');
+				}
+				catch(e) {
+				}
+				return delay < 0 ? this.shoudShowCloseboxWithMouseoverDelay : delay ;
+			]]></getter>
+		</property>
+ 
+		<property name="shoudFocusWithMouseover" readonly="true"> 
+			<getter><![CDATA[
+				try {
+					return this.mTabBrowser.mPrefs.getBoolPref('browser.tabs.extensions.focus_with_mouseover');
+				}
+				catch(e) {
+					return false;
+				}
+			]]></getter>
+		</property>
+		<property name="shoudFocusWithMouseoverDelay" readonly="true">
+			<getter><![CDATA[
+				try {
+					return this.mTabBrowser.mPrefs.getIntPref('browser.tabs.extensions.focus_with_mouseover.delay');
+				}
+				catch(e) {
+					return 100;
+				}
+			]]></getter>
+		</property>
+ 
+		<property name="tabVisibility" readonly="true"> 
+			<getter><![CDATA[
+				return this.mTabBrowser.mGetTabVisibility(this);
+			]]></getter>
+		</property>
+		<field name="TAB_VISIBLE">
+			0
+		</field>
+		<field name="TAB_SCROLLED_OUT_LEFT">
+			-1
+		</field>
+		<field name="TAB_SCROLLED_OUT_RIGHT">
+			1
+		</field>
+		<field name="TAB_SCROLLED_OUT_ABOVE">
+			-2
+		</field>
+		<field name="TAB_SCROLLED_OUT_BELOW">
+			2
+		</field>
+ 
+		<property name="selected"> 
+			<getter><![CDATA[
+				return (this.getAttribute('selected') == 'true');
+			]]></getter>
+			<setter><![CDATA[
+				if (val && this.tabCollapsed) {
+					var parentTab = this.parentTab;
+					if (this.mTabBrowser.mTabInternalRemoving) {
+					}
+					else if (this.mTabBrowser.mTabRemoving) {
+						while (parentTab.tabCollapsed)
+						{
+							parentTab = parentTab.parentTab;
+						}
+						this.mTabBrowser.selectedTab = parentTab;
+						parentTab.selected = true;
+						parentTab.mSelectAfterDelay();
+						return;
+					}
+					else {
+						while (parentTab)
+						{
+							parentTab.tabSubgroupCollapsed = false;
+							parentTab = parentTab.parentTab;
+						}
+					}
+				}
+
+				try {
+					var xpathResult = this.mTabBrowser.evaluateXPath('child::*[@beforeselected or @afterselected]', this.mTabBrowser.mTabContainer);
+					var max = xpathResult.snapshotLength;
+					for (var i = 0; i < max; i++)
+					{
+						xpathResult.snapshotItem(i).removeAttribute('beforeselected');
+						xpathResult.snapshotItem(i).removeAttribute('afterselected');
+					}
+				}
+				catch(e) {
+				}
+
+				this.setAttribute('selected', val);
+
+				var index = this.tabIndex;
+				var tabs;
+				if ('mTabs' in this.mTabBrowser &&
+					this.mTabBrowser.mTabs)
+					tabs = this.mTabBrowser.mTabs;
+				else if ('mTabContainer' in this.mTabBrowser &&
+						this.mTabBrowser.mTabContainer)
+					tabs = this.mTabBrowser.mTabContainer.childNodes;
+				else
+					return val;
+
+				var verticalTab = (this.mTabBrowser.mTabContainer.orient == 'vertical');
+
+				var prev = this.previousTab;
+				if (prev) {
+					if (
+						!val ||
+						verticalTab ||
+						Math.abs(prev.boxObject.y - this.boxObject.y) >= (this.boxObject.height*0.6)
+						)
+						prev.removeAttribute('beforeselected');
+					else
+						prev.setAttribute('beforeselected', val);
+				}
+
+				var next = this.nextTab;
+				if (next) {
+					if (
+						!val ||
+						verticalTab ||
+						Math.abs(next.boxObject.y - this.boxObject.y) >= (this.boxObject.height*0.6)
+						)
+						next.removeAttribute('afterselected');
+					else
+						next.setAttribute('afterselected', val);
+				}
+
+				if (val &&
+					!this.mTabBrowser.mTabInternalRemoving &&
+					!this.tabCollapsed &&
+					this.hasChildTabs() &&
+					this.tabSubgroupCollapsed &&
+					this.mTabBrowser.mPrefs.getBoolPref('browser.tabs.extensions.group.tree.simple_operation')) {
+					this.mTabBrowser.mAllowAutoScrollTabGroup = true;
+					this.collapseOtherSubgroups();
+					this.tabSubgroupCollapsed = false;
+				}
+
+				return val;
+			]]></setter>
+		</property>
+		<method name="mSelectAfterDelay">
+			<body><![CDATA[
+				window.setTimeout(function(aTab) {
+					aTab.mTabBrowser.mTabContainer.selectNewTab(aTab);
+				}, 0, this);
+			]]></body>
+		</method>
+  
+<!-- on events --> 
+	
+		<method name="setTabColor"> 
+			<parameter name="aColor"/>
+			<body><![CDATA[
+				this.mTabBrowser.setTabColorFor(this, aColor);
+			]]></body>
+		</method>
+		<method name="clearTabColor">
+			<body><![CDATA[
+				this.setTabColor('default');
+			]]></body>
+		</method>
+		<method name="updateTabColor">
+			<body><![CDATA[
+				var color = this.getAttribute('tab-color');
+				if (!color || color == 'default') {
+					this.mLabelContainer.removeAttribute('style');
+					this.mLabelBackground.removeAttribute('style');
+					if (color)
+						this.removeAttribute('tab-color');
+				}
+				else {
+					color = color.split(':');
+					this.mLabelContainer.setAttribute('style', 'color: '+color[1]+' !important;');
+					this.mLabelBackground.setAttribute('style', 'background-color: '+color[0]+' !important;');
+				}
+			]]></body>
+		</method>
+ 
+		<method name="mOnLabelModified"> 
+			<parameter name="aEvent"/>
+			<body><![CDATA[
+				if (this.mIsLabelChanging) return;
+				this.mIsLabelChanging = true;
+
+				if (this.getAttribute('tab-fixedLabel') &&
+					aEvent.newValue != this.mTabBrowser.mStringBundle.getString('tabs.loading'))
+					this.setAttribute('label', this.getAttribute('tab-fixedLabel'));
+
+				this.mIsLabelChanging = false;
+			]]></body>
+		</method>
+ 
+		<method name="mOnMouseOver"> 
+			<parameter name="aEvent"/>
+			<body><![CDATA[
+				this.mIsHover = true;
+				this.setAttribute('tab-hover', true);
+
+				if (this.shoudShowCloseboxWithMouseoverDelay > 0)
+					window.setTimeout(this.mOnMouseOverCallbackClosebox, this.shoudShowCloseboxWithMouseoverDelay, this);
+				else
+					this.setAttribute('tab-showclosebox-hover', true);
+
+				if (this.shoudFocusWithMouseover)
+					window.setTimeout(this.mOnMouseOverCallbackFocus, this.shoudFocusWithMouseoverDelay, this);
+			]]></body>
+		</method>
+		<method name="mOnMouseOverCallbackClosebox">
+			<parameter name="aTab"/>
+			<body><![CDATA[
+				if (aTab.mIsHover)
+					aTab.setAttribute('tab-showclosebox-hover', true);
+			]]></body>
+		</method>
+		<method name="mOnMouseOverCallbackFocus">
+			<parameter name="aTab"/>
+			<body><![CDATA[
+				if (aTab.mIsHover)
+					aTab.mTabBrowser.selectedTab = aTab;
+			]]></body>
+		</method>
+ 
+		<method name="mOnMouseOut"> 
+			<parameter name="aEvent"/>
+			<body><![CDATA[
+				this.mIsHover = false;
+
+				if (this.shoudHideCloseboxWithMouseoverDelay > 0)
+					window.setTimeout(this.mOnMouseOutCallbackClosebox, this.shoudHideCloseboxWithMouseoverDelay, this);
+				else
+					this.removeAttribute('tab-showclosebox-hover');
+
+				this.removeAttribute('tab-hover');
+			]]></body>
+		</method>
+		<method name="mOnMouseOutCallbackClosebox">
+			<parameter name="aTab"/>
+			<body><![CDATA[
+				if (!aTab.mIsHover)
+					aTab.removeAttribute('tab-showclosebox-hover');
+			]]></body>
+		</method>
+ 
+		<method name="mOnMouseMove"> 
+			<parameter name="aEvent"/>
+			<body><![CDATA[
+				var target = this.isEventFiredOn(aEvent, 'closebox') ? 'closebox' :
+					this.isEventFiredOn(aEvent, 'twisty') ? 'twisty' :
+					this.isEventFiredOn(aEvent, 'favicon') ? 'favicon' :
+					'tab';
+
+
+				if (this.mTabBrowser.mTabsReadyToClose) {
+					if (this.mLastMouseOverTarget != target &&
+						target == 'closebox') {
+						if (this.getAttribute('tab-ready-to-close') == 'true')
+							this.removeAttribute('tab-ready-to-close');
+						else
+							this.setAttribute('tab-ready-to-close', true);
+					}
+				}
+				else if (this.mTabBrowser.mTabsReadyToFocus && !this.selected) {
+					this.mTabBrowser.selectedTab = this;
+				}
+
+
+				var type = this.mTabBrowser.getAttribute('tabbrowser-tab-closebox');
+				if (
+					type == 'never' ||
+					(type == 'current' && !this.selected)
+					) {
+					this.removeAttribute('tab-closebox-hover');
+				}
+				else {
+					if (target != 'closebox')
+						this.removeAttribute('tab-closebox-hover');
+					else
+						this.setAttribute('tab-closebox-hover', true);
+				}
+
+
+				this.mLastMouseOverTarget = target;
+			]]></body>
+		</method>
+ 
+		<method name="mOnClickButtons"> 
+			<parameter name="aEvent"/>
+			<body><![CDATA[
+				if (this.isEventFiredOn(aEvent, 'twisty')) {
+					if (this.tabSubgroupCollapsed)
+						this.mTabBrowser.mAllowAutoScrollTabGroup = true;
+					this.tabSubgroupCollapsed = !this.tabSubgroupCollapsed;
+					return true;
+				}
+				else if (
+					!(
+						this.mCloseBox.collapsed ||
+						this.mCloseBox.hidden ||
+						window.getComputedStyle(gBrowser.selectedTab.mCloseBox, null).visibility == 'collapse' ||
+						window.getComputedStyle(gBrowser.selectedTab.mCloseBox, null).display == 'none'
+					) &&
+					this.isEventFiredOn(aEvent, 'closebox')) {
+					this.setAttribute('tab-closebox-active', true);
+					this.mTabBrowser.removeTab(this);
+					return true;
+				}
+				return false;
+			]]></body>
+		</method>
+		<method name="isEventFiredOn">
+			<parameter name="aEvent"/>
+			<parameter name="aTarget"/>
+			<body><![CDATA[
+				var node;
+				switch (aTarget)
+				{
+					case 'closebox':
+						node = this.mCloseBox;
+						break;
+					case 'favicon':
+						node = this.mActiveIcon;
+						break;
+					case 'twisty':
+						node = this.mTwisty;
+						break;
+					case 'tab':
+						node = this;
+						break;
+					default:
+						return false;
+				}
+
+				if (
+					(
+						aEvent.type == 'click' ||
+						aEvent.type == 'dblclick' ||
+						aEvent.type == 'mouseup' ||
+						aEvent.type == 'mousedown'
+					) &&
+					aEvent.button != 0
+					)
+					return false;
+
+				var x   = aEvent.clientX,
+					y   = aEvent.clientY,
+					box = node.boxObject;
+
+				if (this.mTabBrowser.mScrollbar) { // see "updateScrollbarFromEvent"
+					var curPos = this.mTabBrowser.mGetScrollPosition(this.mTabBrowser.mScrollbar).curPos;
+					if (this.mTabBrowser.mTabbarPlace < 2)
+						x += curPos;
+					else
+						y += curPos;
+				}
+
+				if (x < box.x ||
+					y < box.y ||
+					x > box.x + box.width ||
+					y > box.y + box.height)
+					return false;
+
+				return true;
+			]]></body>
+		</method>
+ 
+		<method name="mCanThroughClickEvent"> 
+			<parameter name="aEvent"/>
+			<body><![CDATA[
+				var retVal = (
+					!aEvent.ctrlKey ||
+					this.mTabBrowser.mPrefs.getBoolPref('middlemouse.contentLoadURL') ||
+					this.mTabBrowser.mPrefs.getIntPref('browser.tabs.extensions.onmiddleclick') == 0
+					);
+
+// we cannot disable original handler written in the file "chrome://global/content/bindings/tabbox.xml".
+// so, if we shouldn't change tab focus, this method re-focus to the original selected tab.
+				var b  = this.mTabBrowser;
+				var id = b.selectedTab.tabId;
+				if (!retVal && id != this.tabId)
+					window.setTimeout(function() {
+						var t = b.getTabByTabId(id);
+						if (t && !t.selected)
+							b.mTabContainer.selectNewTab(t);
+
+						delete t;
+						delete b;
+						delete id;
+//						delete retVal;
+					}, 0);
+
+				return retVal;
+			]]></body>
+		</method>
+ 
+		<method name="updateThumbnail"> 
+			<body><![CDATA[
+try {
+				if (this.mThumbnailUpdatingTimer ||
+					!this.mTabBrowser.mPrefs.getBoolPref('browser.tabs.extensions.thumbnail.enabled') ||
+					!('getContext' in this.mThumbnail) ||
+					!this.mThumbnail.getContext)
+					return;
+}
+catch(e) {
+	return;
+}
+				this.mThumbnailUpdatingTimer = window.setTimeout(this.mUpdateThumbnail, 0, this);
+			]]></body>
+		</method>
+		<field name="mThumbnailUpdatingTimer">
+			false
+		</field>
+		<method name="mUpdateThumbnail">
+			<parameter name="aTab"/>
+			<body><![CDATA[
+try {
+			var win    = aTab.mBrowser.contentWindow;
+			var canvas = aTab.mThumbnail;
+			var pref   = aTab.mTabBrowser.mPrefs;
+			var root   = aTab.rootTab;
+			var tab    = (root && (aTab.tabCollapsed || aTab.mTabBrowser.tabGroupTreeAvailable)) ? root : aTab ;
+
+			var canvasW = pref.getIntPref('browser.tabs.extensions.thumbnail.width');
+			if (canvasW < 0)
+				canvasW = parseInt(tab.boxObject.width * Math.max(pref.getIntPref('browser.tabs.extensions.thumbnail.power'), 1) / 100);
+
+			var canvasH = pref.getIntPref('browser.tabs.extensions.thumbnail.height');
+			if (canvasH < 0)
+				canvasH = parseInt(canvasW * 0.75);
+
+
+			var w, h;
+			if (canvasH < canvasW) {
+				w = win.innerWidth;
+				h = parseInt(w * (canvasH / Math.max(canvasW, 1)));
+			}
+			else {
+				h = win.innerHeight;
+				w = parseInt(h * (canvasW / Math.max(canvasH, 1)));
+			}
+
+			canvas.style.width  = canvasW+"px";
+			canvas.style.height = canvasH+"px";
+
+			canvas.width  = canvasW;
+			canvas.height = canvasH;
+
+			if (aTab.tabCollapsed) {
+				aTab.mShouldUpdateThumbnailOnExpand = true;
+			}
+			else {
+				aTab.mShouldUpdateThumbnailOnExpand = false;
+				try {
+					var ctx = canvas.getContext("2d");
+					ctx.clearRect(0, 0, canvasW, canvasH);
+					ctx.save();
+					ctx.scale(canvasW/w, canvasH/h);
+					ctx.drawWindow(win, 0/*win.scrollX*/, win.scrollY, w, h, "rgb(255,255,255)");
+					ctx.restore();
+				}
+				catch(e) {
+				}
+			}
+
+}
+catch(e) {
+}
+			aTab.mThumbnailUpdatingTimer = null;
+
+			]]></body>
+		</method>
+  
+		<constructor><![CDATA[ 
+			this.mTabInfo = {
+				mTab                    : this,
+				get loadingURI() {
+					return this.mTab.getAttribute('tab-loadingURI');
+				},
+				set loadingURI(aValue) {
+					this.mTab.setAttribute('tab-loadingURI', aValue);
+					return this.loadingURI;
+				}
+			};
+
+			this.mHiddenIcon = document.getAnonymousElementByAttribute(this, 'tabclass', 'tab-icon-hidden');
+			this.mHiddenIcon.busyIcon = null;
+			this.mHiddenIcon.normalIcon = null;
+
+			this.mActiveIcon = document.getAnonymousElementByAttribute(this, 'tabclass', 'tab-icon-active');
+			this.mLabelContainer = document.getAnonymousElementByAttribute(this, 'class', 'tab-text-container');
+			this.mLabelBackground = document.getAnonymousElementByAttribute(this, 'class', 'tab-text-background');
+			this.mTwisty  = document.getAnonymousElementByAttribute(this, 'class', 'tab-twisty');
+
+			try {
+				var pref = this.mTabBrowser.mPrefs;
+				this.setAttribute('overlay-icon', pref.getBoolPref('browser.tabs.extensions.overlay_icon') ? true : false);
+			}
+			catch(e) {
+				this.setAttribute('overlay-icon', true);
+			}
+
+			if (this.mTabBrowser &&
+				'mTabbarPlace' in this.mTabBrowser) {
+				switch(this.mTabBrowser.mTabbarPlace)
+				{
+					case 0: // top
+					default:
+						this.setAttribute('class', (this.getAttribute('class') || '')+' tab-top');
+						break;
+					case 1: // bottom
+						this.setAttribute('class', (this.getAttribute('class') || '')+' tab-bottom');
+						break;
+					case 2: // left
+						this.setAttribute('class', (this.getAttribute('class') || '')+' tab-left');
+						break;
+					case 3: // right
+						this.setAttribute('class', (this.getAttribute('class') || '')+' tab-right');
+						break;
+				}
+			}
+
+			if (!this.tabId)
+				this.setAttribute('tab-id', 'tabbrowser-tab-' + Math.floor(Math.random() * 1000000));
+
+			if (this.mTabBrowser) {
+				if (!this.mMiscEventListener)
+					this.mMiscEventListener = this.mCreateMiscEventListener();
+
+				this.mTabBrowser.addEventListener('XULTabbrowserTabAdded',      this.mMiscEventListener, false);
+				this.mTabBrowser.addEventListener('XULTabbrowserTabRemoved',    this.mMiscEventListener, false);
+				this.mTabBrowser.addEventListener('XULTabbrowserTabbarResized', this.mMiscEventListener, false);
+			}
+
+			this.initTab();
+		]]></constructor>
+		<destructor><![CDATA[
+			this.mCollapseExpandStopTimer();
+
+			if (this.mMiscEventListener) {
+				this.mTabBrowser.removeEventListener('XULTabbrowserTabAdded',      this.mMiscEventListener, false);
+				this.mTabBrowser.removeEventListener('XULTabbrowserTabRemoved',    this.mMiscEventListener, false);
+				this.mTabBrowser.removeEventListener('XULTabbrowserTabbarResized', this.mMiscEventListener, false);
+
+				this.mMiscEventListener.tab = null;
+				this.mMiscEventListener     = null;
+			}
+		]]></destructor>
+		<field name="mMiscEventListener">
+			null
+		</field>
+		<method name="mCreateMiscEventListener">
+			<body><![CDATA[
+				return {
+					tab         : this,
+					handleEvent : function(aEvent) {
+						var b = this.tab.mTabBrowser;
+						switch (aEvent.type)
+						{
+							case 'XULTabbrowserTabbarResized':
+								if (b.mPrefs.getIntPref('browser.tabs.extensions.thumbnail.width') < 0)
+									this.tab.updateThumbnail();
+								break;
+							case 'XULTabbrowserTabAdded':
+							case 'XULTabbrowserTabRemoved':
+								if (b.mTabbarPlace < 2 &&
+									b.mPrefs.getIntPref('browser.tabs.extensions.tabs_width_type') != 2 &&
+									b.mPrefs.getIntPref('browser.tabs.extensions.thumbnail.width') < 0)
+									this.tab.updateThumbnail();
+								break;
+							default:
+								break;
+						}
+					}
+				};
+			]]></body>
+		</method>
+	
+		<method name="initTab"> 
+			<body><![CDATA[
+				var pref = this.mTabBrowser.mPrefs;
+				var type, min, max;
+				try {
+					type = pref.getIntPref('browser.tabs.extensions.tabs_width_type');
+					min  = Math.abs(pref.getIntPref('browser.tabs.extensions.tabs_min_width'));
+					max  = Math.abs(pref.getIntPref('browser.tabs.extensions.tabs_max_width') || 250 );
+				}
+				catch(e) {
+					type = 0;
+					min  = 30;
+					max  = 250;
+				}
+
+				if (this.mTabBrowser.mTabBox.orient == 'horizontal') {
+					type = 2;
+				}
+
+				if (min > max) {
+					var tmpMin = max;
+					max = min;
+					min = tmpMin;
+				}
+
+				switch (type)
+				{
+					default:
+					case 0: // fit to window
+						this.setAttribute('width', 0);
+						this.setAttribute('minwidth', min);
+						this.setAttribute('maxwidth', max);
+						this.setAttribute('flex', 100);
+						break;
+
+					case 1: // fit to label
+						this.removeAttribute('width');
+						this.setAttribute('minwidth', min);
+						this.setAttribute('maxwidth', max);
+						this.removeAttribute('flex');
+						break;
+
+					case 2: // fix
+						if (this.mTabBrowser.mTabBox.orient == 'horizontal') {
+							this.removeAttribute('width');
+						}
+						else {
+							try {
+								this.setAttribute('width', Math.abs(!type ? 250 : pref.getIntPref('browser.tabs.extensions.tabs_width')));
+							}
+							catch(e) {
+								this.setAttribute('width', 250);
+							}
+						}
+						this.removeAttribute('minwidth');
+						this.removeAttribute('maxwidth');
+						this.removeAttribute('flex');
+						break;
+				}
+
+				var crop;
+				try {
+					crop = pref.getIntPref('browser.tabs.extensions.tabs_title_crop');
+				}
+				catch(e) {
+					crop = 2;
+				}
+
+				this.setAttribute('tab-titleCrop', (crop == 0) ? 'start' : (crop == 1) ? 'center' : 'end' );
+				this.setAttribute('crop', this.getAttribute('tab-titleCrop'));
+
+				this.updateTabColor();
+				this.updateThumbnail();
+			]]></body>
+		</method>
+  
+	</implementation> 
+  
+	<handlers> 
+	
+		<handler event="mouseover" 
+			action="this.mOnMouseOver(event);"/>
+		<handler event="mouseout"
+			action="this.mOnMouseOut(event);"/>
+		<handler event="mousemove"
+			action="this.mOnMouseMove(event);"/>
+ 
+		<handler event="click" button="0"><![CDATA[ 
+			if (
+				this.mOnClickButtons(event) ||
+				!this.mCanThroughClickEvent(event)
+				) return;
+
+// commented out because we cannot disable original handler written in the file "chrome://global/content/bindings/tabbox.xml".
+//			this.parentNode.selectNewTab(this);
+		]]></handler>
+ 
+		<handler event="mousedown" button="0"><![CDATA[ 
+			if (this.selected) {
+				this.setAttribute('clickOnCurrent', true);
+			}
+			else {
+				this.removeAttribute('clickOnCurrent');
+
+				if (this.isEventFiredOn(event, 'twisty') ||
+					this.isEventFiredOn(event, 'closebox')) {
+					this.mTabButtonClicked = true;
+				}
+			}
+		]]></handler>
+ 
+		<handler event="DOMAttrModified"><![CDATA[ 
+			switch(event.attrName)
+			{
+				case 'label':
+					this.mOnLabelModified(event);
+					this.updateThumbnail();
+					break;
+				case 'style':
+					this.updateThumbnail();
+					break;
+				default:
+					break;
+			}
+		]]></handler>
+ 
+	</handlers> 
+  
+</binding> 
+  
+<!-- tabbrowser --> 
+<binding id="tabbrowser"
+	extends="chrome://global/content/bindings/tabbrowser.xml#tabbrowser">
+	
+	<implementation> 
+	
+<!-- properties --> 
+	
+		<field name="mIdentifiedTabs"> 
+			new Array()
+		</field>
+ 
+		<field name="mRemovedTabInfoList"> 
+			new Array()
+		</field>
+		<field name="mTabRemoving">
+			false
+		</field>
+		<field name="mTabInternalRemoving">
+			false
+		</field>
+ 
+		<field name="mHighlightTimer"> 
+			null
+		</field>
+		<field name="mDuplicateTabTimer">
+			null
+		</field>
+ 
+		<field name="mTabContainerInnerBox"> 
+			null
+		</field>
+ 
+		<field name="mMouseDownX"> 
+			0
+		</field>
+		<field name="mMouseDownY">
+			0
+		</field>
+ 
+		<field name="mFocusChangedCount"> 
+			0
+		</field>
+ 
+		<!--property name="mTabs" readonly="true" 
+			onget="return this.mTabContainer.childNodes;"/-->
+ 
+		<property name="rootTabs" readonly="true"> 
+			<getter><![CDATA[
+				try {
+					var xpathResult = this.evaluateXPath('child::*[local-name() = "tab" and (not(@tab-parentTab) or @tab-parentTab = "")]', this.mTabContainer);
+					return {
+							mResult : xpathResult,
+							length  : xpathResult.snapshotLength,
+							item    : function(aIndex)
+							{
+								try {
+									return this.mResult.snapshotItem(aIndex);
+								}
+								catch(e) {
+								}
+								return null;
+							}
+						};
+				}
+				catch(e) {
+				}
+				return this.mTabs;
+			]]></getter>
+		</property>
+ 
+		<property name="mTabDropIndicatorBar" readonly="true"> 
+			<getter><![CDATA[
+				if (!this._mTabDropIndicatorBar) {
+					this._mTabDropIndicatorBar = document.getElementById('tab-drop-indicator-bar') ||
+						document.getAnonymousElementByAttribute(this, 'class', 'tab-drop-indicator-bar');
+					this._mTabDropIndicatorBar.setAttribute('tabid', 'tab-drop-indicator-bar');
+				}
+				return this._mTabDropIndicatorBar;
+			]]></getter>
+		</property>
+
+		<property name="mTabDropIndicator" readonly="true">
+			<getter><![CDATA[
+				if (!this._mTabDropIndicator) {
+					this._mTabDropIndicator = document.getElementById('tab-drop-indicator') ||
+						document.getAnonymousElementByAttribute(this, 'class', 'tab-drop-indicator');
+					this._mTabDropIndicatorBar.setAttribute('tabid', 'tab-drop-indicator');
+				}
+				return this._mTabDropIndicator;
+			]]></getter>
+		</property>
+ 
+<!-- prefs --> 
+	
+		<property name="mLoadInBackground" readonly="true"> 
+			<getter><![CDATA[
+				try {
+					return this.mPrefs.getBoolPref('browser.tabs.loadInBackground');
+				}
+				catch(e) {
+					return false;
+				}
+			]]></getter>
+		</property>
+ 
+		<property name="tabGroupsAvailable" readonly="true"> 
+			<getter><![CDATA[
+				try {
+					return this.mPrefs.getBoolPref('browser.tabs.extensions.group.enabled');
+				}
+				catch(e) {
+					return false;
+				}
+			]]></getter>
+		</property>
+ 
+		<property name="tabGroupTreeAvailable" readonly="true"> 
+			<getter><![CDATA[
+				try {
+					return this.tabGroupsAvailable &&
+						this.mPrefs.getBoolPref('browser.tabs.extensions.group.tree.enabled') &&
+						this.mTabbarPlace > 1;
+				}
+				catch(e) {
+					return false;
+				}
+			]]></getter>
+		</property>
+ 
+		<property name="mWinHookMode" readonly="true"> 
+			<getter><![CDATA[
+				var value;
+				try {
+					value = this.mPrefs.getIntPref('browser.tabs.extensions.window_hook_mode');
+				}
+				catch(e) {
+					value = 0;
+				}
+				return (value <= 0) ? 0 : value ;
+			]]></getter>
+		</property>
+ 
+		<property name="mControlRefreshWithAutoReload" readonly="true"> 
+			<getter><![CDATA[
+				try {
+					return this.mPrefs.getBoolPref('browser.tabs.extensions.control_refresh');
+				}
+				catch(e) {
+					return true;
+				}
+			]]></getter>
+		</property>
+ 
+		<property name="mAutoReloadBackgroundTabsSlow" readonly="true"> 
+			<getter><![CDATA[
+				try {
+					return this.mPrefs.getBoolPref('browser.tabs.extensions.slow_down_autoreload_in_background.enabled');
+				}
+				catch(e) {
+					return false;
+				}
+			]]></getter>
+		</property>
+ 
+		<property name="mAutoReloadBackgroundTabsRate" readonly="true"> 
+			<getter><![CDATA[
+				try {
+					return Math.max(Math.abs(this.mPrefs.getIntPref('browser.tabs.extensions.slow_down_autoreload_in_background.rate')), 1);
+				}
+				catch(e) {
+					return 5;
+				}
+			]]></getter>
+		</property>
+ 
+		<property name="mUndoRemoveTabCache" readonly="true"> 
+			<getter><![CDATA[
+				var value;
+				try {
+					value = this.mPrefs.getIntPref('browser.tabs.extensions.undo_cache.local');
+				}
+				catch(e) {
+					value = 0;
+				}
+				return (value <= 0) ? 0 : value ;
+			]]></getter>
+		</property>
+ 
+		<property name="mTabbarPlace" readonly="true"> 
+			<getter><![CDATA[
+				try {
+					return this.mPrefs.getIntPref('browser.tabs.extensions.tabbar_place');
+				}
+				catch(e) {
+					return 0;
+				}
+			]]></getter>
+		</property>
+ 
+		<property name="mShouldShowProgressForTabs" readonly="true"> 
+			<getter><![CDATA[
+				try {
+					return this.mPrefs.getBoolPref('browser.tabs.extensions.show_progress.tab');
+				}
+				catch(e) {
+					return true;
+				}
+			]]></getter>
+		</property>
+  
+		<!-- Ge the revision of Mozilla. This property will return a numeric value like "1.1", "0.9", etc. --> 
+		<field name="_mMozRevision">
+			0
+		</field>
+		<property name="mMozRevision" readonly="true">
+			<getter><![CDATA[
+				if (!this._mMozRevision) {
+					try {
+						var httpProtocolHandler = Components.classes['@mozilla.org/network/protocol;1?name=http'].getService(Components.interfaces.nsIHttpProtocolHandler);
+						this._mMozRevision = Number(
+									httpProtocolHandler.misc
+									.replace(/^[^\d]+/, '')
+									.replace(/([^\d]+$|rc\d)/i, '')
+									.replace(/\./, '/')
+									.replace(/\./g, '')
+									.replace(/\//, '.')
+								);
+					}
+					catch(e) {
+						this._mMozRevision = 1;
+					}
+				}
+				return this._mMozRevision;
+			]]></getter>
+		</property>
+ 
+<!-- XPConnect --> 
+	
+		<field name="mStringBundleInternal"> 
+			Components.classes['@mozilla.org/intl/stringbundle;1'].getService(Components.interfaces.nsIStringBundleService)
+				.createBundle('chrome://tabextensions/locale/tabextensions.properties')
+		</field>
+ 
+		<field name="mIOService" readonly="true"> 
+			Components.classes['@mozilla.org/network/io-service;1'].getService(Components.interfaces.nsIIOService)
+		</field>
+ 
+		<field name="mPromptService" readonly="true"> 
+			Components.classes['@mozilla.org/embedcomp/prompt-service;1'].getService(Components.interfaces.nsIPromptService)
+		</field>
+ 
+		<field name="mWindowWatcher" readonly="true"> 
+			Components.classes['@mozilla.org/embedcomp/window-watcher;1'].getService(Components.interfaces.nsIWindowWatcher)
+		</field>
+   
+		<!-- common --> 
+	
+		<method name="makeURIFromSpec"> 
+			<parameter name="aURI"/>
+			<body><![CDATA[
+				try {
+					var newURI;
+					aURI = aURI || '';
+					if (aURI && aURI.indexOf('file:') == 0) {
+						var tempLocalFile;
+						try {
+							var fileHandler = this.mIOService.getProtocolHandler('file').QueryInterface(Components.interfaces.nsIFileProtocolHandler);
+							tempLocalFile = fileHandler.getFileFromURLSpec(aURI);
+						}
+						catch(ex) { // [[interchangeability for Mozilla 1.1]]
+							try {
+								tempLocalFile = this.mIOService.getFileFromURLSpec(aURI);
+							}
+							catch(ex) { // [[interchangeability for Mozilla 1.0.x]]
+								tempLocalFile = Components.classes['@mozilla.org/file/local;1'].createInstance(Components.interfaces.nsILocalFile);
+								this.mIOService.initFileFromURLSpec(tempLocalFile, aURI);
+							}
+						}
+						newURI = this.mIOService.newFileURI(tempLocalFile); // we can use this instance with the nsIFileURL interface.
+					}
+					else {
+						newURI = this.mIOService.newURI(aURI, null, null);
+					}
+
+					return newURI;
+				}
+				catch(e){
+				}
+				return null;
+			]]></body>
+		</method>
+ 
+		<method name="makeURIFromFilePath"> 
+			<parameter name="aFilePath"/>
+			<body><![CDATA[
+				try {
+					var tempLocalFile = Components.classes['@mozilla.org/file/local;1'].createInstance(Components.interfaces.nsILocalFile);
+					try {
+						tempLocalFile.initWithPath(aFilePath);
+					}
+					catch(ex) {
+						var UConv = Components.classes['@mozilla.org/intl/scriptableunicodeconverter'].getService(Components.interfaces.nsIScriptableUnicodeConverter);
+						try {
+							UConv.charset = 'UTF-8';
+							aFilePath = UConv.ConvertToUnicode(aFilePath);
+						}
+						catch(er) {
+							UConv.charset = 'Shift_JIS';
+							aFilePath = UConv.ConvertToUnicode(aFilePath);
+						}
+						tempLocalFile.initWithPath(aFilePath);
+					}
+					return this.mIOService.newFileURI(tempLocalFile); // we can use this instance with the nsIFileURL interface.
+				}
+				catch(e){
+				}
+				return null;
+			]]></body>
+		</method>
+ 
+		<method name="readPostStream"> 
+			<parameter name="aStream"/>
+			<body><![CDATA[
+				var ret = {
+						contentType : null,
+						content     : null
+					};
+
+				if (
+					!aStream ||
+					!('gTSWindowShouldBeDestructed' in window) ||
+					!window.gTSWindowShouldBeDestructed
+					)
+					return ret;
+
+				return this.readPostStreamInternal(aStream);
+			]]></body>
+		</method>
+ 
+		<method name="readPostStreamInternal"> 
+			<parameter name="aStream"/>
+			<body><![CDATA[
+				var ret = {
+						contentType : null,
+						content     : null
+					};
+
+				if (!aStream)
+					return ret;
+
+				var nsISeekableStream = Components.interfaces.nsISeekableStream;
+				aStream = aStream.QueryInterface(nsISeekableStream);
+				try {
+					aStream.seek(nsISeekableStream.NS_SEEK_SET, 0);
+				}
+				catch(e) {
+					return ret;
+				}
+
+				var scriptableStream = Components.classes['@mozilla.org/scriptableinputstream;1'].createInstance(Components.interfaces.nsIScriptableInputStream);
+				scriptableStream.init(aStream);
+
+				var content;
+				var size = scriptableStream.available();
+				if (this.mMozRevision >= 1.3) {
+					content = scriptableStream.read(size);
+				}
+				else {
+					// to avoid NS_BASE_STREAM_CLOSED error (for Moz 0.9-1.2)
+					// codes in "liveHTTPHeaders" helped me.
+					for (var i = 0; i < size; i++)
+						content += scriptableStream.read(1);
+				}
+
+		//		scriptableStream.close();
+		//		aStream.close();
+
+				// rewind the stream
+				aStream.seek(nsISeekableStream.NS_SEEK_SET, 0);
+
+				if (content) {
+					ret.contentType = content.match(/Content-Type: ?(.*)/i)[1];
+					ret.content     = content.substr(content.length-Number(content.match(/Content-Length: ?(.*)/i)[1]));
+				}
+
+				return ret;
+			]]></body>
+		</method>
+ 
+		<method name="createPostStream"> 
+			<parameter name="aPostObject"/>
+			<parameter name="aShoudAddHeader"/>
+			<body><![CDATA[
+				if (!aPostObject || !aPostObject.contentType) return null;
+
+				var stream = Components.classes['@mozilla.org/io/string-input-stream;1'].createInstance(Components.interfaces.nsIStringInputStream);
+
+				var content = (aShoudAddHeader) ?
+					[
+						'Content-Type: '+aPostObject.contentType,
+						'Content-Length: '+aPostObject.content.length+'\n',
+						aPostObject.content
+					].join('\n')
+					: aPostObject.content ;
+
+				stream.setData(content, content.length);
+				return stream;
+			]]></body>
+		</method>
+ 
+		<method name="getTabByTabId"> 
+			<parameter name="aTabId"/>
+			<body><![CDATA[
+				return (!aTabId || !(aTabId in this.mIdentifiedTabs)) ? null : this.mIdentifiedTabs[aTabId] ;
+			]]></body>
+		</method>
+ 
+		<method name="setFocusInternal"> 
+			<parameter name="aTarget"/>
+			<body><![CDATA[
+				var tabBrowser = this;
+				// this delay is to wait "onWindowFocus" works.
+				// see globalOverlay.js
+				window.setTimeout(function(aTarget) {
+					tabBrowser.setFocusInternalCallback(aTarget);
+					delete tabBrowser;
+				}, 0, aTarget);
+			]]></body>
+		</method>
+		<method name="setFocusInternalCallback">
+			<parameter name="aTarget"/>
+			<body><![CDATA[
+				var t = this.selectedTab;
+				var b = t.mBrowser;
+
+				var elem = b.focusedElement;
+				if (elem &&
+					elem.ownerDocumen &&
+					elem.ownerDocument.defaultView.top == window.top)
+					elem = null;
+
+				var w    = b.focusedWindow ? b.focusedWindow :
+						b.contentDocument ? b.contentWindow :
+						elem ? this.getDocShellFromDocument((new XPCNativeWrapper(elem, 'ownerDocument')).ownerDocument)
+								.QueryInterface(Components.interfaces.nsIWebNavigation)
+								.QueryInterface(Components.interfaces.nsIInterfaceRequestor)
+								.getInterface(Components.interfaces.nsIDOMWindow) :
+						null ;
+				if ((new XPCNativeWrapper(w, 'top')).top == window.top)
+					w = window._content || window.content;
+
+				if (!elem && !w) return;
+
+				var isElement = (elem && aTarget == elem);
+
+				// if the window is active, use methods of the original codes.
+				// see "onWindowFocus" and "onWindowBlur" definitions in the globalOverlay.js
+				if (window.__tabextensions__isWindowFocused) {
+					var setFocus = function(aTarget) {
+							Components.lookupMethod(aTarget, 'focus').call(aTarget);
+							if ('TabbrowserService' in window && TabbrowserService.debug)
+								dump('tabbrowser.xml#tabbrowser.setFocusInternalCallback()\n  do for the topmost window\n  focus to '+aTarget+'\n');
+						};
+
+					document.commandDispatcher.suppressFocusScroll = true;
+
+					try {
+						setFocus(aTarget);
+					}
+					catch(e) {
+						if (elem) {
+							try {
+								setFocus(elem);
+							}
+							catch(e) {
+								try {
+									setFocus(w);
+								}
+								catch(e) {
+								}
+							}
+						}
+						else if (w) {
+							try {
+								setFocus(w);
+							}
+							catch(e) {
+							}
+						}
+						else {
+							window.setTimeout(setFocus, 0, window.content);
+						}
+					}
+
+					document.commandDispatcher.suppressFocusScroll = false;
+					return;
+				}
+
+				// if the window isn't active, focus but keep the window into the backgorund
+				try {
+					if ('TabbrowserService' in window && TabbrowserService.debug)
+						dump('tabbrowser.xml#tabbrowser.setFocusInternalCallback()::\n  do for a background window\n');
+
+					var winWrapper = new XPCNativeWrapper(w,
+							'QueryInterface()',
+							'document',
+							'focus()'
+						);
+					var docShell = winWrapper.QueryInterface(Components.interfaces.nsIInterfaceRequestor)
+						.getInterface(Components.interfaces.nsIWebNavigation)
+						.QueryInterface(Components.interfaces.nsIDocShell);
+
+					docShell.hasFocus = true;
+
+					var treeOwner = docShell.QueryInterface(Components.interfaces.nsIDocShellTreeItem)
+						.treeOwner;
+
+					treeOwner.QueryInterface(Components.interfaces.nsIInterfaceRequestor)
+						.getInterface(Components.interfaces.nsIEmbeddingSiteWindow)
+						.setFocus();
+
+					treeOwner.QueryInterface(Components.interfaces.nsIBaseWindow)
+						.setFocus();
+
+					if (isElement) {
+						document.commandDispatcher.focusedElement = elem;
+					}
+					else {
+						document.commandDispatcher.focusedWindow = w;
+
+						// if the "tabbrowser" element is focused, the space key (to scroll the content area) is wrongly ignored.
+						var focused = document.commandDispatcher.focusedElement;
+						if (focused &&
+							focused.ownerDocument != winWrapper.document)
+							document.commandDispatcher.focusedElement = null;
+					}
+				}
+				catch(e) {
+//					if ('TabbrowserService' in window && TabbrowserService.debug)
+//						alert('@tabbrowser.xml#tabbrowser.setFocusInternalCallback()\n'+e);
+				}
+			]]></body>
+		</method>
+ 
+		<method name="setReadyStateForAllFrames"> 
+			<parameter name="aWindow"/>
+			<parameter name="aStatus"/>
+			<parameter name="aOnlyForUndefinds"/>
+			<body><![CDATA[
+				if (!aWindow) return;
+
+				if (
+					aWindow.document &&
+					(
+						!aOnlyForUndefinds ||
+						!('tabbrowserReadyState' in aWindow.document)
+					)
+					)
+					aWindow.document.tabbrowserReadyState = aStatus;
+
+				try {
+					var frames = Components.lookupMethod(aWindow, 'frames').call(aWindow);
+					if (frames && frames.length)
+						for (var i = 0; i < frames.length; i++)
+							this.setReadyStateForAllFrames(frames[i], aStatus);
+				}
+				catch(e) {
+				}
+			]]></body>
+		</method>
+ 
+		<property name="isBlank" readonly="true"> 
+			<getter><![CDATA[
+				return (this.selectedTab.isReallyBlank && this.mTabs.length < 2 && !this.getStripVisibility());
+			]]></getter>
+		</property>
+ 
+		<method name="getDocShellFromDocument"> 
+			<parameter name="aDocument"/>
+			<parameter name="aRootDocShell"/>
+			<body><![CDATA[
+				const kDSTreeNode = Components.interfaces.nsIDocShellTreeNode;
+				const kDSTreeItem = Components.interfaces.nsIDocShellTreeItem;
+				const kWebNav     = Components.interfaces.nsIWebNavigation;
+
+				var doc = aDocument;
+				if (!doc) return null;
+
+				doc = new XPCNativeWrapper(doc,
+						'QueryInterface()',
+						'defaultView'
+					);
+
+
+				if (doc.defaultView)
+					return (new XPCNativeWrapper(doc.defaultView, 'QueryInterface()'))
+							.QueryInterface(Components.interfaces.nsIInterfaceRequestor)
+							.getInterface(kWebNav)
+							.QueryInterface(Components.interfaces.nsIDocShell);
+
+				if (!aRootDocShell)
+					aRootDocShell = this.docShell;
+
+				aRootDocShell = aRootDocShell
+						.QueryInterface(kDSTreeNode)
+						.QueryInterface(kDSTreeItem)
+						.QueryInterface(kWebNav);
+				var docShell = aRootDocShell;
+				traceDocShellTree:
+				do {
+					if (docShell.document == aDocument)
+						return docShell;
+
+					if (docShell.childCount) {
+						docShell = docShell.getChildAt(0);
+						docShell = docShell
+							.QueryInterface(kDSTreeNode)
+							.QueryInterface(kWebNav);
+					}
+					else {
+						parentDocShell = docShell.parent.QueryInterface(kDSTreeNode);
+						while (docShell.childOffset == parentDocShell.childCount-1)
+						{
+							docShell = parentDocShell;
+							if (docShell == aRootDocShell || !docShell.parent)
+								break traceDocShellTree;
+							parentDocShell = docShell.parent.QueryInterface(kDSTreeNode);
+						}
+						docShell = parentDocShell.getChildAt(docShell.childOffset+1)
+							.QueryInterface(kDSTreeNode)
+							.QueryInterface(kWebNav);
+					}
+				} while (docShell != aRootDocShell);
+
+				return null;
+			]]></body>
+		</method>
+ 
+		<method name="evaluateXPath"> 
+			<parameter name="aExpression"/>
+			<parameter name="aContextNode"/>
+			<parameter name="aType"/>
+			<body><![CDATA[
+				aExpression  = aExpression || '';
+				aContextNode = aContextNode || document.documentElement;
+
+				const type       = aType || XPathResult.ORDERED_NODE_SNAPSHOT_TYPE;
+				const resolver   = {
+					lookupNamespaceURI : function(aPrefix)
+					{
+						return 'http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul';
+					}
+				};
+				return document.evaluate(aExpression, aContextNode, resolver, type, null);
+			]]></body>
+		</method>
+  
+<!-- updating of UI --> 
+	
+		<method name="updateTabbarPlace"> 
+			<body><![CDATA[
+				var max = this.mTabs.length;;
+				var i;
+				var indicatorBar = this.mTabDropIndicatorBar;
+//				var nativeDragDropAvailable = document.getElementById('tab-drop-indicator-bar');
+
+				// reset
+				this.setAttribute('class', this.mTabContainer.getAttribute('class').replace(/ tabbrowser-tabbar-(top|bottom|left|right)/g, ''));
+				this.mTabContainer.setAttribute('class', this.mTabContainer.getAttribute('class').replace(/ tabs-bottom/g, '').replace(/ tabbrowser-tabs-(top|bottom|left|right)/g, ''));
+				this.mStrip.setAttribute('class', this.mStrip.getAttribute('class').replace(/ tabbrowser-strip-(top|bottom|left|right)/g, ''));
+
+				var flexible = (this.mPrefs.getIntPref('browser.tabs.extensions.tabs_width_type') < 1) && (this.mTabBox.orient != 'horizontal');
+
+				for (i = 0; i < max; i++)
+				{
+					this.mTabs[i].setAttribute('class', this.mTabs[i].getAttribute('class').replace(/ tab-(top|bottom|left|right)/g, ''));
+					if (flexible)
+						this.mTabs[i].setAttribute('flex', 100);
+					else
+						this.mTabs[i].removeAttribute('flex');
+				}
+
+				this.mTabBox.orient = 'vertical';
+				this.mStrip.orient = this.mTabContainer.orient = this.mTabContainerInnerBox.orient = 'horizontal';
+				if (indicatorBar) {
+					indicatorBar.orient = this.mStrip.orient;
+					indicatorBar.setAttribute('ordinal', 20);
+				}
+				this.mStrip.setAttribute('ordinal', 30);
+				this.mTabBarSplitter.setAttribute('ordinal', 31);
+				this.mTabBarSplitter.setAttribute('collapse', 'before');
+				this.mPanelContainer.setAttribute('ordinal', 40);
+
+
+				if (this.mTabbarPlace < 0)
+					this.setAttribute('tabbrowser-tabbar-hidden', true);
+				else
+					this.removeAttribute('tabbrowser-tabbar-hidden');
+
+
+				var labelAttr = this.mTabbarPlace < 2 ? 'label-for-horizontal-tabbar' : 'label-for-vertical-tabbar' ;
+				var nodes = this.mTabContainer.previousSibling.getElementsByAttribute(labelAttr, '*');
+				for (i = 0; i < nodes.length; i++)
+					nodes[i].setAttribute('label', nodes[i].getAttribute(labelAttr));
+
+
+				var tabPosition = '';
+				var tabBarWidth = 250;
+				try {
+					tabBarWidth = Math.abs(this.mPrefs.getIntPref('browser.tabs.extensions.tabs_width'));
+				}
+				catch(e) {
+				}
+
+				switch(this.mTabbarPlace)
+				{
+					case 0: // top
+					default:
+						this.setAttribute('class', this.mTabContainer.getAttribute('class')+' tabbrowser-tabbar-top');
+						this.mTabContainer.setAttribute('class', this.mTabContainer.getAttribute('class')+' tabbrowser-tabs-top');
+						this.mStrip.setAttribute('class', this.mStrip.getAttribute('class')+' tabbrowser-strip-top');
+
+						this.mStrip.removeAttribute('width');
+						tabPosition = ' tab-top';
+						break;
+
+					case 1: // bottom
+						this.setAttribute('class', this.mTabContainer.getAttribute('class')+' tabbrowser-tabbar-bottom');
+						this.mTabContainer.setAttribute('class', this.mTabContainer.getAttribute('class')+' tabbrowser-tabs-bottom tabs-bottom');
+						this.mStrip.setAttribute('class', this.mStrip.getAttribute('class')+' tabbrowser-strip-bottom');
+
+						this.mStrip.removeAttribute('width');
+
+						this.mPanelContainer.setAttribute('ordinal', 20);
+						if (indicatorBar)
+							indicatorBar.setAttribute('ordinal', 30);
+						this.mTabBarSplitter.setAttribute('ordinal', 10);
+						this.mTabBarSplitter.setAttribute('collapse', 'after');
+						this.mSetPropertyWithDelay(this.mTabBarSplitter, 'ordinal', 39);
+						this.mStrip.setAttribute('ordinal', 40);
+
+
+						tabPosition = ' tab-bottom';
+						break;
+
+					case 2: // left
+						this.setAttribute('class', this.mTabContainer.getAttribute('class')+' tabbrowser-tabbar-left');
+						this.mTabContainer.setAttribute('class', this.mTabContainer.getAttribute('class')+' tabbrowser-tabs-left');
+						this.mStrip.setAttribute('class', this.mStrip.getAttribute('class')+' tabbrowser-strip-left');
+
+						this.mTabBox.orient = 'horizontal';
+						this.mStrip.orient = this.mTabContainer.orient = this.mTabContainerInnerBox.orient = 'vertical';
+						if (indicatorBar)
+							indicatorBar.orient = this.mStrip.orient;
+
+						this.mStrip.setAttribute('width', tabBarWidth);
+
+						tabPosition = ' tab-left';
+						break;
+
+					case 3: // right
+						this.setAttribute('class', this.mTabContainer.getAttribute('class')+' tabbrowser-tabbar-right');
+						this.mTabContainer.setAttribute('class', this.mTabContainer.getAttribute('class')+' tabbrowser-tabs-right');
+						this.mStrip.setAttribute('class', this.mStrip.getAttribute('class')+' tabbrowser-strip-right');
+
+						this.mTabBox.orient = 'horizontal';
+						this.mStrip.orient = this.mTabContainer.orient = this.mTabContainerInnerBox.orient = 'vertical';
+						this.mPanelContainer.setAttribute('ordinal', 20);
+						this.mTabBarSplitter.setAttribute('ordinal', 10);
+						this.mTabBarSplitter.setAttribute('collapse', 'after');
+						this.mSetPropertyWithDelay(this.mTabBarSplitter, 'ordinal', 29);
+						this.mStrip.setAttribute('ordinal', 30);
+						if (indicatorBar) {
+							indicatorBar.orient = this.mStrip.orient;
+							indicatorBar.setAttribute('ordinal', 40);
+						}
+
+						this.mStrip.setAttribute('width', tabBarWidth);
+
+						tabPosition = ' tab-right';
+						break;
+				}
+
+
+				for (i = 0; i < max; i++)
+				{
+					this.mTabs[i].setAttribute('class', this.mTabs[i].getAttribute('class')+tabPosition);
+					this.mTabs[i].initTab();
+				}
+
+//				if (!nativeDragDropAvailable)
+//					indicatorBar.parentNode.orient = indicatorBar.orient == 'horizontal' ? 'vertical' : 'horizontal' ;
+			]]></body>
+		</method>
+		<method name="mSetPropertyWithDelay">
+			<parameter name="aTarget"/>
+			<parameter name="aProperty"/>
+			<parameter name="aValue"/>
+			<body><![CDATA[
+				window.setTimeout(function() { aTarget[aProperty] = aValue; }, 0);
+			]]></body>
+		</method>
+
+		<method name="updateTabAppearance"> 
+			<body><![CDATA[
+				if (this.mTabbarPlace == 3 &&
+					this.tabGroupTreeAvailable &&
+					this.mPrefs.getBoolPref('browser.tabs.extensions.tab.invert_appearance.right'))
+					this.setAttribute('tab-appearance-inverted', true);
+				else
+					this.removeAttribute('tab-appearance-inverted');
+
+				var tabbarCloseboxBox = document.getAnonymousElementByAttribute(this.mTabContainer, 'tabs-scrollbox-right', 'true');
+				if (tabbarCloseboxBox) {
+					if (this.mTabbarPlace > 1 &&
+						this.getAttribute('tab-appearance-inverted') == 'true') {
+						this.mSetAttributeWithDelay(tabbarCloseboxBox, 'spacer-order',         100);
+						this.mSetAttributeWithDelay(tabbarCloseboxBox, 'scroll-buttons-order', 50);
+						this.mSetAttributeWithDelay(tabbarCloseboxBox, 'closebox-order',       10);
+					}
+					else {
+						this.mSetAttributeWithDelay(tabbarCloseboxBox, 'spacer-order');
+						this.mSetAttributeWithDelay(tabbarCloseboxBox, 'scroll-buttons-order');
+						this.mSetAttributeWithDelay(tabbarCloseboxBox, 'closebox-order');
+					}
+				}
+			]]></body>
+		</method>
+		<method name="mSetAttributeWithDelay">
+			<parameter name="aTarget"/>
+			<parameter name="aAttr"/>
+			<parameter name="aValue"/>
+			<body><![CDATA[
+				window.setTimeout(function() {
+					if (aValue)
+						aTarget.setAttribute(aAttr, aValue);
+					else
+						aTarget.removeAttribute(aAttr);
+				}, 0);
+			]]></body>
+		</method>
+ 
+		<!-- show/hide menuitems of the context menu on tabs --> 
+		<method name="updateMenuItems">
+			<parameter name="aPopup"/>
+			<parameter name="aTabBrowser"/>
+			<parameter name="aTab"/>
+			<parameter name="aShouldShowHide"/>
+			<body><![CDATA[
+			var tabbrowser  = aTabBrowser || this ;
+			var tab         = aTab || tabbrowser.selectedTab;
+			var b           = tab.mBrowser;
+
+			var tabs        = tabbrowser.mTabs;
+			var index       = tab.tabIndex;
+			var OnRightEdge = (index == tabs.length-1);
+			var OnLeftEdge  = (index == 0);
+
+			var isSingleWindow = tabbrowser.mWinHookMode == 2;
+
+			var item;
+			var count;
+			var i;
+
+			var groupItems = aPopup.getElementsByAttribute('tbattr', 'tabbrowser-group');
+			var isGroupMode = tabbrowser.tabGroupsAvailable;
+			for (i = 0; i < groupItems.length; i++)
+				this.setOrRemoveBooleanAttribute(groupItems[i], 'hidden', !isGroupMode);
+
+			var treeItems = aPopup.getElementsByAttribute('tbattr', 'tabbrowser-tree');
+			var isTreeMode = tabbrowser.tabGroupTreeAvailable;
+			for (i = 0; i < treeItems.length; i++)
+				this.setOrRemoveBooleanAttribute(treeItems[i], 'hidden', !isTreeMode);
+
+			var hiddenOrDisabled = (aShouldShowHide) ? 'hidden' : 'disabled' ;
+
+
+			item = aPopup.getElementsByAttribute('tabid', 'tab-item-lockTab')[0];
+			this.setOrRemoveBooleanAttribute(item, 'checked', tab.getAttribute('tab-locked') == 'true');
+			this.setOrRemoveBooleanAttribute(item, 'hidden', tabbrowser.mPrefs.getIntPref('browser.tabs.opentabfor.links.behavior') > 0 ? true : false );
+
+			item = aPopup.getElementsByAttribute('tabid', 'tab-item-lockTabAll')[0];
+			this.setOrRemoveBooleanAttribute(item, 'checked', tab.getAttribute('tab-locked') == 'true');
+			this.setOrRemoveBooleanAttribute(item, hiddenOrDisabled, tabbrowser.mPrefs.getIntPref('browser.tabs.opentabfor.links.behavior') > 0 || tabs.length == 1);
+
+			item = aPopup.getElementsByAttribute('tabid', 'tab-item-blockReferrer')[0];
+			this.setOrRemoveBooleanAttribute(item, 'checked', tab.getAttribute('tab-referrerblocked') == 'true');
+			this.setOrRemoveBooleanAttribute(item, 'hidden', !tabbrowser.mPrefs.getIntPref('network.http.sendRefererHeader'));
+
+			item = aPopup.getElementsByAttribute('tabid', 'tab-item-blockReferrerAll')[0];
+			this.setOrRemoveBooleanAttribute(item, 'checked', tab.getAttribute('tab-referrerblocked') == 'true');
+			this.setOrRemoveBooleanAttribute(item, hiddenOrDisabled, !tabbrowser.mPrefs.getIntPref('network.http.sendRefererHeader') || tabs.length == 1);
+
+			this.setOrRemoveBooleanAttribute(aPopup.getElementsByAttribute('tabid', 'tab-item-duplicateInWindow')[0], 'hidden', isSingleWindow);
+
+			this.setOrRemoveBooleanAttribute(aPopup.getElementsByAttribute('tabid', 'tab-item-autoreload')[0], 'checked', tab.getAttribute('tab-autoreload'));
+
+			item = aPopup.getElementsByAttribute('tabid', 'tab-item-autoreloadAll')[0];
+			this.setOrRemoveBooleanAttribute(item, 'checked', tab.getAttribute('tab-autoreload'));
+			this.setOrRemoveBooleanAttribute(item, hiddenOrDisabled, tabs.length == 1);
+
+			this.setOrRemoveBooleanAttribute(aPopup.getElementsByAttribute('tabid', 'tab-item-removeRight')[0], hiddenOrDisabled, OnRightEdge);
+			this.setOrRemoveBooleanAttribute(aPopup.getElementsByAttribute('tabid', 'tab-item-removeLeft')[0], hiddenOrDisabled, OnLeftEdge);
+
+			this.setOrRemoveBooleanAttribute(aPopup.getElementsByAttribute('tabid', 'tab-item-moveRight')[0], hiddenOrDisabled, OnRightEdge);
+			this.setOrRemoveBooleanAttribute(aPopup.getElementsByAttribute('tabid', 'tab-item-moveLeft')[0], hiddenOrDisabled, OnLeftEdge);
+
+
+			var undoRemoveTab = aPopup.getElementsByAttribute('tabid', 'tab-item-undoRemoveTab')[0];
+			this.setOrRemoveBooleanAttribute(undoRemoveTab, 'hidden', tabbrowser.mUndoRemoveTabCache == 0);
+			this.setOrRemoveBooleanAttribute(undoRemoveTab, 'disabled', !tabbrowser.mRemovedTabInfoList.length);
+
+
+	 		this.setOrRemoveBooleanAttribute(aPopup.getElementsByAttribute('tabid', 'tab-item-editBookmark')[0], 'hidden', (tabbrowser.bookmarksManager ? !tabbrowser.bookmarksManager.isBookmarked(tab.getAttribute('tab-bookmarkID')) : true ));
+
+			this.setOrRemoveBooleanAttribute(aPopup.getElementsByAttribute('tabid', 'tab-item-collapseExpandGroup')[0], 'hidden', !isTreeMode || !tab.hasChildTabs());
+			this.setOrRemoveBooleanAttribute(aPopup.getElementsByAttribute('tabid', 'tab-item-sortTabsByGroup')[0], 'disabled', tabs.length == 1);
+
+
+			// advanced
+			this.setOrRemoveBooleanAttribute(aPopup.getElementsByAttribute('tabid', 'tab-item-allowPlugins')[0], 'checked', tab.allowPlugins);
+			this.setOrRemoveBooleanAttribute(aPopup.getElementsByAttribute('tabid', 'tab-item-allowMetaRedirects')[0], 'checked', tab.allowMetaRedirects);
+
+			item = aPopup.getElementsByAttribute('tabid', 'tab-item-allowJavascript')[0];
+			this.setOrRemoveBooleanAttribute(item, 'disabled', !this.mPrefs.getBoolPref('javascript.enabled'));
+			this.setOrRemoveBooleanAttribute(item, 'checked', !item.getAttribute('disabled') && tab.allowJavascript);
+
+			item = aPopup.getElementsByAttribute('tabid', 'tab-item-allowSubframes')[0];
+			this.setOrRemoveBooleanAttribute(item, 'disabled', !this.mPrefs.getBoolPref('browser.frames.enabled'));
+			this.setOrRemoveBooleanAttribute(item, 'checked', !item.getAttribute('disabled') && tab.allowSubframes);
+
+			item = aPopup.getElementsByAttribute('tabid', 'tab-item-allowImages')[0];
+			var imageBehavior = 0;
+			try {
+				imageBehavior = this.mPrefs.getIntPref('network.image.imageBehavior');
+			}
+			catch(e) {
+			}
+			this.setOrRemoveBooleanAttribute(item, 'disabled', imageBehavior == 2);
+			this.setOrRemoveBooleanAttribute(item, 'checked', !item.getAttribute('disabled') && tab.allowImages);
+
+
+			if (aShouldShowHide)
+				tabbrowser.__tabextensions__updatePopupMenu(aPopup);
+
+			var unloadable = tabbrowser.canRemoveCurrentTab();
+			this.setOrRemoveBooleanAttribute(aPopup.getElementsByAttribute('tabid', 'tab-item-removeTab')[0], 'disabled', !unloadable && tabs.length == 1);
+			this.setOrRemoveBooleanAttribute(aPopup.getElementsByAttribute('tabid', 'tab-item-bookmarkGroup')[0], 'disabled', !(tab.getAttribute('tab-parentTab') || tab.hasChildTabs() || !tabbrowser.tabGroupsAvailable));
+			this.setOrRemoveBooleanAttribute(aPopup.getElementsByAttribute('tabid', 'tab-item-removeTabGroup')[0], 'disabled', !(tab.getAttribute('tab-parentTab') || tab.hasChildTabs() || !tabbrowser.tabGroupsAvailable) || (!unloadable && tabs.length == 1));
+
+			this.setOrRemoveBooleanAttribute(aPopup.getElementsByAttribute('tabid', 'tab-item-editMenu')[0], 'hidden', 'mTabBrowser' in aPopup && aPopup.mTabBrowser && document.popupNode && document.popupNode.localName == 'tab');
+
+
+			tabbrowser.showHideTabPopupMenuItems(aPopup, aShouldShowHide);
+			tabbrowser.showHideMenuSeparator(aPopup);
+			]]></body>
+		</method>
+	
+		<method name="setOrRemoveBooleanAttribute"> 
+			<parameter name="aNode"/>
+			<parameter name="aAttr"/>
+			<parameter name="aValue"/>
+			<body><![CDATA[
+			if (!aNode || !aAttr) return;
+			if (aValue) {
+				aNode.setAttribute(aAttr, true);
+				aNode.setAttribute('menuitem-'+aAttr, true);
+			}
+			else {
+				aNode.removeAttribute(aAttr);
+				aNode.removeAttribute('menuitem-'+aAttr);
+			}
+			]]></body>
+		</method>
+  
+		<method name="showHideTabPopupMenuItems"> 
+			<parameter name="aPopup"/>
+			<parameter name="aUsePrefs"/>
+			<body><![CDATA[
+			var i;
+
+			// extract items should be shown
+			var items = aPopup.childNodes;
+			var id,
+				name;
+			for (i = 0; i < items.length; i++)
+			{
+				id   = items[i].getAttribute('tabid');
+				if (id.indexOf('-') < 0 ||
+					id.split('-')[1] != 'item') continue;
+
+				name  = id.split('-')[2];
+				shown = true;
+				try {
+					if (aUsePrefs)
+						shown = this.mPrefs.getBoolPref('browser.tabs.extensions.show_item.'+name);
+				}
+				catch(e) {
+				}
+				if (shown && items[i].getAttribute('menuitem-hidden') != 'true')
+					items[i].removeAttribute('hidden');
+				else
+					items[i].setAttribute('hidden', true);
+			}
+			]]></body>
+		</method>
+		<method name="showHideMenuSeparator">
+			<parameter name="aPopup"/>
+			<body><![CDATA[
+				var nodes       = aPopup.childNodes;
+				var lastVisible = null;
+
+				for (var i = 0; i < nodes.length; i++)
+				{
+					if (
+						nodes[i].localName == 'menuseparator' &&
+						(!lastVisible || lastVisible.localName == 'menuseparator')
+						)
+						nodes[i].setAttribute('hidden', true);
+					else if (nodes[i].localName == 'menuseparator')
+						nodes[i].removeAttribute('hidden');
+
+					if (nodes[i].getAttribute('hidden') != 'true')
+						lastVisible = nodes[i];
+				}
+
+				if (lastVisible && lastVisible.localName == 'menuseparator')
+					lastVisible.setAttribute('hidden', true);
+			]]></body>
+		</method>
+  
+<!-- add tab --> 
+	
+		<method name="addTabInternal"> 
+			<parameter name="aURI"/>
+			<parameter name="aReferrerURI"/>
+			<parameter name="aInfo"/>
+			<body><![CDATA[
+				var utils    = this.addTabInternalUtils;
+				var uri      = utils.sanitizeURI(aURI);
+
+				if (!aInfo) aInfo = {};
+				aInfo.uri = uri;
+
+				var referrer = utils.sanitizeReferrer(aReferrerURI, aInfo);
+
+				// cancel if this browser is filled with tabs
+				if (utils.cancelByLimit(uri, referrer, aInfo)) return null;
+
+				// if there is only one blank tab and the tab bar is hidden, replace tab.
+				var removedCurrentTab = this.isBlank ? this.selectedTab : null ;
+				if (!removedCurrentTab)
+					this.setAttribute('has-multiple-tabs', true);
+
+				utils.sanitizeFlags(aInfo);
+
+				utils.initTabIndex(aInfo);
+
+				var t = this.__tabextensions__addTab('about:blank');
+				this.mIdentifiedTabs[t.tabId] = t;
+
+				t.mBrowser.mTab = t;
+				t.collapsed = true;
+
+//				t.setAttribute('ordinal', this.mTabs.length-1);
+
+
+				window.setTimeout(function() {
+					t.initTab();
+					delete t;
+				}, 0);
+
+				if (this.selectedTab.mBrowser.getAttribute('autoscroll') =='false')
+					this.selectedTab.mBrowser.removeAttribute('autoscroll');
+
+				// set properties before starting to load
+				utils.initDocShellProps(t, aInfo);
+
+				this.mTabProgressListenerCreatorInternal.addListenerTo(t);
+				utils.internalLoad(t, uri, referrer, aInfo);
+
+				utils.dispatchTabAddedEvent(t);
+
+				if (
+					!removedCurrentTab &&
+					this.mTabs.length > 1 &&
+					this.mTabs[aInfo.index] != t
+					)
+					this.moveTabTo(t, aInfo.index);
+
+				this.initTabWithTabInfo(t, aInfo);
+				utils.initTabGroup(t, aInfo);
+
+				this.mFocusChangedCount = 0;
+				this.onlyPrimalyTab = false;
+
+				if (removedCurrentTab) {
+					this.removeTab(removedCurrentTab);
+					if (!this.mPrefs.getBoolPref('browser.tabs.autoHide'))
+						this.setStripVisibilityTo(true);
+				}
+
+				this.onTabsModified();
+
+				delete utils;
+				delete uri;
+				delete referrer;
+				delete removedCurrentTab;
+
+				t.collapsed = false;
+				return t;
+			]]></body>
+		</method>
+	
+		<field name="addTabInternalUtils"><![CDATA[ 
+			({
+				owner : this,
+	
+				sanitizeURI : function(aURI) 
+				{
+					var uri = String(aURI);
+					try {
+						if (aURI && 'QueryInterface' in aURI)
+							uri = aURI.QueryInterface(Components.interfaces.nsIURI).spec;
+					}
+					catch(e) {
+					}
+
+					// URI validation
+					try {
+						// "nsIURIFixup" can check URI strings and filepath strings (encoded in UTF-8, Shift_JIS, or others).
+						const URIFixup = Components.classes['@mozilla.org/docshell/urifixup;1'].getService(Components.interfaces.nsIURIFixup);
+						var testURI = URIFixup.createFixupURI(uri, URIFixup.FIXUP_FLAG_ALLOW_KEYWORD_LOOKUP);
+						if (!testURI) uri = 'about:blank';
+					}
+					catch(e) {
+						uri = 'about:blank';
+					}
+
+					return uri;
+				},
+ 
+				sanitizeReferrer : function(aURI, aInfo) 
+				{
+					var referrer = null;
+					try {
+						if (
+							!this.owner.mPrefs.getBoolPref('browser.tabs.extensions.referrerBlocked.enabled') ||
+							(
+								('openedFromTab' in aInfo) && aInfo.openedFromTab
+							)
+							)
+							referrer = aURI.QueryInterface(Components.interfaces.nsIURI);
+					}
+					catch(e) {
+					}
+					return referrer;
+				},
+ 
+				sanitizeFlags : function(aInfo) 
+				{
+					try {
+						aInfo.openIn = ('openIn' in aInfo && aInfo.openIn > -1) ? aInfo.openIn : this.owner.mPrefs.getIntPref('browser.tabs.extensions.open_tab_in') ;
+					}
+					catch(e) {
+						aInfo.openIn = 3;
+					}
+				},
+ 
+				initTabIndex : function(aInfo) 
+				{
+					if ('index' in aInfo) return;
+
+					var parentTab = (typeof aInfo.parentTab == 'string') ? this.owner.getTabByTabId(aInfo.parentTab) : aInfo.parentTab ;
+					if (
+						parentTab &&
+						this.owner.tabGroupsAvailable &&
+						(
+							('inGroup' in aInfo && aInfo.inGroup) ||
+							aInfo.openIn == 0 ||
+							aInfo.openIn == 3
+						)
+						) {
+						if (this.owner.tabGroupTreeAvailable) {
+							if (aInfo.openIn == 0)
+								aInfo.openIn = 3;
+							else if (aInfo.openIn == 1)
+								aInfo.openIn = 2;
+						}
+						aInfo.index = this.owner.getGroupEdgeIndexOf(parentTab, aInfo.openIn);
+						if (aInfo.openIn > 1)
+							aInfo.index++;
+					}
+					else {
+						var pos = this.owner.selectedTab.tabIndex;
+						switch (aInfo.openIn)
+						{
+							case 0: // Start position of the tabbar
+								aInfo.index = 0;
+								break;
+							case 1: // Lefthand of the current tab
+							case 4:
+								if (pos < this.owner.mTabs.length)
+									aInfo.index = pos;
+								else
+									aInfo.index = 0;
+								break;
+							case 2: // Righthand of the current tab
+							case 5:
+								if (pos+1 < this.owner.mTabs.length)
+									aInfo.index = pos+1;
+								else
+									aInfo.index = this.owner.mTabs.length;
+								break;
+							case 3: // End position of the tabbar
+							default:
+								aInfo.index = this.owner.mTabs.length;
+								break;
+						}
+					}
+				},
+ 
+				cancelByLimit : function(aURI, aReferrer, aInfo) 
+				{
+					var max;
+					try {
+						max = this.owner.mPrefs.getIntPref('browser.tabs.extensions.limit.number');
+					}
+					catch(e) {
+						max = 0;
+					}
+					if (max <= 0 || this.owner.mTabs.length < max)
+						return false;
+
+					var event = document.createEvent('Events');
+					event.initEvent('XULTabbrowserAddTabCanceled', false, true);
+					event.loadingURI  = aURI;
+					event.referrerURI = aReferrer || null ;
+					event.tabInfo     = aInfo;
+
+					this.owner.dispatchEvent(event);
+
+					return true;
+				},
+ 
+				initDocShellProps : function(aTab, aInfo) 
+				{
+					var allowProps = {
+							allowPlugins       : true,
+							allowJavascript    : true,
+							allowMetaRedirects : true,
+							allowSubframes     : true,
+							allowImages        : true
+						},
+						allowed = true;
+					for (var i in allowProps)
+					{
+						allowProps[i] = (aInfo && i in aInfo) ? aInfo[i] :
+										this.owner.mPrefs.getBoolPref('browser.tabs.extensions.'+i+'.enabled');
+						if (!allowProps[i]) allowed = false;
+					}
+					if (!allowed) {
+						for (i in allowProps)
+							this.owner.setDocShellPropertyFor(aTab, i, allowProps[i], 'ANY', true);
+					}
+				},
+ 
+				internalLoad : function(aTab, aURI, aReferrerURI, aInfo) 
+				{
+					if (aURI != 'about:blank') {
+						var charset = ('charset' in aInfo) ? aInfo.charset : null ;
+						if (charset) {
+							try {
+								aTab.mBrowser.documentCharsetInfo.parentCharset = browser.mAtomService.getAtom(charset);
+							}
+							catch(e) {
+							}
+						}
+						aTab.mBrowser.loadURIWithFlags(
+							aURI,
+							Components.interfaces.nsIWebNavigation.LOAD_FLAGS_NONE,
+							aReferrerURI,
+							null,
+							null
+						);
+					}
+
+					if ('postData' in aInfo && aInfo.postData) {
+						try {
+							aTab.mBrowser.webNavigation.loadURI(
+								aURI,
+								Components.interfaces.nsIWebNavigation.LOAD_FLAGS_NONE,
+								aReferrerURI,
+								this.owner.createPostStream(aInfo.postData, true),
+								null
+							);
+						}
+						catch(e) {
+						}
+					}
+
+					aTab.setAttribute('tab-loadingURI', aURI);
+					if (aURI != 'about:blank') {
+						// to show temporary URI in the location bar before starting to load the tab
+						aTab.mBrowser.userTypedValue = aURI;
+						aTab.mBrowser.userTypedClearForNewTab = true;
+					}
+				},
+ 
+				initTabGroup : function(aTab, aInfo) 
+				{
+					if (!('parentTab' in aInfo) ||
+						!aInfo.parentTab ||
+						!this.owner.tabGroupsAvailable)
+						return;
+
+					var parentTab = (typeof aInfo.parentTab == 'string') ? this.owner.getTabByTabId(aInfo.parentTab) : aInfo.parentTab ;
+					if (!parentTab) return;
+
+					//     If there is 3 tabs A, B(child of A) and C(child of A),
+					// and you open new tab D from A, tabextensions appends D
+					// to it's group. Then it has three children B, C, and D.
+					//     But, D is not accessible when there is too many tabs.
+					// In bookmark groups or links opened from the context menu,
+					// D shouldn't be the brother of B and C. For example, i
+					// new tabs are shown at the right edge of groups, expected
+					// result is following: A, D(child of A), B and C(child of B).
+					if (parentTab.hasChildTabs() &&
+						parentTab.shouldPurgeChildren) {
+						var children  = parentTab.childTabs;
+						var newParent = parentTab.parentTab || children[0] ;
+						for (var i = 0; i < children.length; i++)
+							this.owner.attachTabTo(children[i], children[i] == newParent ? parentTab.parentTab : newParent );
+
+						parentTab.shouldPurgeChildren = false;
+						newParent.shouldPurgeChildren = true;
+					}
+
+					if (aTab.tabIndex != aInfo.index) {
+						if (
+							('inGroup' in aInfo && aInfo.inGroup) ||
+							aInfo.openIn == 0 ||
+							aInfo.openIn == 3
+							)
+							this.owner.moveTabToGroupEdge(aTab, parentTab, aInfo.openIn);
+					}
+
+					if ('openedAutomatically' in aInfo &&
+						aInfo.openedAutomatically)
+						this.owner.attachTabTo(aTab, parentTab, true);
+					else
+						aTab.parentTab = parentTab;
+				},
+ 
+				dispatchTabAddedEvent : function(aTab) 
+				{
+					// dispatch "XULTabbrowserTabAdded" event
+					var event = document.createEvent('Events');
+					event.initEvent('XULTabbrowserTabAdded', false, true);
+					event.tabId       = aTab.tabId;
+					event.tabURI      = aTab.getAttribute('tab-loadingURI');
+					event.referrerURI = aTab.getAttribute('tab-loadingReferrerURI') ? this.owner.makeURIFromSpec(aTab.getAttribute('tab-loadingReferrerURI')) : null ;
+					this.owner.dispatchEvent(event);
+				}
+ 
+			}) 
+		]]></field>
+   
+		<method name="addTabWithTabInfo"> 
+			<parameter name="aInfo"/>
+			<parameter name="aTabBrowser"/>
+			<body><![CDATA[
+				var i, j,
+					tabBrowser = aTabBrowser || this;
+
+				if (aInfo.SHIndex >= aInfo.SHEntries.length)
+					aInfo.SHIndex = aInfo.SHEntries.length-1;
+
+
+				var t;
+				if ('index' in aInfo) {
+					t = tabBrowser.addTabInternal(
+							(aInfo.SHIndex < 0 ? aInfo.uri : 'about:blank' ),
+							null,
+							{
+								index : aInfo.index
+							}
+						);
+				}
+				else
+					t = tabBrowser.addTab((aInfo.SHIndex < 0 ? aInfo.uri : 'about:blank' ));
+
+				if (!t) return t;
+
+				// restore session history
+				var b = t.mBrowser;
+				var SHInternal = b.sessionHistory.QueryInterface(Components.interfaces.nsISHistoryInternal);
+				for (i in aInfo.SHEntries)
+					SHInternal.addEntry(
+						this.createSHEntryFromInfo(aInfo.SHEntries[i]),
+						true
+					);
+
+				var uri = (aInfo.SHIndex < 0) ? aInfo.uri : aInfo.SHEntries[aInfo.SHIndex].uri ;
+
+				// set flags before starting page-loading
+				var props = [
+						'allowPlugins',
+						'allowJavascript',
+						'allowMetaRedirects',
+						'allowSubframes',
+						'allowImages'
+					];
+				for (i in props)
+					tabBrowser.setDocShellPropertyFor(t, props[i], aInfo[props[i]], uri);
+
+				try {
+					b.gotoIndex(aInfo.SHIndex);
+				}
+				catch(e) { // when the entry is moving in frames...
+					try {
+						b.gotoIndex(b.sessionHistory.count-1);
+					}
+					catch(ex) { // when there is no history, do nothing
+					}
+				}
+
+				// use "repostConfirm" in locale/en-US/global/appstrings.properties
+
+				aInfo.uri = uri;
+				tabBrowser.initTabWithTabInfo(t, aInfo);
+
+				// restore grouping
+				if (tabBrowser.tabGroupsAvailable) {
+					t.parentTab = (typeof aInfo.parentTab == 'string') ? tabBrowser.getTabByTabId(aInfo.parentTab) : aInfo.parentTab ;
+					var child;
+					if (typeof aInfo.childTabs == 'string') {
+						aInfo.childTabs = aInfo.childTabs.split('|');
+					}
+					for (i in aInfo.childTabs)
+					{
+						child = (typeof aInfo.childTabs[i] == 'string' ? tabBrowser.getTabByTabId(aInfo.childTabs[i]) : aInfo.childTabs[i] );
+						if (child) child.parentTab = t;
+					}
+				}
+
+				return t;
+			]]></body>
+		</method>
+  
+<!-- remove tab --> 
+	
+		<method name="removeTabInternal"> 
+			<parameter name="aTab"/>
+			<parameter name="aFlags"/>
+			<body><![CDATA[
+				this.mTabRemoving = true;
+
+				//   if the panel-container has no "selectedIndex" attribute,
+				// I have to set correct value, because the value "-1" (the
+				// panel-container's selectedIndex) causes an error
+				// (NS_ERROR_DOM_INDEX_SIZE_ERR) in the "removeTab" method.
+				if (this.mPanelContainer.selectedIndex < 0)
+					this.mPanelContainer.selectedIndex = this.mTabContainer.selectedIndex;
+
+				if (aTab.localName == 'tabs') aTab = this.selectedTab;
+				if (!aFlags) aFlags = {};
+
+				var utils = this.removeTabInternalUtils;
+
+				utils.initRemoveFlags(aTab, aFlags);
+
+				utils.removeChildTabs(aTab, aFlags);
+				utils.updateUndoCache(aTab, aFlags);
+				utils.resetTabGroup(aTab);
+
+				if (!aFlags.isLast) utils.terminateTab(aTab);
+
+				// set all frames to "loading" for blocing popups
+				if (!this.selectedTab.isReallyBlank) // for blank tabs, this operation causes a fatal error...
+					this.setReadyStateForAllFrames(aTab.mBrowser.contentWindow, 'loading');
+
+
+				// backup "unread" status
+				if ('tabUnreadStateManager' in this) {
+					var next = aTab.nextSibling || aTab.previousSibling || aTab;
+					var nextIsUnread = next.getAttribute('unread') == 'true';
+					var prev = aTab.previousSibling || aTab.nextSibling || aTab;
+					var prevIsUnread = prev.getAttribute('unread') == 'true';
+				}
+
+
+				// avoid original "unload last tab" operation (Firefox 1.0)
+				var originalAutoHide = this.mPrefs.getBoolPref('browser.tabs.autoHide');
+				if (this.mTabs.length == 1 && !originalAutoHide) {
+					this.mPrefs.setBoolPref('browser.tabs.autoHide.temporaryChanged', true);
+					this.mPrefs.setBoolPref('browser.tabs.autoHide', true);
+				}
+
+				aTab.removeAttribute('ordinal');
+
+				this.mTabInternalRemoving = true;
+				try {
+					this.__tabextensions__removeTab(aTab);
+				}
+				catch(e) {
+					alert(e);
+					utils.forceRemoveTab(aTab);
+				}
+				this.mTabInternalRemoving = false;
+
+				if (this.mTabs.length == 1 && !originalAutoHide) {
+					this.mPrefs.setBoolPref('browser.tabs.autoHide', false);
+					try {
+						this.mPrefs.clearUserPref('browser.tabs.autoHide.temporaryChanged');
+					}
+					catch(e) {
+						this.mPrefs.setBoolPref('browser.tabs.autoHide.temporaryChanged', false);
+					}
+					this.setStripVisibilityTo(true);
+				}
+
+
+				// restore "unread" status
+				if (
+					'tabUnreadStateManager' in this &&
+					(
+						(this.selectedTab == next && nextIsUnread) ||
+						(this.selectedTab == prev && prevIsUnread)
+					)
+					)
+					this.selectedTab.setAttribute('unread', true);
+
+
+				utils.dispatchTabRemovedEvent(aFlags);
+
+				// control behaviors in Mozilla 1.1 or later:
+				utils.lastTabClosing(aFlags);
+				utils.showHideTabBar(aFlags);
+
+				utils.updateTabFocus(aFlags);
+
+				if (!('nested' in aFlags) || !aFlags.nested)
+					this.mTabRemoving = false;
+				if (this.mTabs.length == 1)
+					this.removeAttribute('has-multiple-tabs');
+
+				this.onTabsModified();
+			]]></body>
+		</method>
+	
+		<field name="removeTabInternalUtils"><![CDATA[ 
+			({
+				owner : this,
+	
+				initRemoveFlags : function(aTab, aFlags) 
+				{
+					aFlags.isLast = (this.owner.mTabs.length == 1);
+
+					aFlags.removeTabId = aTab.tabId,
+					aFlags.removeIndex = aTab.tabIndex,
+					aFlags.moveFocus   = (aFlags.removeIndex == this.owner.selectedTab.tabIndex);
+					aFlags.nextIndex   = this.getNextIndex(aTab, aFlags);
+
+					try {
+						aFlags.lastTabMode = this.owner.mPrefs.getIntPref('browser.tabs.extensions.last_tab_closing');
+					}
+					catch(e) {
+						aFlags.lastTabMode = 0;
+					}
+				},
+ 
+				getNextIndex : function(aTab, aFlags) 
+				{
+					if (aTab != this.owner.selectedTab) return -1;
+
+					// If current tab is closed, focus a tab user prefer.
+					var i,
+						nextTab,
+						walkingTab,
+						focusAt,
+						focusInGroup;
+					try {
+						focusAt = this.owner.mPrefs.getIntPref('browser.tabs.extensions.direction_of_focusing');
+						focusInGroup = this.owner.mPrefs.getBoolPref('browser.tabs.extensions.direction_of_focusing.in_group');
+					}
+					catch(e) {
+						focusAt = 1;
+						focusInGroup = true;
+					}
+					try {
+						if (
+							this.owner.mPrefs.getBoolPref('browser.tabs.extensions.direction_of_focusing.back_to_base_tab') &&
+							this.owner.mFocusChangedCount < 2
+							)
+							focusAt = 3;
+					}
+					catch(e) {
+					}
+					focusInGroup = this.owner.tabGroupsAvailable && focusAt != 2 && focusAt != 3 && focusInGroup ;
+					var group = focusInGroup ? aTab.ownerGroup.sort(this.owner.conpareTabOrder) : [];
+
+					switch (focusAt)
+					{
+						default:
+						case 0: // Right to Left (Default at Moz1.0)
+							if (focusInGroup) {
+								for (i = 0; i < group.length; i++)
+									if (group[i] == aTab) {
+										nextTab = (i == 0) ? group[i+1] : group[i-1] ;
+										break;
+									}
+							}
+							else
+								nextTab = aTab.previousTab || aTab.nextTab;
+							break;
+
+						case 1: // Left to Right (Default at Moz1.1)
+							if (focusInGroup) {
+								for (i = 0; i < group.length; i++)
+									if (group[i] == aTab) {
+										nextTab = (i == group.length-1) ? (i-1 in group ? group[i-1] : null ) : (i+1 in group ? group[i+1] : null ) ;
+										break;
+									}
+							}
+							else
+								nextTab = aTab.nextTab || aTab.previousTab;
+							break;
+
+						case 2: // Focus previously made tab.
+							nextTab = (aTab.previousSibling && aTab.previousSibling.localName == 'tab') ? aTab.previousSibling : aTab.nextSibling ;
+							break;
+
+						case 3: // Focus previously selected tab.
+							if (aFlags.isLast) break;
+
+							var tabs        = this.owner.mTabs;
+							var tmpTabs     = [];
+							var focusedTabs = [];
+							for (i = 0; i < tabs.length; i++)
+							{
+								if (tabs[i].__tabextensions__lastFocusedTime)
+									focusedTabs.push(tabs[i]);
+								else
+									tmpTabs.push(tabs[i]);
+							}
+
+							focusedTabs.sort(this.compareFocusTime);
+
+							tmpTabs = focusedTabs.concat(tmpTabs);
+
+							for (i = 0; i < tmpTabs.length; i++)
+							{
+								if (tmpTabs[i] == aTab) {
+									currentIndex = i;
+									break;
+								}
+							}
+							nextTab = tmpTabs[(currentIndex + 1) % tmpTabs.length];
+							break;
+					}
+					if (!nextTab) nextTab = aTab;
+
+
+					var nextIndex = nextTab.tabIndex;
+					if (nextIndex > this.owner.selectedTab.tabIndex)
+						nextIndex--;
+
+					return nextIndex;
+				},
+				compareFocusTime : function(aTabA, aTabB)
+				{
+					return (aTabB.__tabextensions__lastFocusedTime - aTabA.__tabextensions__lastFocusedTime);
+				},
+ 
+				removeChildTabs : function(aTab, aFlags) 
+				{
+					if (
+						(
+							!this.owner.tabGroupTreeAvailable ||
+							(
+								this.owner.mPrefs.getIntPref('browser.tabs.extensions.group.tree.on_subgroup_root_removed') != 2 &&
+								!aTab.tabSubgroupCollapsed
+							)
+						) &&
+						(
+							!this.owner.tabGroupsAvailable ||
+							!aTab.hasChildTabs() ||
+							!('children' in aFlags) ||
+							!aFlags.children
+						)
+						)
+						return;
+
+					var children = aTab.descendantTabs;
+					for (var i = children.length-1; i > -1; i--)
+						this.owner.removeTabInternal(children[i], { nested : true });
+
+					aFlags.isLast = (this.owner.mTabs.length == 1);
+				},
+ 
+				updateUndoCache : function(aTab, aFlags) 
+				{
+					var globalCache = 0;
+					try {
+						globalCache = this.owner.mPrefs.getIntPref('browser.tabs.extensions.undo_cache.global');
+					}
+					catch(e) {
+					}
+
+					if (
+						aFlags.isLast ||
+						('preventUndo' in aFlags && aFlags.preventUndo) ||
+						(aTab.isReallyBlank && !this.owner.mPrefs.getBoolPref('browser.tabs.extensions.undo_cache.cache_blank_tab')) ||
+						(!this.owner.mUndoRemoveTabCache && !globalCache)
+						)
+						return;
+
+					var info = this.owner.getTabInfo(aTab);
+					this.owner.mRemovedTabInfoList.push(info);
+
+					var event = document.createEvent('Events');
+					event.initEvent('XULTabbrowserUndoCacheAdded', false, true);
+					event.cachedTabInfo = info;
+					this.owner.dispatchEvent(event);
+
+					if (this.owner.mRemovedTabInfoList.length > this.owner.mUndoRemoveTabCache) {
+						info = this.owner.mRemovedTabInfoList[0];
+						this.owner.mRemovedTabInfoList.splice(0, 1);
+
+						event = document.createEvent('Events');
+						event.initEvent('XULTabbrowserUndoCacheOverFlowed', false, true);
+						event.overFlowedCachedTabInfo = info;
+						this.owner.dispatchEvent(event);
+					}
+				},
+ 
+				resetTabGroup : function(aTab) 
+				{
+					if (
+						this.owner.tabGroupTreeAvailable &&
+						this.owner.mPrefs.getIntPref('browser.tabs.extensions.group.tree.on_subgroup_root_removed') == 1
+						) {
+						var tabs = aTab.childTabs;
+						var parentTab = aTab.parentTab || null ;
+						for (var i = tabs.length-1; i > -1; i--)
+						{
+							this.owner.attachTabTo(tabs[i], parentTab);
+							this.owner.moveTabTo(tabs[i], aTab.tabIndex+i);
+						}
+						this.owner.detachTab(aTab);
+					}
+					else if (this.owner.tabGroupsAvailable) {
+						this.owner.detachTab(aTab);
+					}
+/*
+					else {
+						// if we don't set "ordinal" attribute, contents of scrollbox aren't shown in their correct order...
+						var tabs = this.owner.mTabs;
+						var max  = tabs.length;
+						for (var i = aTab.tabIndex+1; i < max; i++)
+							tabs[i].setAttribute('ordinal', i-1);
+					}
+*/
+				},
+ 
+				terminateTab : function(aTab) 
+				{
+					aTab.mBrowser.stop();
+
+					/*
+						Memory use does not go down after closing tabs
+						(resources not released)
+						[ https://bugzilla.mozilla.org/show_bug.cgi?id=131456 ]
+					*/
+					aTab.mBrowser.focusedWindow   = null;
+					aTab.mBrowser.focusedElement  = null;
+					aTab.mBrowser._webBrowserFind = null;
+
+					delete this.owner.mIdentifiedTabs[aTab.tabId];
+					this.owner.mTabProgressListenerCreatorInternal.removeListenerFrom(aTab);
+					// kill "window.close()" because sometimes it crashs browser.
+					if (aTab.mBrowser.contentWindow)
+						aTab.mBrowser.contentWindow.close = function() {};
+
+					if (aTab.selected) {
+						if (aTab.previousTab)
+							aTab.previousTab.removeAttribute('beforeselected');
+						if (aTab.nextTab)
+							aTab.nextTab.removeAttribute('afterselected');
+					}
+					if (aTab.getAttribute('first-tab') == 'true' &&
+						aTab.nextTab)
+						aTab.nextTab.setAttribute('first-tab', true);
+					if (aTab.getAttribute('last-tab') == 'true' &&
+						aTab.previousTab)
+						aTab.previousTab.setAttribute('last-tab', true);
+				},
+ 
+				forceRemoveTab : function(aTab) 
+				{
+					try {
+						if (this.owner.mPanelContainer.length > this.owner.mTabs.length)
+							this.owner.mPanelContainer.removeChild(aTab.mBrowser);
+						if (this.owner.mTabContainer.length > this.owner.mTabs.length)
+							this.owner.mTabContainer.removeChild(aTab);
+					}
+					catch(ex) {
+						alert('@tabbrowser.xml#tabbrowser.removeTabInternal() / forceRemoveTab():\n\n'+ex);
+					}
+				},
+ 
+				lastTabClosing : function(aFlags) 
+				{
+					if (!aFlags.isLast) return;
+
+					var chromehidden;
+					if (
+						aFlags.lastTabMode == 4 ||
+						( // if the tab bar is hidden by "window.open" flags
+							(chromehidden = Components.lookupMethod(window, 'top').call(window).document.documentElement.getAttribute('chromehidden')) &&
+							chromehidden.indexOf('location') > -1 &&
+							chromehidden.indexOf('toolbar') > -1
+						)
+						) {
+						window.setTimeout('window.close()', 0);
+						return;
+					}
+
+					if (
+						(aFlags.lastTabMode == 1 || aFlags.lastTabMode== 3) &&
+						!this.owner.selectedTab.isReallyBlank
+						) {
+						var removeTab = this.owner.selectedTab;
+						var blankTab  = this.owner.addTab('about:blank');
+						blankTab.collapsed = true;
+						this.owner.removeTabInternal(removeTab, { preventUndo : aFlags.preventUndo, nested : true });
+						blankTab.collapsed = false;
+					}
+
+					// kill the autoscrolling, to regard click actions on the content area as on the tab bar.
+					if (aFlags.lastTabMode== 3)
+						this.owner.selectedTab.mBrowser.setAttribute('autoscroll', 'false');
+				},
+ 
+				showHideTabBar : function(aFlags) 
+				{
+					if (this.owner.mTabs.length != 1) return;
+
+					var hideTabBar = (
+							(
+								aFlags.isLast &&
+								(
+									aFlags.lastTabMode == 0 ||
+									aFlags.lastTabMode == 3
+								)
+							) ||
+							(
+								aFlags.lastTabMode == 2 &&
+								this.owner.mPrefs.getBoolPref('browser.tabs.autoHide')
+							)
+						);
+
+					if (!hideTabBar)
+						this.owner.mPrefs.setBoolPref('browser.tabs.autoHide', false);
+
+					this.owner.mPrefs.setBoolPref('browser.tabs.forceHide', hideTabBar);
+					this.owner.setStripVisibilityTo(!hideTabBar);
+				},
+ 
+				updateTabFocus : function(aFlags) 
+				{
+					if (!aFlags.moveFocus)
+						return;
+
+					var nextIndex = Math.min(aFlags.nextIndex, this.owner.mTabs.length-1);
+
+					try {
+						this.owner.selectedTab = this.owner.mTabs[nextIndex];
+						this.owner.selectedTab.selected = true;
+						this.owner.scrollTabbarToTab(this.owner.selectedTab);
+					}
+					catch(e) {
+						dump(e+'\n');
+					}
+					this.owner.mFocusChangedCount = 0;
+					this.owner.setFocusInternal();
+				},
+ 
+				dispatchTabRemovedEvent : function(aFlags) 
+				{
+					// dispatch "XULTabbrowserTabRemoved" event
+					var event = document.createEvent('Events');
+					event.initEvent('XULTabbrowserTabRemoved', false, true);
+					event.tabId    = aFlags.removeTabId;
+					event.tabIndex = aFlags.removeIndex;
+					this.owner.dispatchEvent(event);
+				}
+ 
+			}) 
+		]]></field>
+   
+		<method name="removeAllTabs"> 
+			<parameter name="aFlag"/>
+			<body><![CDATA[
+				// Firefox 1.0 or later
+				if ('warnAboutClosingTabs' in this &&
+					!this.warnAboutClosingTabs(true))
+					return;
+
+				for (var i = this.mTabs.length-1; i > -1; i--)
+					this.removeTabInternal(this.mTabs[i], aFlag);
+			]]></body>
+		</method>
+ 
+		<method name="removeAllTabsButInternal"> 
+			<parameter name="aTab"/>
+			<parameter name="aFlag"/>
+			<body><![CDATA[
+				// Firefox 1.0 or later
+				if ('warnAboutClosingTabs' in this &&
+					!this.warnAboutClosingTabs(false))
+					return aTab;
+
+				if (aTab.localName != 'tab') aTab = this.selectedTab;
+				for (var i = this.mTabs.length-1; i > -1; i--)
+					if (this.mTabs[i] != aTab)
+						this.removeTabInternal(this.mTabs[i], aFlag);
+
+				return aTab;
+			]]></body>
+		</method>
+ 
+		<method name="removeVisitedTabs"> 
+			<parameter name="aFlag"/>
+			<body><![CDATA[
+				for (var i = this.mTabs.length-1; i > -1; i--)
+					if (this.mTabs[i] != this.selectedTab &&
+						this.mTabs[i].mBrowser.contentWindow.__tabextensions__selected)
+					this.removeTabInternal(this.mTabs[i], aFlag);
+			]]></body>
+		</method>
+ 
+		<method name="canRemoveCurrentTab"> 
+			<body><![CDATA[
+				var lastTabClosing = this.mPrefs.getIntPref('browser.tabs.extensions.last_tab_closing');
+				return (
+						!this.isBlank &&
+						(
+							this.mTabs.length > 1 ||
+							(
+								(lastTabClosing == 1 || lastTabClosing == 3) &&
+								!this.selectedTab.isReallyBlank
+							)
+						)
+					);
+			]]></body>
+		</method>
+ 
+		<!-- 左/右のタブを全て閉じる --> 
+		<method name="removeLeftTabsFrom">
+			<parameter name="aTab"/>
+			<body><![CDATA[
+				var tabs = this.mTabs;
+				for (var i = aTab.tabIndex-1; i > -1; i--)
+					this.removeTab(tabs[i]);
+			]]></body>
+		</method>
+		<method name="removeRightTabsFrom">
+			<parameter name="aTab"/>
+			<body><![CDATA[
+				var tabs = this.mTabs;
+				for (var i = tabs.length-1; i > aTab.tabIndex; i--)
+					this.removeTab(tabs[i]);
+			]]></body>
+		</method>
+  
+		<!-- tab progress listener creator --> 
+		<field name="mTabProgressListenerCreatorInternal"><![CDATA[
+			({
+				owner : this,
+	
+				createInstanceFor : function(aTab) 
+				{
+					return ({
+						mTab        : aTab,
+						mTabBrowser : this.owner,
+						mCreator    : this,
+
+						onStateChange : function(aWebProgress, aRequest, aStateFlags, aStatus)
+						{
+							try {
+								const PL = Components.interfaces.nsIWebProgressListener;
+
+
+							// SECTION 1: methods must be called for the updating of the tab and the tabbrowser
+
+								// for Firefox 0.x-0.9.x
+								this.mCreator.inheritIcon(this.mTab);
+
+								if (!aWebProgress || !aWebProgress.DOMWindow) return;
+
+								var w = aWebProgress.DOMWindow;
+
+
+							// SECTION 2: initialize the content frame of the tab
+
+								this.mCreator.inheritDocShellProps(this.mTab);
+
+								this.mCreator.dispatchLoadingEvent({
+									tab    : this.mTab,
+									window : w,
+									state  : aStateFlags
+								});
+
+								// ignore .css and other linked files
+								if (!aStateFlags || !(aStateFlags & PL.STATE_IS_NETWORK)) return;
+
+
+							// SECTION 3: for progressing loadings
+
+								var info = {
+										window  : w,
+										tab     : this.mTab,
+										channel : aRequest.QueryInterface(Components.interfaces.nsIChannel),
+										request : aRequest,
+										state   : aStateFlags,
+										keep    : false
+									};
+								try {
+									info.keep = this.mTabBrowser.mPrefs.getBoolPref('browser.tabs.extensions.keep_tab_status');
+								}
+								catch(e) {
+								}
+
+								// set page-loaded flag
+								// This is an emulation of IE's "document.readyState".
+								var winWrapper = new XPCNativeWrapper(w, 'document');
+								if (!('tabbrowserReadyState' in winWrapper.document) ||
+									!winWrapper.document.tabbrowserReadyState) {
+									winWrapper.document.tabbrowserReadyState = 'loading';
+									this.mTabBrowser.setReadyStateForAllFrames(w, 'loading', true);
+								}
+
+								// this method does QI(nsIHttpChannel) for the channel.
+								var currentURI = this.mCreator.getCurrentURI(info);
+								info.uri = currentURI.spec;
+
+								this.mCreator.updateTab(info);
+								this.mCreator.getPostStream(info);
+								this.mCreator.resetDocShellProps(info);
+
+								if (!w || !(aStateFlags & PL.STATE_STOP)) return;
+
+
+							// SECTION 4: for finished loadings
+
+								this.mCreator.resetTabGroup(info);
+								if (winWrapper.document.tabbrowserReadyState != 'complete') {
+									this.mCreator.initBookmarkID(info);
+									this.mCreator.initTextZoom(info);
+									this.mCreator.initFixedLabel(info);
+									this.mCreator.initLocked(info);
+									this.mCreator.initReferrerBlocked(info);
+									this.mCreator.initAutoReload(info);
+								}
+
+								this.mCreator.dispatchLoadFinishEvent(info);
+
+								// set page-loaded flag
+								winWrapper.document.tabbrowserReadyState = 'complete';
+								this.mTabBrowser.setReadyStateForAllFrames(w, 'complete'/*, true*/);
+
+								window.setTimeout(this.finishLoadCallback, 0, this.mCreator, this.mTab);
+
+							}
+							catch(e) {
+								if (TabbrowserService.debug) dump(e+'\n');
+							}
+						},
+						finishLoadCallback : function(aCreator, aTab) {
+							aCreator.inheritIcon(aTab); // for Firefox 0.x-0.9.x
+							aTab.removeAttribute('tab-progress');
+						},
+
+						onProgressChange : function(aWebProgress, aRequest, aCurSelfProgress, aMaxSelfProgress, aCurTotalProgress, aMaxTotalProgress)
+						{
+//							this.onStateChange(aWebProgress, aRequest);
+
+							if (aMaxTotalProgress < 1 ||
+								!this.mTabBrowser.mShouldShowProgressForTabs)
+								return;
+
+							var percentage = parseInt((aCurTotalProgress * 100) / aMaxTotalProgress);
+							if (percentage > 0 && percentage < 100)
+								this.mTab.setAttribute('tab-progress', percentage);
+							else if (percentage == 0 || percentage == 100)
+								this.mTab.removeAttribute('tab-progress');
+						},
+
+						onLocationChange : function(aWebProgress, aRequest, aLocation)
+						{
+							if (this.mTab.mBrowser.userTypedClearForNewTab &&
+								this.mTab.mBrowser.userTypedValue) {
+								this.mTab.mBrowser.userTypedClearForNewTab = false;
+								this.mTab.mBrowser.userTypedValue = null;
+							}
+
+							this.mCreator.dispatchLocationChangeEvent(this.mTab, this.mTab.getAttribute('tab-loadingURI'), aLocation.spec);
+
+							this.mTab.setAttribute('tab-loadingURI', aLocation.spec);
+
+//							this.onStateChange(aWebProgress, aRequest);
+						},
+						onStatusChange : function(aWebProgress, aRequest, aStatus, aMessage)
+						{
+//							this.onStateChange(aWebProgress, aRequest);
+						},
+						onSecurityChange : function(aWebProgress, aRequest, aState)
+						{
+//							this.onStateChange(aWebProgress, aRequest);
+						},
+						onLinkIconAvailable : function(aHref) {},
+
+						QueryInterface : function(aIID)
+						{
+							if (aIID.equals(Components.interfaces.nsIWebProgressListener) ||
+								aIID.equals(Components.interfaces.nsISupportsWeakReference) ||
+								aIID.equals(Components.interfaces.nsISupports))
+								return this;
+							throw Components.results.NS_NOINTERFACE;
+						}
+					});
+				},
+ 
+				addListenerTo : function(aTab) 
+				{
+					var b = aTab.mBrowser;
+
+					if ('mTabbrowserServiceFilter' in b ||
+						'mTabbrowserServiceListener' in b) return;
+
+					var listener = this.createInstanceFor(aTab);
+
+					try {
+						if ('@mozilla.org/appshell/component/browser-status-filter;1' in Components.classes) {
+							const filter = Components.classes['@mozilla.org/appshell/component/browser-status-filter;1'].createInstance(Components.interfaces.nsIWebProgress);
+
+							filter.addProgressListener(listener, Components.interfaces.nsIWebProgress.NOTIFY_ALL);
+							b.webProgress.addProgressListener(filter, Components.interfaces.nsIWebProgress.NOTIFY_ALL);
+							b.mTabbrowserServiceFilter = filter;
+						}
+						else // for Mozilla 1.0.x
+							b.webProgress.addProgressListener(listener, Components.interfaces.nsIWebProgress.NOTIFY_ALL);
+					}
+					catch(e) {
+						dump('TabbrowserExtensions: failed to add progress listener\n\n'+e);
+					}
+
+					b.mTabbrowserServiceListener = listener;
+				},
+ 
+				removeListenerFrom : function(aTab) 
+				{
+					var b = aTab.mBrowser;
+					try {
+						if (b.mTabbrowserServiceFilter) {
+							if (b.mTabbrowserServiceListener)
+								b.mTabbrowserServiceFilter.removeProgressListener(b.mTabbrowserServiceListener);
+							b.webProgress.removeProgressListener(b.mTabbrowserServiceFilter);
+						}
+						else if (b.mTabbrowserServiceListener)
+							b.webProgress.removeProgressListener(b.mTabbrowserServiceListener);
+					}
+					catch(e) {
+						dump('TabbrowserExtensions: failed to remove progress listener\n\n'+e);
+					}
+				},
+ 
+				// for SECTION 1 
+				// for Firefox 0.x-0.9.x
+				inheritIcon : function(aTab)
+				{
+					var hiddenIcon;
+					try {
+						hiddenIcon = window.getComputedStyle(aTab.mHiddenIcon, '').getPropertyValue('list-style-image').replace(/^url\(['"]?|['"]?\)$/g, '');
+					}
+					catch(e) {
+					}
+
+					if (hiddenIcon) {
+						if (!aTab.getAttribute('busy'))
+							aTab.mHiddenIcon.normalIcon = hiddenIcon;
+						else
+							aTab.mHiddenIcon.busyIcon = hiddenIcon;
+					}
+
+					if (!aTab.mHiddenIcon.normalIcon ||
+						!aTab.mHiddenIcon.busyIcon ||
+						aTab.mHiddenIcon.normalIcon == aTab.mHiddenIcon.busyIcon)
+						return;
+
+					if (!hiddenIcon ||
+						hiddenIcon == aTab.mHiddenIcon.normalIcon)
+						aTab.mActiveIcon.removeAttribute('style');
+					else
+						aTab.mActiveIcon.setAttribute('style', 'list-style-image: url("' + hiddenIcon + '");');
+				},
+
+ 
+				// for SECTION 2 
+				inheritDocShellProps : function(aTab)
+				{
+					if (!aTab.tabForbidden) return;
+
+					var docShells = aTab.mBrowser.docShell.getDocShellEnumerator(
+							Components.interfaces.nsIDocShellTreeItem.typeAll,
+							aTab.mBrowser.docShell.ENUMERATE_FORWARDS
+						);
+					var docShell;
+					while (docShells.hasMoreElements())
+					{
+						docShell = docShells.getNext().QueryInterface(Components.interfaces.nsIDocShell);
+						docShell.allowPlugins       = aTab.allowPlugins;
+						docShell.allowJavascript    = aTab.allowJavascript;
+						docShell.allowMetaRedirects = aTab.allowMetaRedirects;
+						docShell.allowSubframes     = aTab.allowSubframes;
+						docShell.allowImages        = aTab.allowImages;
+					}
+				},
+ 
+				// for SECTION 3 
+	
+				getCurrentURI : function(aInfo) 
+				{
+					try {
+						// if redirecting to other page, regard it as loading page
+						var httpChannel = aInfo.channel.QueryInterface(Components.interfaces.nsIHttpChannel);
+						if (httpChannel) {
+							aInfo.channel = httpChannel;
+							var headerLocation = httpChannel.getResponseHeader('location');
+							if (headerLocation)
+								return this.owner.makeURIFromSpec(headerLocation);
+						}
+					}
+					catch(e) {
+					}
+					return aInfo.channel.URI;
+				},
+ 
+				updateTab : function(aInfo) 
+				{
+					if (aInfo.uri.indexOf('javascript:') != 0) {
+						aInfo.tab.setAttribute('tab-loadingURI', aInfo.uri);
+					}
+					aInfo.tab.setAttribute('tab-loadingName', aInfo.window.name);
+					aInfo.tab.setAttribute('tab-loadingReferrerURI', aInfo.channel.referrer ? aInfo.channel.referrer.spec : null );
+				},
+ 
+				getPostStream : function(aInfo) 
+				{
+					// if I don't set 'GET', TabbrowserService.openTabInsteadSelf() roops eternally
+					aInfo.tab.mBrowser.currentMethod = aInfo.channel.requestMethod || 'GET' ;
+
+					if (aInfo.channel.requestMethod == 'GET' ||
+						!('gTSWindowShouldBeDestructed' in window) ||
+						!window.gTSWindowShouldBeDestructed)
+						return;
+
+					aInfo.channel = aInfo.channel.QueryInterface(Components.interfaces.nsIUploadChannel);
+					aInfo.tab.mBrowser.lastPostData = this.owner.readPostStream(aInfo.channel.uploadStream);
+					aInfo.tab.mBrowser.lastPostData.method = aInfo.channel.requestMethod;
+					aInfo.channel.setUploadStream(null, '', 0);
+				},
+ 
+				resetDocShellProps : function(aInfo) 
+				{
+					if (!(aInfo.state & Components.interfaces.nsIWebProgressListener.STATE_START) ||
+						!aInfo.tab.tabForbidden ||
+						aInfo.window != aInfo.tab.mBrowser.contentWindow || // igunore subframes loading
+						aInfo.tab.getAttribute('tab-forbiddenTargetURI') == 'ANY' ||
+						aInfo.tab.getAttribute('tab-forbiddenTargetURI') == aInfo.uri)
+						return;
+
+					if (aInfo.keep)
+						aInfo.tab.setAttribute('tab-forbiddenTargetURI', aInfo.uri);
+					else
+						this.owner.resetDocShellProperties(aInfo.tab, true);
+				},
+  
+				// for SECTION 4 
+	
+				resetTabGroup : function(aInfo) 
+				{
+					// reset group when the tab has child or parent and other pages are loaded
+					if (
+						!this.owner.tabGroupsAvailable ||
+						(!aInfo.tab.parentTab && !aInfo.tab.hasChildTabs()) ||
+						!aInfo.window ||
+						aInfo.tab.getAttribute('tab-groupTargetHost') == aInfo.channel.URI.host
+						)
+						return;
+
+					if (this.owner.mPrefs.getBoolPref('browser.tabs.extensions.group.auto_purge'))
+						this.owner.detachTab(aInfo.tab);
+					else
+						aInfo.tab.setAttribute('tab-groupTargetHost', aInfo.channel.URI.host);
+				},
+ 
+				initBookmarkID : function(aInfo) 
+				{
+					if (aInfo.tab.getAttribute('tab-bookmarkID') &&
+						aInfo.tab.getAttribute('tab-bookmarkURI') != aInfo.uri)
+						this.owner.setBookmarkIDFor(aInfo.tab, null, null);
+				},
+ 
+				initTextZoom : function(aInfo) 
+				{
+					var zoom = aInfo.tab.textZoom / 100;
+					if (aInfo.tab.textZoom &&
+						aInfo.tab.getAttribute('tab-textZoomTargetURI') != 'ANY' &&
+						aInfo.tab.getAttribute('tab-textZoomTargetURI') != aInfo.uri)
+						this.owner.setTextZoomFor(aInfo.tab.textZoom, aInfo.uri);
+					else if (zoom != aInfo.tab.mBrowser.markupDocumentViewer.textZoom)
+						aInfo.tab.mBrowser.markupDocumentViewer.textZoom = zoom;
+				},
+ 
+				initFixedLabel : function(aInfo) 
+				{
+					if (!aInfo.tab.getAttribute('tab-fixedLabel') ||
+						aInfo.tab.getAttribute('tab-fixedLabelTargetURI') == 'ANY' ||
+						aInfo.tab.getAttribute('tab-fixedLabelTargetURI') == aInfo.uri)
+						return;
+
+	//				if (aInfo.keep)
+	//					aInfo.tab.setAttribute('tab-fixedLabelTargetURI', aInfo.uri);
+	//				else
+					this.owner.setFixedLabelFor(aInfo.tab, (aInfo.tab.getAttribute('tab-nextFixedLabel') || null), (aInfo.tab.getAttribute('tab-nextFixedLabel') ? aInfo.uri : void(0) ));
+				},
+ 
+				initLocked : function(aInfo) 
+				{
+					if (!aInfo.tab.locked ||
+						aInfo.tab.getAttribute('tab-lockedTargetURI') == 'ANY' ||
+						aInfo.tab.getAttribute('tab-lockedTargetURI') == aInfo.uri)
+						return;
+
+					if (aInfo.keep)
+						aInfo.tab.getAttribute('tab-lockedTargetURI') = aInfo.uri;
+					else
+						this.owner.unlockTab(aInfo.tab, true);
+				},
+ 
+				initReferrerBlocked : function(aInfo) 
+				{
+					if (!aInfo.tab.referrerBlocked ||
+						aInfo.tab.getAttribute('tab-referrerblockedTargetURI') == 'ANY' ||
+						aInfo.tab.getAttribute('tab-referrerblockedTargetURI') == aInfo.uri)
+						return;
+
+					if (aInfo.keep)
+						aInfo.tab.setAttribute('tab-referrerblockedTargetURI', aInfo.uri);
+					else
+						this.owner.unblockReferrerForTab(aInfo.tab, true);
+				},
+ 
+				initAutoReload : function(aInfo) 
+				{
+					// Cancel Refresh and Set AutoReload
+					var autoReloadFromHeader = this.owner.setAutoReloadFromHeaderForTab(aInfo.tab, aInfo.window, aInfo.request);
+
+					var interval = aInfo.tab.autoReloadInterval;
+					if (autoReloadFromHeader ||
+						!interval ||
+						aInfo.tab.mBrowser.contentWindow != aInfo.window)
+						return;
+
+					if (!aInfo.tab.getAttribute('tab-autoReloadFromHeaderURI') && // cancel whenever if the reloading is activated from "http-equiv=refresh"
+						aInfo.keep &&
+						aInfo.tab.getAttribute('tab-autoReloadTargetURI') != 'ANY' &&
+						aInfo.tab.getAttribute('tab-autoReloadTargetURI') != aInfo.uri)
+						aInfo.tab.getAttribute('tab-autoReloadTargetURI') = aInfo.uri;
+
+					if (this.owner.selectedTab != aInfo.tab &&
+						this.owner.mAutoReloadBackgroundTabsSlow) {
+						interval = interval*this.owner.mAutoReloadBackgroundTabsRate;
+					}
+
+					var postData;
+					try {
+						postData = aInfo.tab.mBrowser.sessionHistory.getEntryAtIndex(aInfo.tab.mBrowser.sessionHistory.index, false).QueryInterface(Components.interfaces.nsISHEntry).postData;
+					}
+					catch(e) {
+					}
+					if (
+						(
+							aInfo.tab.getAttribute('tab-autoReloadTargetURI') == 'ANY' ||
+							aInfo.tab.getAttribute('tab-autoReloadTargetURI') == aInfo.uri
+						) &&
+						(
+							!postData ||
+							aInfo.tab.mBrowser.autoReloadPostData
+						)
+						)
+						aInfo.tab.mBrowser.autoReloadTimer = window.setTimeout(this.owner.reloadBrowser, interval, aInfo.tab.mBrowser, this.owner, aInfo.tab);
+					else // cancel auto-reload
+						this.owner.cancelAutoReloadTab(aInfo.tab, true);
+				},
+  
+				dispatchLoadingEvent : function(aInfo) 
+				{
+					var event = document.createEvent('Events');
+					event.initEvent('XULTabbrowserTabLoading', false, true);
+					event.tabId        = aInfo.tab.tabId;
+					event.tabURI       = aInfo.tab.getAttribute('tab-loadingURI');
+					event.loadingView  = aInfo.window;
+					event.followFrames = (aInfo.state && (aInfo.state & Components.interfaces.nsIWebProgressListener.STATE_IS_NETWORK));
+					this.owner.dispatchEvent(event);
+				},
+ 
+				dispatchLoadFinishEvent : function(aInfo) 
+				{
+					var event = document.createEvent('Events');
+					event.initEvent('XULTabbrowserTabLoad', false, true);
+					event.tabId      = aInfo.tab.tabId;
+					event.tabURI     = aInfo.tab.getAttribute('tab-loadingURI');
+					event.loadedView = aInfo.window;
+					this.owner.dispatchEvent(event);
+				},
+ 
+				dispatchLocationChangeEvent : function(aTab, aOld, aNew) 
+				{
+					var event = document.createEvent('Events');
+					event.initEvent('XULTabbrowserTabLocationChange', false, true);
+					event.tabId       = aTab.tabId;
+					event.oldLocation = aOld;
+					event.newLocation = aNew;
+					this.owner.dispatchEvent(event);
+				}
+ 
+			}) 
+		]]></field>
+ 
+		<method name="startHookingContentAreaEvents"> 
+			<body><![CDATA[
+				for (var i in this.hookEvents)
+					this.addEventListener(this.hookEvents[i], this.hookContentAreaEvents, true);
+			]]></body>
+		</method>
+		<method name="endHookingContentAreaEvents">
+			<body><![CDATA[
+				for (var i in this.hookEvents)
+					this.removeEventListener(this.hookEvents[i], this.hookContentAreaEvents, true);
+			]]></body>
+		</method>
+		<field name="hookContentAreaClick">
+			false
+		</field>
+	
+		<field name="hookEvents">([ 
+			'click', 'keypress', 'submit'
+		])</field>
+ 
+		<field name="hookContentAreaEvents"><![CDATA[ 
+			({
+				mTabBrowser : this,
+				extraHandlers : [],
+
+				handleEvent : function(aEvent)
+				{
+					try{
+						var node;
+						try {
+							node = aEvent.originalTarget;
+						}
+						catch(e) {
+						}
+						if (!node) node = aEvent.target;
+						var w = node;
+
+						var winWrapper = /^\[object .*Window\]$/.test(String(node)) ? (new XPCNativeWrapper(node, 'document')) : null ;
+						if (!winWrapper || !winWrapper.document) {
+							w = this.mTabBrowser.getDocShellFromDocument(/^\[object .*Document\]$/.test(String(node)) ? node : (new XPCNativeWrapper(node, 'ownerDocument')).ownerDocument );
+							if (w)
+								w = (new XPCNativeWrapper(w, 'QueryInterface()'))
+									.QueryInterface(Components.interfaces.nsIWebNavigation)
+									.QueryInterface(Components.interfaces.nsIInterfaceRequestor)
+									.getInterface(Components.interfaces.nsIDOMWindow);
+						}
+						if (!w ||
+							(new XPCNativeWrapper(w, 'top')).top == Components.lookupMethod(window, 'top').call(window))
+							return true;
+					}
+					catch(e) {
+dump('gBrowser.hookContentAreaEvents();\n'+e+'\n');
+						return true;
+					}
+
+					var nodeWrapper = new XPCNativeWrapper(node,
+							'nodeType',
+							'parentNode'
+						);
+					if (nodeWrapper.nodeType == Node.TEXT_NODE)
+						node = nodeWrapper.parentNode;
+
+					// for the context menu on the last blank tab
+					this.updateMouseDownPosition(aEvent);
+
+
+					// see TBEMiscOverlay.nsBrowserAccessOpenURI()
+					nodeWrapper = new XPCNativeWrapper(node, 'localName');
+					var elemWrapper = nodeWrapper.localName ?
+							(new XPCNativeWrapper(node,
+								'localName',
+								'getAttribute()'
+							)) : null ;
+					var linkWrapper = /^(a|area|link)$/i.test(nodeWrapper.localName) ?
+							(new XPCNativeWrapper(node, 'target', 'href')) :
+							null ;
+					var formWrapper = String(nodeWrapper.localName).toLowerCase() == 'form' ?
+							(new XPCNativeWrapper(node, 'target', 'action')) :
+							null ;
+					if (
+						(
+							aEvent.type == 'click' ||
+							aEvent.type == 'keypress' ||
+							aEvent.type == 'submit' ||
+							aEvent.type == 'command'
+						) &&
+						(
+							(linkWrapper ? linkWrapper.target : null ) ||
+							(formWrapper ? formWrapper.target : null ) ||
+							(elemWrapper ? elemWrapper.getAttribute('target') : null )
+						)
+						) {
+						w.__tabextensions__lastTarget =
+							(linkWrapper ? linkWrapper.target : null ) ||
+							(formWrapper ? formWrapper.target : null ) ||
+							elemWrapper.getAttribute('target');
+						w.__tabextensions__lastAction =
+							(formWrapper ? formWrapper.action : null ) ||
+							elemWrapper.getAttribute('action');
+						w.__tabextensions__lastHref =
+							(linkWrapper ? linkWrapper.href : null ) ||
+							elemWrapper.getAttribute('href');
+					}
+
+
+					for (var i = 0; i < this.extraHandlers.length; i++)
+					{
+						try {
+							if (this.extraHandlers[i] &&
+								typeof this.extraHandlers[i] == 'function')
+								this.extraHandlers[i](aEvent, this.mTabBrowser);
+						}
+						catch(e) {
+dump('gBrowser.hookContentAreaEvents();\nextraHandlers['+i+']\n'+e+'\n');
+						}
+					}
+				},
+
+				updateMouseDownPosition : function(aEvent)
+				{
+					if (!this.mTabBrowser.isBlank || aEvent.type != 'mousedown')
+						return;
+
+					this.mTabBrowser.mMouseDownX = aEvent.screenX;
+					this.mTabBrowser.mMouseDownY = aEvent.screenY;
+				}
+			})
+		]]></field>
+   
+		<!-- tab info --> 
+	
+		<method name="getTabInfo"> 
+			<parameter name="aTab"/>
+			<body><![CDATA[
+				if (!aTab || aTab.localName != 'tab') return null;
+
+				var i;
+
+				var b  = aTab.mBrowser;
+				var SH = null;
+				try {
+					SH = b.sessionHistory;
+				}
+				catch(e) {
+				}
+
+				var entries = [],
+					entry,
+					x       = {},
+					y       = {},
+					content;
+				if (SH)
+					for (i = 0; i < SH.count; i++)
+					{
+						entry = this.getSHEntryInfo(SH.getEntryAtIndex(i, false));
+						if (entry)
+							entries.push(entry);
+					}
+
+				var info = {
+						id                 : aTab.tabId,
+
+						uri                : (b.currentURI ? b.currentURI.spec : '' ), // with the prefbar, "mailto:" tab's currentURI is null. why?
+						label              : aTab.label,
+						favIcon            : (aTab.getAttribute('image') || ''),
+
+						index              : aTab.tabIndex,
+						selected           : (aTab == this.selectedTab),
+						SHEntries          : entries,
+						SHIndex            : (SH ? SH.index : -1 ),
+
+						parentTab          : aTab.getAttribute('tab-parentTab'),
+						childTabs          : aTab.mChildTabs.join('|'),
+
+						locked             : aTab.locked,
+						referrerBlocked    : aTab.referrerBlocked,
+						autoreloadInterval : aTab.autoReloadInterval,
+						autoreloadPostType : (aTab.mBrowser.autoReloadPostData ? aTab.mBrowser.autoReloadPostData.contentType : '' ),
+						autoreloadPostData : (aTab.mBrowser.autoReloadPostData ? aTab.mBrowser.autoReloadPostData.content : '' ),
+
+						allowPlugins       : aTab.allowPlugins,
+						allowJavascript    : aTab.allowJavascript,
+						allowMetaRedirects : aTab.allowMetaRedirects,
+						allowSubframes     : aTab.allowSubframes,
+						allowImages        : aTab.allowImages,
+
+						fixedLabel         : (aTab.getAttribute('tab-fixedLabelTargetURI') || '').indexOf('autoDestroy::') == 0 ?
+							null :
+							(
+								aTab.getAttribute('tab-nextFixedLabel') ||
+								aTab.getAttribute('tab-fixedLabel')
+							),
+						textZoom           : (aTab.mBrowser.docShell.contentViewer ? parseInt(aTab.mBrowser.markupDocumentViewer.textZoom*100) : aTab.textZoom ),
+
+						bookmarkID         : aTab.getAttribute('tab-bookmarkID'),
+
+						toString : function()
+						{
+							return '[object XULTabbrowserTabInfo]';
+						}
+					};
+
+				if (this.getTabInfoExtra.length)
+					for (i = 0; i < this.getTabInfoExtra.length; i++)
+						this.getTabInfoExtra[i](aTab, this, info);
+
+				return info;
+			]]></body>
+		</method>
+		<field name="getTabInfoExtra">
+			new Array()
+		</field>
+	
+		<method name="getSHEntryInfo"> 
+			<parameter name="aEntry"/>
+			<body><![CDATA[
+				if (!aEntry) return null;
+
+				aEntry = aEntry.QueryInterface(Components.interfaces.nsIHistoryEntry);
+				aEntry = aEntry.QueryInterface(Components.interfaces.nsISHEntry);
+
+				var x = {}, y = {};
+				aEntry.getScrollPosition(x, y);
+
+				var info = {
+					id               : aEntry.ID, // to compare with saved data
+					uri              : (aEntry.URI ? aEntry.URI.spec : null ),
+					title            : aEntry.title,
+					isSubFrame       : aEntry.isSubFrame,
+					saveLayoutState  : aEntry.saveLayoutStateFlag,
+					loadType         : aEntry.loadType,
+					expirationStatus : aEntry.expirationStatus,
+					x                : Math.max(x.value, 0),
+					y                : Math.max(y.value, 0),
+					children         : []
+				};
+if ('TabbrowserService' in window && TabbrowserService.debug && !info.uri) {
+	var msg = ['ERROR: NULL ENTRY CREATED\n'];
+	for (var j in info)
+		msg.push(j+' : '+info[j]);
+	alert('@tabbrowser.xml#tabbrowser.getSHEntryInfo()\n'+msg.join('\n'));
+}
+
+				// get post data
+				if ('cacheKey' in aEntry && aEntry.cacheKey) {
+					info.cacheKey = aEntry.cacheKey.QueryInterface(Components.interfaces.nsISupportsPRUint32).data;
+
+					var data = this.readPostStream(aEntry.postData);
+					info.postContentType = data.contentType || '';
+					info.postContent     = data.content || '';
+				}
+				else {
+					info.cacheKey        = 0;
+					info.postContentType = '';
+					info.postContent     = '';
+				}
+
+
+				var children = [];
+				try {
+					aEntry = aEntry.QueryInterface(Components.interfaces.nsISHContainer);
+				}
+				catch(e) {
+					return info;
+				}
+
+				for (var i = 0; i < aEntry.childCount; i++)
+				{
+					info.children.push(this.getSHEntryInfo(aEntry.GetChildAt(i)));
+				}
+				return info;
+			]]></body>
+		</method>
+ 
+		<method name="createSHEntryFromInfo"> 
+			<parameter name="aInfo"/>
+			<body><![CDATA[
+				var entry = Components.classes['@mozilla.org/browser/session-history-entry;1'].createInstance(Components.interfaces.nsISHEntry);
+				entry = entry.QueryInterface(Components.interfaces.nsIHistoryEntry);
+
+				if ('setURI' in entry) { // Firefox 1.1 or later
+					entry.setURI(this.makeURIFromSpec(aInfo.uri));
+					entry.setTitle(aInfo.title);
+					entry.setIsSubFrame(aInfo.isSubFrame);
+				}
+				else { // Firefox 1.0.x or before
+					entry.SetURI(this.makeURIFromSpec(aInfo.uri));
+					entry.SetTitle(aInfo.title);
+					entry.SetIsSubFrame(aInfo.isSubFrame);
+				}
+
+				entry.setScrollPosition(
+					{ value : aInfo.x },
+					{ value : aInfo.y }
+				);
+
+				entry.saveLayoutStateFlag = aInfo.saveLayoutState;
+				entry.loadType            = aInfo.loadType;
+
+				if ('cacheKey' in aInfo && aInfo.cacheKey) {
+					var cacheKey = Components.classes['@mozilla.org/supports-PRUint32;1'].createInstance(Components.interfaces.nsISupportsPRUint32);
+					cacheKey.type = cacheKey.TYPE_PRUINT32;
+					cacheKey.data = parseInt(aInfo.cacheKey);
+					cacheKey = cacheKey.QueryInterface(Components.interfaces.nsISupports);
+
+					entry.cacheKey         = cacheKey;
+					entry.expirationStatus = 'expirationStatus' in aInfo ? aInfo.expirationStatus : null ;
+					entry.postData         = this.createPostStream(
+						{
+							contentType : aInfo.postContentType,
+							content     : aInfo.postContent,
+							method      : ''
+						},
+						true
+					);
+				}
+
+				if (!aInfo.children || !aInfo.children.length) return entry;
+
+				entry = entry.QueryInterface(Components.interfaces.nsISHContainer);
+				for (var i in aInfo.children)
+					entry.AddChild(
+						this.createSHEntryFromInfo(
+							aInfo.children[i]
+						),
+						i
+					);
+
+				return entry;
+			]]></body>
+		</method>
+  
+		<!-- 保存されていたタブの状態を反映 --> 
+		<!-- restore tab's status stored in bookmarks -->
+		<method name="initTabWithTabInfo">
+			<parameter name="aTab"/>
+			<parameter name="aInfo"/>
+			<parameter name="aForcedTargetURI"/>
+			<body><![CDATA[
+				if (!aInfo) return;
+				if (!('uri' in aInfo)) aInfo.uri = null;
+
+				// Name the browser instead of "window.name"
+				if (!('browserName' in aInfo) ||
+					!aInfo.browserName ||
+					String(aInfo.browserName).search(/^_(self|top|parent|blank|content)$/i) > -1) {
+				}
+				else {
+					aTab.browserName = String(aInfo.browserName);
+				}
+
+				var isNewLoading = !aTab.mBrowser.currentURI || (aTab.mBrowser.currentURI.spec != aInfo.uri);
+
+				if (aTab.getAttribute('tab-lockedTargetURI') != 'ANY' ||
+					aForcedTargetURI) {
+					if ('locked' in aInfo ? aInfo.locked : this.mPrefs.getBoolPref('browser.tabs.extensions.locked.enabled'))
+						this.lockTab(aTab, 'locked' in aInfo ? aInfo.uri : 'ANY');
+					else
+						this.unlockTab(aTab, isNewLoading);
+				}
+
+				if (aTab.getAttribute('tab-referrerblockedTargetURI') != 'ANY' ||
+					aForcedTargetURI) {
+					if ('referrerBlocked' in aInfo ? aInfo.referrerBlocked : this.mPrefs.getBoolPref('browser.tabs.extensions.referrerBlocked.enabled'))
+						this.blockReferrerForTab(aTab, 'referrerBlocked' in aInfo ? aInfo.uri : 'ANY');
+					else
+						this.unblockReferrerForTab(aTab, isNewLoading);
+				}
+
+				if (aTab.getAttribute('tab-autoReloadTargetURI') != 'ANY' ||
+					aForcedTargetURI) {
+					if ('autoreloadInterval' in aInfo && aInfo.autoreloadInterval) {
+						this.setAutoReloadTab(
+							aTab,
+							aInfo.autoreloadInterval,
+							aInfo.uri,
+							{
+								postData : !aInfo.autoreloadPostData ? null : {
+									contentType : aInfo.autoreloadPostType,
+									content     : aInfo.autoreloadPostData
+								}
+							}
+						);
+					}
+					else
+						this.cancelAutoReloadTab(aTab, isNewLoading);
+				}
+
+				if (aTab.getAttribute('tab-forbiddenTargetURI') != 'ANY' ||
+					aForcedTargetURI) {
+					var allowProps = [
+							'allowPlugins',
+							'allowJavascript',
+							'allowMetaRedirects',
+							'allowSubframes',
+							'allowImages'
+						];
+					for (var i in allowProps)
+						this.setDocShellPropertyFor(
+							aTab,
+							allowProps[i],
+							(allowProps[i] in aInfo ? aInfo[allowProps[i]] : this.mPrefs.getBoolPref('browser.tabs.extensions.'+allowProps[i]+'.enabled') ) ,
+							allowProps[i] in aInfo ? aInfo.uri : 'ANY',
+							isNewLoading
+						);
+				}
+
+				if (aTab.getAttribute('tab-fixedLabelTargetURI') != 'ANY' ||
+					aForcedTargetURI)
+					this.setFixedLabelFor(
+						aTab,
+						('fixedLabel' in aInfo ? aInfo.fixedLabel : null ),
+						('fixedLabelAutoDestroy' in aInfo && aInfo.fixedLabelAutoDestroy ? 'autoDestroy::'+aInfo.uri : aInfo.uri ),
+						('nextFixedLabel' in aInfo ? aInfo.nextFixedLabel : null )
+					);
+
+				if (aTab.getAttribute('tab-textZoomTargetURI') != 'ANY' ||
+					aForcedTargetURI) {
+					if ('textZoom' in aInfo && aInfo.textZoom) {
+						this.setTextZoomFor(
+							aTab,
+							aInfo.textZoom,
+							aInfo.uri
+						);
+					}
+					else
+						this.resetTextZoomFor(aTab, isNewLoading);
+				}
+
+				if ('bookmarkID' in aInfo && aInfo.bookmarkID)
+					this.setBookmarkIDFor(aTab, aInfo.bookmarkID, aInfo.uri);
+
+
+				if (this.initTabWithTabInfoExtra.length)
+					for (i = 0; i < this.initTabWithTabInfoExtra.length; i++)
+						this.initTabWithTabInfoExtra[i](aTab, this, aInfo);
+			]]></body>
+		</method>
+		<field name="initTabWithTabInfoExtra">
+			new Array()
+		</field>
+  
+		<!-- bookmarks --> 
+	
+		<field name="bookmarksManager"> 
+			null
+		</field>
+ 
+		<method name="setBookmarkIDFor"> 
+			<parameter name="aTab"/>
+			<parameter name="aID"/>
+			<parameter name="aTargetURI"/>
+			<body><![CDATA[
+				if (aTab.localName == 'tabs') aTab = this.selectedTab;
+
+				var uri = aTargetURI !== void(0) ? aTargetURI : aTab.getAttribute('tab-loadingURI') ;
+
+				aTab.setAttribute('tab-bookmarkID',  aID);
+				aTab.setAttribute('tab-bookmarkURI', uri);
+
+				return aTab;
+			]]></body>
+		</method>
+ 
+		<method name="editBookmarkFromTab"> 
+			<parameter name="aTab"/>
+			<body><![CDATA[
+				if (!this.bookmarksManager ||
+					!this.bookmarksManager.isBookmarked(aTab.getAttribute('tab-bookmarkID')))
+					return aTab;
+
+				this.bookmarksManager.edit(aTab.getAttribute('tab-bookmarkID'));
+
+				return aTab;
+			]]></body>
+		</method>
+  
+		<!-- 閉じたタブを開き直す --> 
+		<method name="undoRemoveTab">
+			<body><![CDATA[
+				// if no entry exists, do no action
+				if (!this.mRemovedTabInfoList.length) return null;
+
+				var tabInfo = (!this.mRemovedTabInfoList.length) ? { uri : null, index : 0, selected : false } : this.mRemovedTabInfoList.pop() ;
+				if (tabInfo.constructor == Array) tabInfo = tabInfo[0];
+
+				var event = document.createEvent('Events');
+				event.initEvent('XULTabbrowserUndoCacheRemoved', false, true);
+				event.removedCachedTabInfo = tabInfo;
+				this.dispatchEvent(event);
+
+
+				var tabShouldBeRemoved = (this.mTabs.length == 1 && this.currentURI.spec == 'about:blank') ? this.selectedTab : null ;
+
+
+				if (!this.mPrefs.getBoolPref('browser.tabs.extensions.undo.apply_original_index'))
+					delete tabInfo.index;
+
+				var t = this.addTabWithTabInfo(tabInfo);
+
+				if (tabShouldBeRemoved)
+					this.removeTabInternal(tabShouldBeRemoved, { preventUndo : true });
+
+				if (tabInfo.selected) {
+					this.selectedTab = t;
+					this.scrollTabbarToTab(t);
+				}
+
+				return t;
+			]]></body>
+		</method>
+ 
+<!-- features of tabs --> 
+	
+		<!-- タブの状態が変化したことを知らせるイベントを発行 --> 
+		<method name="onTabStatusChange">
+			<parameter name="aTab"/>
+			<parameter name="aKey"/>
+			<parameter name="aTargetURI"/>
+			<body><![CDATA[
+				var event = document.createEvent('Events');
+				event.initEvent('XULTabbrowserTabStatusChange', false, true);
+				event.tabId        = aTab.tabId;
+				event.targetURI    = aTargetURI;
+				event.targetStatus = aKey;
+				this.dispatchEvent(event);
+			]]></body>
+		</method>
+ 
+		<method name="setFixedLabelFor"> 
+			<parameter name="aTab"/>
+			<parameter name="aNewLabel"/>
+			<parameter name="aTargetURI"/>
+			<parameter name="aOnLoadNewLabel"/>
+			<body><![CDATA[
+				if (aTab.localName == 'tabs') aTab = this.selectedTab;
+
+				var uri = aTargetURI || aTab.getAttribute('tab-loadingURI');
+				var id  = aTab.getAttribute('tab-bookmarkID');
+				var data;
+
+
+				var browser = aTab.mBrowser;
+				var doc     = new XPCNativeWrapper(browser.contentDocument, 'title');
+
+				if (aNewLabel === void(0)) {
+					var isBookmarked = this.bookmarksManager.isBookmarked(id);
+					var label        = (
+							aTab.getAttribute('tab-fixedLabel') ||
+							(isBookmarked ? this.bookmarksManager.getName(id) : null ) ||
+							aTab.label ||
+							''
+						);
+
+					data = {
+							modified     : false,
+							value        : label,
+							isBookmarked : isBookmarked,
+							shouldSave   : true,
+							useTitle     : false
+						};
+					window.openDialog('chrome://tabextensions/content/setFixedLabel.xul', '_blank', 'chrome,modal,centerscreen', data);
+
+					aNewLabel = data.value;
+
+					if (isBookmarked && data.modified && data.shouldSave) {
+						if (data.useTitle)
+							this.bookmarksManager.setName(doc.title || void(0), uri, 0);
+						else if (aNewLabel)
+							this.bookmarksManager.setName(aNewLabel, uri, 0);
+					}
+				}
+
+				if (aNewLabel) {
+					aTab.setAttribute('tab-fixedLabel', aNewLabel);
+					aTab.setAttribute('label', aNewLabel);
+				}
+				else {
+					aTab.removeAttribute('tab-fixedLabel');
+					var title   = doc.title;
+					if (title)
+						aTab.setAttribute('label', title);
+					else
+						aTab.setAttribute('label', (browser.currentURI.spec && browser.currentURI.spec != 'about:blank') ? browser.currentURI.spec : this.mStringBundle.getString('tabs.untitled') );
+				}
+
+				if (aOnLoadNewLabel)
+					aTab.setAttribute('tab-nextFixedLabel', aOnLoadNewLabel);
+				else
+					aTab.removeAttribute('tab-nextFixedLabel');
+
+				aTab.setAttribute('tab-fixedLabelTargetURI', uri);
+
+				if (data && data.modified && data.shouldSave)
+					this.onTabStatusChange(aTab, 'fixedLabel', uri);
+
+				return aTab;
+			]]></body>
+		</method>
+ 
+		<!-- ズーム --> 
+	
+		<method name="setTextZoomFor"> 
+			<parameter name="aTab"/>
+			<parameter name="aZoom"/>
+			<parameter name="aTargetURI"/>
+			<body><![CDATA[
+				if (aTab.localName == 'tabs') aTab = this.selectedTab;
+				var b = aTab.mBrowser;
+				if (b) {
+					if (aZoom)
+						aTab.setAttribute('tab-textZoom', aZoom);
+					else
+						aTab.removeAttribute('tab-textZoom');
+
+					var zoom = aZoom / 100;
+					if (b.docShell.contentViewer)
+						b.markupDocumentViewer.textZoom = zoom;
+
+					aTab.setAttribute('tab-textZoomTargetURI', aTargetURI || (b.currentURI ? b.currentURI.spec : aTab.getAttribute('tab-loadingURI') ));
+
+					this.onTabStatusChange(aTab, 'textZoom', aTab.getAttribute('tab-textZoomTargetURI'));
+				}
+
+				if (this.tabGroupsAvailable &&
+					this.mPrefs.getBoolPref('browser.tabs.extensions.inherit.group.textZoom'))
+					for (var i = 0, tabs = aTab.childTabs, max = tabs.length; i < max; i++)
+						this.setTextZoomFor(tabs[i], aZoom);
+
+				return aTab;
+			]]></body>
+		</method>
+ 
+		<method name="resetTextZoomFor"> 
+			<parameter name="aTab"/>
+			<parameter name="aShouldNotSaveStatus"/>
+			<body><![CDATA[
+				if (aTab.localName == 'tabs') aTab = this.selectedTab;
+				var b = aTab.mBrowser;
+				if (b) {
+					aTab.setAttribute('tab-textZoom', 100);
+
+					if (b.docShell.contentViewer)
+						b.markupDocumentViewer.textZoom = 1;
+
+					this.onTabStatusChange(aTab, 'textZoom', aTab.getAttribute('tab-textZoomTargetURI'));
+
+					aTab.removeAttribute('tab-textZoomTargetURI');
+				}
+
+				if (this.tabGroupsAvailable &&
+					this.mPrefs.getBoolPref('browser.tabs.extensions.inherit.group.textZoom'))
+					for (var i = 0, tabs = aTab.childTabs, max = tabs.length; i < max; i++)
+						this.resetTextZoomFor(tabs[i], aShouldNotSaveStatus);
+
+				return aTab;
+			]]></body>
+		</method>
+  
+		<!-- タブのロック/解除 --> 
+	
+		<method name="toggleTabLocked"> 
+			<parameter name="aTab"/>
+			<body><![CDATA[
+				if (aTab.localName == 'tabs') aTab = this.selectedTab;
+				if (aTab.locked)
+					this.unlockTab(aTab);
+				else
+					this.lockTab(aTab);
+			]]></body>
+		</method>
+	
+		<method name="toggleAllTabsLocked"> 
+			<body><![CDATA[
+				var locked = (this.mContextTab || this.selectedTab).locked,
+					i;
+				var max = this.mTabs.length;
+				if (locked)
+					for (i = 0; i < max; i++)
+						this.unlockTab(this.mTabs[i]);
+				else
+					for (i = 0; i < max; i++)
+						this.lockTab(this.mTabs[i]);
+			]]></body>
+		</method>
+ 
+		<method name="unlockTab"> 
+			<parameter name="aTab"/>
+			<parameter name="aShouldNotSaveStatus"/>
+			<body><![CDATA[
+				if (aTab.localName == 'tabs') aTab = this.selectedTab;
+				var b = aTab.mBrowser;
+				if (b) {
+					aTab.removeAttribute('tab-locked');
+
+					if (!aShouldNotSaveStatus)
+						this.onTabStatusChange(aTab, 'locked', aTab.getAttribute('tab-lockedTargetURI'));
+
+					aTab.removeAttribute('tab-lockedTargetURI');
+				}
+
+				if (this.tabGroupsAvailable &&
+					this.mPrefs.getBoolPref('browser.tabs.extensions.inherit.group.locked'))
+					for (var i = 0, tabs = aTab.childTabs, max = tabs.length; i < max; i++)
+						this.unlockTab(tabs[i], aShouldNotSaveStatus);
+
+				return aTab;
+			]]></body>
+		</method>
+  
+		<method name="lockTab"> 
+			<parameter name="aTab"/>
+			<parameter name="aTargetURI"/>
+			<body><![CDATA[
+				if (aTab.localName == 'tabs') aTab = this.selectedTab;
+				var b = aTab.mBrowser;
+				if (b) {
+					aTab.setAttribute('tab-locked', true);
+					aTab.setAttribute('tab-lockedTargetURI', aTargetURI || (b.currentURI ? b.currentURI.spec : aTab.getAttribute('tab-loadingURI') ));
+
+					this.onTabStatusChange(aTab, 'locked', aTab.getAttribute('tab-lockedTargetURI'));
+				}
+
+				if (this.tabGroupsAvailable &&
+					this.mPrefs.getBoolPref('browser.tabs.extensions.inherit.group.locked'))
+					for (var i = 0, tabs = aTab.childTabs, max = tabs.length; i < max; i++)
+						this.lockTab(tabs[i]);
+
+				return aTab;
+			]]></body>
+		</method>
+  
+		<!-- リファラのブロック --> 
+	
+		<method name="toggleReferrerBlocked"> 
+			<parameter name="aTab"/>
+			<body><![CDATA[
+				if (aTab.localName == 'tabs') aTab = this.selectedTab;
+
+				if (aTab.referrerBlocked)
+					this.unblockReferrerForTab(aTab);
+				else
+					this.blockReferrerForTab(aTab);
+			]]></body>
+		</method>
+	
+		<method name="toggleReferrerBlockedForAllTabs"> 
+			<body><![CDATA[
+				var blocked = (this.mContextTab || this.selectedTab).referrerBlocked,
+					i;
+				var max = this.mTabs.length;
+				if (blocked)
+					for (i = 0; i < max; i++)
+						this.unblockReferrerForTab(this.mTabs[i]);
+				else
+					for (i = 0; i < max; i++)
+						this.blockReferrerForTab(this.mTabs[i]);
+			]]></body>
+		</method>
+  
+		<method name="blockReferrerForTab"> 
+			<parameter name="aTab"/>
+			<parameter name="aTargetURI"/>
+			<body><![CDATA[
+				if (aTab.localName == 'tabs') aTab = this.selectedTab;
+				var b = aTab.mBrowser;
+				if (b) {
+					aTab.setAttribute('tab-referrerblocked', true);
+					aTab.setAttribute('tab-referrerblockedTargetURI', aTargetURI || (b.currentURI ? b.currentURI.spec : aTab.getAttribute('tab-loadingURI') ));
+
+					this.onTabStatusChange(aTab, 'referrerblocked', aTab.getAttribute('tab-referrerblockedTargetURI'));
+				}
+
+				if (this.tabGroupsAvailable &&
+					this.mPrefs.getBoolPref('browser.tabs.extensions.inherit.group.referrerBlocked'))
+					for (var i = 0, tabs = aTab.childTabs, max = tabs.length; i < max; i++)
+						this.blockReferrerForTab(tabs[i]);
+
+				return aTab;
+			]]></body>
+		</method>
+ 
+		<method name="unblockReferrerForTab"> 
+			<parameter name="aTab"/>
+			<parameter name="aShouldNotSaveStatus"/>
+			<body><![CDATA[
+				if (aTab.localName == 'tabs') aTab = this.selectedTab;
+				var b = aTab.mBrowser;
+				if (b) {
+					aTab.removeAttribute('tab-referrerblocked');
+
+					if (!aShouldNotSaveStatus)
+						this.onTabStatusChange(aTab, 'referrerblocked', aTab.getAttribute('tab-referrerblockedTargetURI'));
+
+					aTab.removeAttribute('tab-referrerblockedTargetURI');
+				}
+
+				if (this.tabGroupsAvailable &&
+					this.mPrefs.getBoolPref('browser.tabs.extensions.inherit.group.referrerBlocked'))
+					for (var i = 0, tabs = aTab.childTabs, max = tabs.length; i < max; i++)
+						this.unblockReferrerForTab(tabs[i], aShouldNotSaveStatus);
+
+				return aTab;
+			]]></body>
+		</method>
+  
+		<!-- タブの自動リロード --> 
+	
+		<method name="toggleTabAutoReload"> 
+			<parameter name="aTab"/>
+			<parameter name="aInterval"/>
+			<body><![CDATA[
+				if (aTab.localName == 'tabs') aTab = this.selectedTab;
+				if (aTab.getAttribute('tab-autoreload')) {
+					this.cancelAutoReloadTab(aTab);
+					return true;
+				}
+				else
+					return this.setAutoReloadTab(aTab, aInterval);
+			]]></body>
+		</method>
+	
+		<method name="toggleAllTabsAutoReload"> 
+			<parameter name="aInterval"/>
+			<body><![CDATA[
+				var autoreload = (this.mContextTab || this.selectedTab).getAttribute('tab-autoreload'),
+					i;
+				var max = this.mTabs.length;
+				if (autoreload) {
+					for (i = 0; i < max; i++)
+						this.cancelAutoReloadTab(this.mTabs[i]);
+				}
+				else {
+					if (!aInterval) {
+						var data = { value: 0 };
+						window.openDialog('chrome://tabextensions/content/setInterval.xul', '_blank', 'chrome,modal,centerscreen', data);
+						aInterval = Number(data.value);
+					}
+					if (aInterval <= 0) return;
+					for (i = 0; i < max; i++)
+						this.setAutoReloadTab(this.mTabs[i], aInterval);
+				}
+			]]></body>
+		</method>
+  
+		<method name="setAutoReloadTab"> 
+			<parameter name="aTab"/>
+			<parameter name="aInterval"/>
+			<parameter name="aTargetURI"/>
+			<parameter name="aInfo"/>
+			<body><![CDATA[
+				if (aTab.localName == 'tabs') aTab = this.selectedTab;
+				if (!aInfo) aInfo = {};
+
+				// if the page has post stream, confirm to start reloading
+				// original: "Reload Every" (http://www.haitsma.org/)
+				var shouldReloadWithPost = false;
+				var postData = aInfo.postData;
+				try {
+					var entry = aTab.mBrowser.sessionHistory.getEntryAtIndex(aTab.mBrowser.sessionHistory.index, false).QueryInterface(Components.interfaces.nsISHEntry);
+					if (entry.URI.spec == aTab.getAttribute('tab-loadingURI'))
+						postData = entry.postData ;
+				}
+				catch(e) {
+				}
+				if (postData) {
+					if (aInfo.postData) {
+						shouldReloadWithPost = true;
+					}
+					else {  // show confirming dialog with "!" icon
+						var params = Components.classes['@mozilla.org/embedcomp/dialogparam;1'].createInstance(Components.interfaces.nsIDialogParamBlock);
+
+						params.SetString(12, this.mStringBundleInternal.GetStringFromName('message_confirm_autoreloadPostData_title')); // title text
+						params.SetString(0, this.mStringBundleInternal.GetStringFromName('message_confirm_autoreloadPostData_text')); // message text
+						params.SetString(2, 'alert-icon'); // icon
+						params.SetInt(2, 2); // number of buttons (OK and Cancel)
+
+						window.openDialog('chrome://global/content/commonDialog.xul', '_blank', 'chrome,modal,centerscreen', params);
+
+						if (params.GetInt(0) == 0)
+							shouldReloadWithPost = true;
+					}
+
+					if (!shouldReloadWithPost) {
+						this.cancelAutoReloadTab(aTab, aInfo.fromHeader);
+						return false;
+					}
+					if (!aInfo.postData) postData = this.readPostStreamInternal(postData);
+				}
+
+				if (aInterval === void(0)) {
+					var data = { value: 0 };
+					window.openDialog('chrome://tabextensions/content/setInterval.xul', '_blank', 'chrome,modal,centerscreen', data);
+					aInterval = Number(data.value);
+				}
+				if (aInterval <= 0) return false;
+
+				if (aInterval)
+					aTab.setAttribute('tab-autoReloadInterval', aInterval);
+				else
+					aTab.removeAttribute('tab-autoReloadInterval');
+				aTab.setAttribute('tab-autoreload', true);
+
+				var b = aTab.mBrowser;
+				aTab.setAttribute('tab-autoReloadTargetURI',
+					aTargetURI ||
+					(b.currentURI ?
+						b.currentURI.spec :
+						aTab.getAttribute('tab-loadingURI')
+					).replace(/#[^#]+$/, '')
+				);
+
+				aTab.mBrowser.autoReloadPostData = !shouldReloadWithPost ? null :
+					{
+						contentType : postData.contentType,
+						content     : postData.content
+					};
+
+				// To prevent DOS attack with POST data, I force you to reload with a limited interval.
+				if (aTab.mBrowser.autoReloadPostData) aInterval = Math.max(aInterval, 15000);
+
+				aTab.setAttribute('tab-autoReloadFromHeaderURI', aInfo.fromHeader ? aTab.getAttribute('tab-autoReloadTargetURI') : null );
+
+				// remove hash from the page URL, because it blocks auto-reloading
+				if ((b.currentURI ? b.currentURI.spec : aTab.getAttribute('tab-loadingURI') ).match(/#[^#]+$/)) {
+					var currentPostData;
+					try {
+						currentPostData = b.sessionHistory.getEntryAtIndex(b.sessionHistory.index, false).QueryInterface(Components.interfaces.nsISHEntry).postData;
+					}
+					catch(e) {
+						currentPostData = null;
+					}
+					b.webNavigation.loadURI(
+						aTab.getAttribute('tab-autoReloadTargetURI'),
+						Components.interfaces.nsIWebNavigation.LOAD_FLAGS_NONE,
+						null,
+						currentPostData,
+						null
+					);
+				}
+
+				aTab.mBrowser.autoReloadTimer = window.setTimeout(this.reloadBrowser, aInterval, b, this, aTab);
+
+				if (!aInfo.fromHeader)
+					this.onTabStatusChange(aTab, 'autoreload', aTab.getAttribute('tab-autoReloadTargetURI'));
+
+				if (shouldReloadWithPost)
+					this.reloadBrowser(aTab.mBrowser, this, aTab);
+
+				return true;
+			]]></body>
+		</method>
+ 
+		<method name="cancelAutoReloadTab"> 
+			<parameter name="aTab"/>
+			<parameter name="aShouldNotSaveStatus"/>
+			<body><![CDATA[
+				if (aTab.localName == 'tabs') aTab = this.selectedTab;
+				aTab.removeAttribute('tab-autoReloadInterval');
+				if (aTab.mBrowser.autoReloadTimer) window.clearTimeout(aTab.mBrowser.autoReloadTimer);
+				aTab.removeAttribute('tab-autoreload');
+
+				if (!aShouldNotSaveStatus)
+					this.onTabStatusChange(aTab, 'autoreload', aTab.getAttribute('tab-autoReloadTargetURI'));
+
+				aTab.removeAttribute('tab-autoReloadTargetURI');
+				aTab.mBrowser.autoReloadPostData      = null;
+				aTab.removeAttribute('tab-autoReloadFromHeaderURI');
+			]]></body>
+		</method>
+ 
+		<method name="reloadBrowser"> 
+			<parameter name="aBrowser"/>
+			<parameter name="aTabBrowser"/>
+			<parameter name="aTab"/>
+			<body><![CDATA[
+				if (aBrowser.currentURI.spec == aTab.getAttribute('tab-autoReloadTargetURI')) {
+					var postData = aTab.mBrowser.autoReloadPostData;
+					if (postData) postData = aTabBrowser.createPostStream(postData, true);
+					try {
+						if (!postData)
+							postData = aBrowser.sessionHistory.getEntryAtIndex(aBrowser.sessionHistory.index, false).QueryInterface(Components.interfaces.nsISHEntry).postData;
+					}
+					catch(e) {
+					}
+					if (aTab.mBrowser.autoReloadTimer) {
+						window.clearTimeout(aTab.mBrowser.autoReloadTimer);
+						aTab.mBrowser.autoReloadTimer = null;
+					}
+					aBrowser.webNavigation.loadURI(
+						aBrowser.currentURI.spec,
+						Components.interfaces.nsIWebNavigation.LOAD_FLAGS_BYPASS_PROXY | Components.interfaces.nsIWebNavigation.LOAD_FLAGS_BYPASS_CACHE,
+						null,
+						postData,
+						null
+					);
+				}
+				else
+					aTab.mBrowser.autoReloadTimer = window.setTimeout(aTabBrowser.reloadBrowser, 100, aBrowser, aTabBrowser, aTab);
+			]]></body>
+		</method>
+ 
+		<!-- ヘッダのrefreshを自動リロードに変換する --> 
+		<!-- activate auto-reloading from "http-equiv=refresh" in the header -->
+		<method name="setAutoReloadFromHeaderForTab">
+			<parameter name="aTab"/>
+			<parameter name="aWindow"/>
+			<parameter name="aRequest"/>
+			<body><![CDATA[
+				if (!aTab || !this.mControlRefreshWithAutoReload) return false;
+
+				var b = aTab.mBrowser;
+				if (!b.docShell.allowMetaRedirects) return false;
+
+				var refresh = [],
+					i;
+
+				// get refresh from HTTP header
+				if (aRequest) {
+					try {
+						var httpChannel = aRequest.QueryInterface(Components.interfaces.nsIChannel).QueryInterface(Components.interfaces.nsIHttpChannel);
+						if (httpChannel)
+							refresh.push(httpChannel.getResponseHeader('refresh'));
+					}
+					catch(e) {
+					}
+				}
+
+
+				// get refresh from meta elements
+
+				if (!aWindow) aWindow = b.contentWindow;
+
+				var doc = (new XPCNativeWrapper(aWindow, 'document')).document;
+				doc = new XPCNativeWrapper(doc,
+						'getElementsByTagName()',
+						'getElementsByTagNameNS()',
+						'documentElement'
+					);
+
+				var meta = doc.getElementsByTagName('META');
+				if (!meta.length)
+					meta = doc.getElementsByTagNameNS('http://www.w3.org/1999/xhtml', 'meta');
+				var metaLength = (new XPCNativeWrapper(meta, 'length')).length;
+				if (metaLength) {
+					var header;
+					var attributeGetter;
+					for (i = 0; i < metaLength; i++)
+					{
+						attributeGetter = new XPCNativeWrapper(meta[i], 'getAttribute()');
+						header  = attributeGetter.getAttribute('http-equiv');
+						if (header && header.toLowerCase() == 'refresh')
+							refresh.push(attributeGetter.getAttribute('content'));
+					}
+				}
+
+				if (!refresh.length) return false;
+
+				var interval,
+					uri,
+					minimumInterval = -1;
+				var SH = b.sessionHistory;
+				var activated = false;
+				var baseURI, prevPOSTData, currentPOSTData;
+				for (i in refresh)
+				{
+					uri = refresh[i].replace(/((\+|-)?\d+[;, ])? */, '').replace(/url *= */i, '').replace(/^[;, ]+/, '') || (b.currentURI ? b.currentURI.spec : aTab.getAttribute('tab-loadingURI') );
+
+					if (uri.search(/^(https?|ftp|file|resource|chrome|gopher):/) < 0) {
+						baseURI = this.mIOService.newURI((new XPCNativeWrapper(doc.documentElement, 'baseURI')).baseURI, null, null);
+						uri = this.mIOService.newURI(baseURI.resolve(uri), null, null).spec;
+					}
+
+					// if it is a redirecting to other pages, don't activate
+					if (uri != (b.currentURI ? b.currentURI.spec : aTab.getAttribute('tab-loadingURI') )) continue;
+
+					// if it is a reloading after a posting, like uploaders, don't activate.
+					try {
+						if (SH.index > 0) {
+							prevPOSTData = SH.getEntryAtIndex(SH.index-1, false).QueryInterface(Components.interfaces.nsISHEntry).postData;
+							currentPOSTData = SH.getEntryAtIndex(SH.index, false).QueryInterface(Components.interfaces.nsISHEntry).postData;
+							// when new posting
+							if (
+								!prevPOSTData != !currentPOSTData ||
+								!currentPOSTData ||
+								prevPOSTData.available() != currentPOSTData.available() // after another posting
+								) continue;
+						}
+					}
+					catch(e) {
+					}
+
+					interval = refresh[i].replace(/^\+/, '').match(/^\d+/);
+					interval = (interval) ? Number(interval[0]) : 0 ;
+
+					// use only the minimum interval
+					if (minimumInterval < 0) minimumInterval = interval;
+					if (minimumInterval < interval) continue;
+
+					b.docShell.QueryInterface(Components.interfaces.nsIRefreshURI).cancelRefreshURITimers();
+					this.setAutoReloadTab(aTab, aTab.autoReloadInterval || interval*1000, uri, { fromHeader : true });
+					activated = true;
+				}
+				return activated;
+			]]></body>
+		</method>
+  
+		<!-- change a property of browser.docShell --> 
+	
+		<method name="toggleDocShellPropertyFor"> 
+			<parameter name="aTab"/>
+			<parameter name="aProp"/>
+			<body><![CDATA[
+				if (aTab.localName != 'tab') aTab = this.selectedTab;
+
+				var b = aTab.mBrowser;
+				this.setDocShellPropertyFor(aTab, aProp, !b.docShell[aProp]);
+			]]></body>
+		</method>
+ 
+		<method name="setDocShellPropertyFor"> 
+			<parameter name="aTab"/>
+			<parameter name="aProp"/>
+			<parameter name="aValue"/>
+			<parameter name="aTargetURI"/>
+			<parameter name="aShouldNotSaveStatus"/>
+			<body><![CDATA[
+				if (aTab.localName != 'tab') aTab = this.selectedTab;
+				var b = aTab.mBrowser;
+
+				var modified = (aValue != b.docShell[aProp]);
+
+				switch (aProp)
+				{
+					case 'allowPlugins':
+					case 'allowJavascript':
+					case 'allowMetaRedirects':
+					case 'allowSubframes':
+					case 'allowImages':
+						var docShells = b.docShell.getDocShellEnumerator(
+								Components.interfaces.nsIDocShellTreeItem.typeAll,
+								b.docShell.ENUMERATE_FORWARDS
+							);
+						var docShell;
+						while (docShells.hasMoreElements())
+						{
+							docShell = docShells.getNext()
+									.QueryInterface(Components.interfaces.nsIDocShell);
+							docShell[aProp] = aValue;
+						}
+						break;
+
+					default:
+						return;
+				}
+
+				aTab.setAttribute('tab-forbiddenTargetURI', aTargetURI || (b.currentURI ? b.currentURI.spec : aTab.getAttribute('tab-loadingURI') ));
+
+				if (
+					modified &&
+					(
+						aTab.getAttribute('tab-forbiddenTargetURI') == 'ANY' ||
+						aTab.getAttribute('tab-forbiddenTargetURI') == b.currentURI.spec
+					) &&
+					aTab.getAttribute('tab-loadingURI') && b.currentURI &&
+					aTab.getAttribute('tab-loadingURI') == b.currentURI.spec
+					)
+					b.reload();
+
+				if (aTab.tabForbidden)
+					aTab.setAttribute('tab-forbidden', true);
+				else
+					aTab.removeAttribute('tab-forbidden');
+
+				if (!aShouldNotSaveStatus)
+					this.onTabStatusChange(aTab, aProp, aTab.getAttribute('tab-forbiddenTargetURI'));
+
+
+				if (this.tabGroupsAvailable &&
+					this.mPrefs.getBoolPref('browser.tabs.extensions.inherit.group.allow'))
+					for (var i = 0, tabs = aTab.childTabs, max = tabs.length; i < max; i++)
+						this.setDocShellPropertyFor(tabs[i], aProp, aValue, null, aShouldNotSaveStatus);
+			]]></body>
+		</method>
+ 
+		<method name="resetDocShellProperties"> 
+			<parameter name="aTab"/>
+			<parameter name="aShouldNotSaveStatus"/>
+			<body><![CDATA[
+				if (aTab.localName != 'tab') aTab = this.selectedTab;
+				var b = aTab.mBrowser;
+
+				var modified = false;
+
+				var allowProps = [
+						'allowPlugins',
+						'allowJavascript',
+						'allowMetaRedirects',
+						'allowSubframes',
+						'allowImages'
+					];
+				var i;
+
+				var docShells = b.docShell.getDocShellEnumerator(
+						Components.interfaces.nsIDocShellTreeItem.typeAll,
+						b.docShell.ENUMERATE_FORWARDS
+					);
+				var docShell;
+				var defValue;
+				while (docShells.hasMoreElements())
+				{
+					docShell = docShells.getNext()
+							.QueryInterface(Components.interfaces.nsIDocShell);
+					for ( i in allowProps)
+					{
+						defValue = this.mPrefs.getBoolPref('browser.tabs.extensions.'+allowProps[i]+'.enabled')
+
+						if (defValue != docShell[allowProps[i]])
+							modified = true;
+
+						docShell[allowProps[i]] = defValue;
+					}
+				}
+
+				if (
+					modified &&
+					aTab.getAttribute('tab-loadingURI') == b.currentURI.spec
+					)
+					b.reload();
+
+				aTab.removeAttribute('tab-forbidden');
+				if (!aShouldNotSaveStatus) {
+					this.onTabStatusChange(aTab, 'allowPlugins', aTab.getAttribute('tab-forbiddenTargetURI'));
+					this.onTabStatusChange(aTab, 'allowJavascript', aTab.getAttribute('tab-forbiddenTargetURI'));
+					this.onTabStatusChange(aTab, 'allowMetaRedirects', aTab.getAttribute('tab-forbiddenTargetURI'));
+					this.onTabStatusChange(aTab, 'allowSubframes', aTab.getAttribute('tab-forbiddenTargetURI'));
+					this.onTabStatusChange(aTab, 'allowImages', aTab.getAttribute('tab-forbiddenTargetURI'));
+				}
+				aTab.removeAttribute('tab-forbiddenTargetURI');
+
+
+				if (this.tabGroupsAvailable &&
+					this.mPrefs.getBoolPref('browser.tabs.extensions.inherit.group.allow'))
+					for (var i = 0, tabs = aTab.childTabs, max = tabs.length; i < max; i++)
+						this.resetDocShellProperties(tabs[i], aShouldNotSaveStatus);
+			]]></body>
+		</method>
+  
+		<!-- タブの色を設定 --> 
+		<method name="setTabColorFor">
+			<parameter name="aTab"/>
+			<parameter name="aTabColor"/>
+			<body><![CDATA[
+				if (aTab.localName == 'tabs') aTab = this.selectedTab;
+
+				var i;
+
+				var textcolor = '',
+					bgcolor   = '';
+
+				if (aTabColor == 'auto') {
+					bgcolor = this.getRandomTabColorFor(aTab);
+				}
+				else if (aTabColor) {
+					var colorset = aTabColor.split(':');
+					bgcolor   = colorset[0];
+					textcolor = colorset.length > 1 ? colorset[1] : '';
+				}
+				else {
+					// 子がなくて親がいる時は親の色を変える
+					// if the tab has no child and has a parent, change the color of parent.
+					if (!aTab.hasChildTabs()) {
+						var current = aTab;
+						var parent;
+						while (parent &&
+								current.getAttribute('tab-color') == parent.getAttribute('tab-color'))
+							current = parent = current.parentTab;
+
+						if (current != aTab) {
+							current.setTabColor();
+							return;
+						}
+					}
+
+					var colorData = { color: null };
+					window.openDialog(
+						'chrome://tabextensions/content/colorPicker.xul',
+						'',
+						'chrome,modal,resizable=no,titlebar=no,centerscreen',
+						colorData,
+						this.mStringBundleInternal.GetStringFromName('label_setTabColorDefault')
+					);
+					bgcolor = colorData.color;
+					if (!bgcolor) return;
+				}
+
+				if (bgcolor != 'default' && !textcolor) {
+					var bgcolorCode = bgcolor.substr(1);
+					var rgb = [
+							Number('0x'+bgcolorCode.substr(0,2)),
+							Number('0x'+bgcolorCode.substr(2,2)),
+							Number('0x'+bgcolorCode.substr(4,2))
+						];
+
+					// 元の色の明るさを調査
+					// なお、グレースケールへの変換式はこちらのサイトより引用。
+					// http://www.geocities.co.jp/Milkyway/4171/graphics/002-6.html
+					// check the brightness of the color
+					var bgbright = Math.floor(((299*rgb[0])+(582*rgb[1])+(114*rgb[2]))/1000);
+
+					for (i in rgb)
+					{
+						if (bgbright < 128) // 暗めの時
+							rgb[i] += 180;
+						else // 明るめの時
+							rgb[i] -= 180;
+
+						rgb[i] = Math.max(Math.min(255, rgb[i]), 0);
+					}
+
+					for (i in rgb)
+					{
+						rgb[i] = rgb[i].toString(16);
+						if (rgb[i].length == 1) rgb[i] = '0'+rgb[i];
+					}
+
+					textcolor = '#'+rgb.join('');
+				}
+
+				var tabs = aTab.descendantTabs;
+				tabs.push(aTab);
+				var color = bgcolor+(textcolor ? ':'+textcolor : '' );
+				for (i in tabs)
+				{
+					tabs[i].setAttribute('tab-color', color);
+					tabs[i].updateTabColor();
+				}
+			]]></body>
+		</method>
+	
+		<!-- Generates and returns unique color for the tab --> 
+		<method name="getRandomTabColorFor">
+			<parameter name="aTab"/>
+			<parameter name="aColor"/><!-- return this color when no tab has this color -->
+			<parameter name="aCount"/>
+			<body><![CDATA[
+				if (aTab.localName == 'tabs') aTab = this.selectedTab;
+
+				var i;
+
+				if (aColor && aColor != 'default') {
+					var unique = true;
+					var max = this.mTabs.length;
+					for (i = 0; i < max; i++)
+						if (this.mTabs[i] != aTab &&
+							this.mTabs[i].getAttribute('tab-color') == aColor)
+							unique = false;
+					if (unique) return aColor;
+				}
+
+				var rgb = [0, 0, 0];
+				for (i in rgb)
+				{
+					rgb[i] = Math.floor(Math.random() * 256).toString(16);
+					if (rgb[i].length == 1) rgb[i] = '0'+rgb[i];
+				}
+
+				var color = '#'+rgb.join('');
+
+				// if tabs with this color exists, retry until three times.
+				if (!aCount || aCount < 3)
+					for (i = 0; i < this.mTabs.length; i++)
+						if (this.mTabs[i] != aTab &&
+							this.mTabs[i].getAttribute('tab-color') == color)
+							color = this.getRandomTabColorFor(aTab, null, aCount ? aCount+1 : 0);
+
+				return color;
+			]]></body>
+		</method>
+   
+		<!-- タブの複製 --> 
+	
+		<method name="duplicateTab"> 
+			<parameter name="aTab"/>
+			<body><![CDATA[
+				var info = this.getTabInfo(aTab);
+				delete info.index;
+				var t = this.addTabWithTabInfo(info);
+
+				if (!this.mLoadInBackground) {
+					this.selectedTab = t;
+					this.scrollTabbarToTab(t);
+				}
+
+				return t;
+			]]></body>
+		</method>
+ 
+		<method name="duplicateTabInWindow"> 
+			<parameter name="aTab"/>
+			<body><![CDATA[
+				if (this.mWinHookMode == 2) {
+					this.duplicateTab(aTab);
+					return aTab;
+				}
+
+				var info = this.getTabInfo(aTab);
+				delete info.index;
+				var win = window.openDialog(location.href, '_blank', 'chrome,all,dialog=no'); //, 'about:blank' : this causes unclosable tab, in Firefox
+
+				var getDocShellFromDocument = this.getDocShellFromDocument;
+
+				win.gDuplicateTabInfo = info;
+				win.addEventListener(
+					'load',
+					function(aEvent)
+					{
+						var doc = aEvent.target;
+						if (String(doc).search(/^\[object .*Document\]$/) < 0) { // not Document
+							if (String(doc).search(/^\[object .*Window\]$/) < 0) // Window
+								doc = (new XPCNativeWrapper(doc, 'document')).document;
+							else // Element
+								doc = (new XPCNativeWrapper(doc, 'ownerDocument')).ownerDocument;
+						}
+						var w = getDocShellFromDocument(doc, win
+								.QueryInterface(Components.interfaces.nsIInterfaceRequestor)
+								.getInterface(Components.interfaces.nsIWebNavigation)
+								.QueryInterface(Components.interfaces.nsIDocShell))
+								.QueryInterface(Components.interfaces.nsIInterfaceRequestor)
+								.getInterface(Components.interfaces.nsIDOMWindow);
+						w = Components.lookupMethod(w, 'top').call(w);
+						w.gTabbrowserDuplicateTabTimer = w.setInterval(
+							function(aInfo, aWindow)
+							{
+								if (aWindow.closed) {
+									aWindow.clearInterval(aWindow.gTabbrowserDuplicateTabTimer);
+									return;
+								}
+
+								var b = aWindow.document.getElementsByTagNameNS(
+										'http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul',
+										'tabbrowser'
+									);
+								if (!b.length ||
+									!('addTabWithTabInfo' in b[0])) return;
+
+								var primaryTab = b[0].selectedTab;
+								b[0].selectedTab = b[0].addTabWithTabInfo(aInfo);
+								b[0].scrollTabbarToTab(b[0].selectedTab);
+								b[0].removeTab(primaryTab);
+
+								aWindow.clearInterval(aWindow.gTabbrowserDuplicateTabTimer);
+							},
+							5,
+							w.gDuplicateTabInfo,
+							w
+						);
+					},
+					false
+				);
+
+				return aTab;
+			]]></body>
+		</method>
+  
+<!-- rearrange tabs --> 
+	
+		<!-- 絶対指定 --> 
+		<!-- with absolute index -->
+		<method name="moveTabTo">
+			<parameter name="aTab"/>
+			<parameter name="aTargetIndex"/>
+			<body><![CDATA[
+				if (aTab.localName == 'tabs') aTab = this.selectedTab;
+
+				var current = aTab.tabIndex;
+				if (current == aTargetIndex) return aTab;
+
+				var max = this.mTabs.length;
+
+				if (aTab.selected) {
+					if (aTab.previousTab)
+						aTab.previousTab.removeAttribute('beforeselected');
+					if (aTab.nextTab)
+						aTab.nextTab.removeAttribute('afterselected');
+				}
+
+				if (aTab.tabIndex == 0) {
+					aTab.removeAttribute('first-tab');
+					if (aTab.nextTab)
+						aTab.nextTab.setAttribute('first-tab', true);
+				}
+				else if (aTab.tabIndex == this.mTabs.length-1) {
+					aTab.removeAttribute('last-tab');
+					if (aTab.previousTab)
+						aTab.previousTab.setAttribute('last-tab', true);
+				}
+
+				// codes from Tab Mix/MiniT
+				if (this.mTabFilters)
+					this.mTabFilters.splice(aTargetIndex, 0, this.mTabFilters.splice(aTab.tabIndex, 1)[0]);
+				if (this.mTabListeners)
+					this.mTabListeners.splice(aTargetIndex, 0, this.mTabListeners.splice(aTab.tabIndex, 1)[0]);
+
+				aTargetIndex = aTargetIndex < aTab.tabIndex ? aTargetIndex: aTargetIndex+1;
+
+				this.mCurrentTab.selected = false;
+
+
+				if (aTargetIndex < max &&
+					this.mTabs[aTargetIndex])
+					this.mTabContainer.insertBefore(aTab, this.mTabs[aTargetIndex]);
+				else
+					this.mTabContainer.appendChild(aTab);
+
+
+				for (var i = Math.min(aTab.tabIndex, aTargetIndex); i < max; i++)
+				{
+					this.mTabs[i].tabIndex = i;
+
+					// if we don't set "ordinal" attribute, contents of scrollbox aren't shown in their correct order...
+//					this.mTabs[i].setAttribute('ordinal', i);
+				}
+
+				if (aTab.tabIndex == 0) {
+					aTab.setAttribute('first-tab', true);
+					if (aTab.nextTab)
+						aTab.nextTab.removeAttribute('first-tab');
+				}
+				else if (aTab.tabIndex == max-1) {
+					aTab.setAttribute('last-tab', true);
+					if (aTab.previousTab)
+						aTab.previousTab.removeAttribute('last-tab');
+				}
+
+				this.mCurrentTab.selected = true;
+
+
+				// If the "_mBrowser" property is null, Firefox fails to close tab.
+				var nullPointer = aTab.mBrowser;
+				delete nullPointer;
+
+
+				var parentTab = aTab.parentTab;
+				if (parentTab) {
+					var tabs = parentTab.childTabs;
+					tabs.sort(this.conpareTabOrder);
+					var list = [];
+					max = tabs.length;
+					for (var i = 0; i < max; i++)
+						list.push(tabs[i].tabId);
+					parentTab.setAttribute('tab-childTabs', list.join('|'));
+				}
+
+/*
+				if (aTab.hasChildTabs() && this.tabGroupTreeAvailable) {
+					var tabs = aTab.childTabs;
+					var max = tabs.length;
+					for (var i = 0; max; i++)
+						this.moveTabToGroupEdge(tabs[i], aTab);
+				}
+*/
+
+
+				// dispatch "XULTabbrowserTabMoved" event
+				var event = document.createEvent('Events');
+				event.initEvent('XULTabbrowserTabMoved', false, true);
+				event.tabId       = aTab.tabId;
+				event.oldTabIndex = current;
+				event.newTabIndex = aTargetIndex;
+				this.dispatchEvent(event);
+
+				delete i;
+				delete aTargetIndex;
+				delete current;
+				delete event;
+
+				return aTab;
+			]]></body>
+		</method>
+	
+ 
+  
+		<!-- 相対指定 --> 
+		<!-- with relative index -->
+		<method name="moveTabBy">
+			<parameter name="aTab"/>
+			<parameter name="aOrder"/>
+			<body><![CDATA[
+				if (aOrder == 0) return aTab;
+				return this.moveTabTo(aTab, aTab.tabIndex+aOrder);
+			]]></body>
+		</method>
+ 
+		<!-- タブの左右移動 --> 
+		<method name="moveTabLeft">
+			<body><![CDATA[
+				var current = this.selectedTab.tabIndex;
+				this.moveTabTo(this.selectedTab, (current - 1 + this.mTabs.length) % this.mTabs.length);
+			]]></body>
+		</method>
+		<method name="moveTabRight">
+			<body><![CDATA[
+				var current = this.selectedTab.tabIndex;
+				this.moveTabTo(this.selectedTab, (current + 1) % this.mTabs.length);
+			]]></body>
+		</method>
+  
+<!-- history of focus --> 
+	
+		<method name="updateLastFocusedTime"> 
+			<parameter name="aTab"/>
+			<body><![CDATA[
+				if (
+					this.mTabRemoving ||
+					this.mShouldNotUpdateLastFocusedTime
+					) return;
+
+				aTab.__tabextensions__lastFocusedTime = (new Date()).getTime();
+			]]></body>
+		</method>
+ 
+		<property name="mTabsInFocusHistoryOrder" readonly="true"> 
+			<getter><![CDATA[
+				var tabs        = this.mTabs;
+				var tmpTabs     = [];
+				var focusedTabs = [];
+				for (var i = tabs.length-1; i > -1; i--)
+				{
+					if (tabs[i].__tabextensions__lastFocusedTime)
+						focusedTabs.push(tabs[i]);
+					else
+						tmpTabs.push(tabs[i]);
+				}
+
+				focusedTabs.sort(
+					function(aTabA, aTabB)
+					{
+						return (aTabA.__tabextensions__lastFocusedTime - aTabB.__tabextensions__lastFocusedTime);
+					}
+				);
+
+				return tmpTabs.concat(focusedTabs);
+			]]></getter>
+		</property>
+ 
+		<method name="advanceSelectedTabByLastFocusedTime"> 
+			<parameter name="aDir"/>
+			<body><![CDATA[
+				if (this.mTabs.length < 2) return;
+
+				var fromContent = (document.commandDispatcher.focusedWindow != window);
+
+				var tabs  = this.mTabsInFocusHistoryOrder;
+
+				var max = tabs.length;
+				var index = max-1;
+				for (var i = 0; i < max; i++)
+					if (tabs[i] == this.selectedTab) {
+						index = i;
+						break;
+					}
+
+				var next;
+
+				if (aDir > 0) {
+					if (index == max-1 &&
+						!this.mPrefs.getBoolPref('browser.tabs.extensions.tabFlip.roop'))
+						return;
+					index = (index + 1) % max;
+				}
+				else {
+					if (index == 0 &&
+						!this.mPrefs.getBoolPref('browser.tabs.extensions.tabFlip.roop'))
+						return;
+					index = (index - 1 + max) % max;
+				}
+
+				next = tabs[index];
+
+				if (next && next != this.mTabContainer.selectedItem) {
+					this.mShouldNotUpdateLastFocusedTime = true;
+					this.mTabContainer.selectNewTab(next);
+					this.mShouldNotUpdateLastFocusedTime = false;
+				}
+
+				this.scrollTabbarTo(next);
+
+				// failsafe
+				if (fromContent)
+					Components.lookupMethod(this.contentWindow, 'focus').call(this.contentWindow);
+			]]></body>
+		</method>
+  
+<!-- tabgroup --> 
+	
+		<method name="getTabFromChild"> 
+			<parameter name="aNode"/>
+			<body><![CDATA[
+				var node = aNode;
+				// if the tab dropped to child nodes of tabs, return parent tab element.
+				while (node.localName != 'tab' && node != this)
+					node = node.parentNode;
+				if (node.localName != 'tab') return null;
+				return node;
+			]]></body>
+		</method>
+ 
+		<!-- 同じグループのタブ全てを得る --> 
+		<!-- get all tabs contained in the group -->
+		<method name="gatherGroupTabsOf">
+			<parameter name="aTab"/>
+			<body><![CDATA[
+				var root = aTab.rootTab;
+				if (this.tabGroupTreeAvailable || !root)
+					root = aTab.parentTab || aTab;
+
+				var tabs = root.descendantTabs;
+				tabs.unshift(root);
+				return tabs;
+			]]></body>
+		</method>
+ 
+		<!-- 子タブを得る --> 
+		<!-- get all child or grandchild tabs of the tab -->
+		<method name="getDescendantTabsOf">
+			<parameter name="aTab"/>
+			<body><![CDATA[
+				if (!this.tabGroupsAvailable) return [];
+
+				var tabs     = [];
+				var children = aTab.childTabs;
+				for (var i in children)
+				{
+					if (!children[i]) continue;
+
+					tabs.push(children[i]);
+
+					if (children[i].hasChildTabs())
+						tabs = tabs.concat(this.getDescendantTabsOf(children[i]).sort(this.conpareHasChildTabs));
+				}
+				return tabs;
+			]]></body>
+		</method>
+		<method name="gatherChildTabsOf"><!-- old name -->
+			<parameter name="aTab"/>
+			<body><![CDATA[
+				return this.getDescendantTabsOf(aTab);
+			]]></body>
+		</method>
+ 
+		<!-- グループの中で同じ色のタブを得る --> 
+		<method name="gatherGroupedSameColorTabsOf">
+			<parameter name="aTab"/>
+			<body><![CDATA[
+				var current = aTab;
+				var color   = current.getAttribute('tab-color');
+				if (
+					!this.tabGroupsAvailable ||
+					!color ||
+					color == 'default'
+					)
+					return [current];
+
+				var parent;
+				var parentColor;
+				while (parent = current.parentTab)
+				{
+					parentColor = parent.getAttribute('tab-color');
+					if (
+						!parentColor ||
+						parentColor == 'default' ||
+						color != parentColor
+						)
+						break;
+
+					current = parent;
+					color   = parentColor;
+				}
+				var sameColorTabs = [current];
+				var groupedTabs   = current.descendantTabs;
+				if (groupedTabs.length)
+					for (var i in groupedTabs)
+						if (groupedTabs[i].getAttribute('tab-color') == color)
+							sameColorTabs.push(groupedTabs[i]);
+
+				return sameColorTabs;
+			]]></body>
+		</method>
+ 
+		<!-- タブ同士を関連付ける --> 
+		<method name="attachTabTo">
+			<parameter name="aTab"/>
+			<parameter name="aParent"/>
+			<parameter name="aOpenedAutomatically"/>
+			<body><![CDATA[
+				if (aParent && typeof aParent == 'string')
+					aParent = this.getTabByTabId(aParent);
+				if (aTab && typeof aTab == 'string')
+					aTab = this.getTabByTabId(aTab);
+
+				if (
+					!this.tabGroupsAvailable ||
+					!aTab ||
+					aTab.localName != 'tab' ||
+					aTab == aParent // reject same tab
+					) return;
+
+				var i;
+				var host = this.makeURIFromSpec(aTab.getAttribute('tab-groupTargetHost') !== null ? aTab.getAttribute('tab-groupTargetHost') : aTab.getAttribute('tab-loadingURI') ) ||
+						aTab.mBrowser.currentURI;
+				try {
+					host = host ? host.host : null ;
+				}
+				catch(e) {
+					host = null;
+				}
+
+				if (!this.canAttachTabTo(aTab, aParent)) {
+					if (host != aTab.getAttribute('tab-groupTargetHost'))
+						aTab.setAttribute('tab-groupTargetHost', host);
+					if (aOpenedAutomatically !== void(0))
+						aTab.setAttribute('tab-openedAutomatically', aOpenedAutomatically);
+					return;
+				}
+
+
+				// dispatch "XULTabbrowserTabGroupModified" event
+				var event = document.createEvent('Events');
+				event.initEvent('XULTabbrowserTabGroupModified', false, true);
+				event.tabId       = aTab.tabId;
+				event.parentTabId = aParent ? aParent.tabId : null ;
+
+
+				// 親から切り離す
+				// detach from old parent
+				if (aTab.getAttribute('tab-parentTab'))
+					aTab.parentTab = null;
+
+				aTab.setAttribute('tab-parentTab', aParent ? aParent.tabId : '' );
+				aTab.setAttribute('tab-groupTargetHost', host);
+				aTab.setAttribute('tab-openedAutomatically', (aOpenedAutomatically !== void(0)) ? aOpenedAutomatically : true );
+
+				if (!aTab.getAttribute('tab-parentTab')) {
+					this.updateTabTree();
+					this.dispatchEvent(event);
+					return;
+				}
+
+				// bundle the tab to the parent
+
+				var isFirstChild = false;
+				if (!aParent.hasChildTabs()){
+					isFirstChild = true;
+					if (!aParent.getAttribute('tab-parentTab')) {
+						// タブに初めて子を持たせる時は、そのタブも初期化する if the parent has not had child tabs yet, initialize itself.
+						this.attachTabTo(aParent, null, false);
+						// 自動で色を付ける
+						// set group color automatically
+						var autocolor = false;
+						try {
+							autocolor = this.mPrefs.getBoolPref('browser.tabs.extensions.group.auto_color');
+						}
+						catch(e) {
+						}
+						if (!aParent.hasAttribute('tab-color') && autocolor)
+							aParent.setTabColor('auto');
+					}
+				}
+
+				var list = aParent.getAttribute('tab-childTabs') || '';
+				if (list == aTab.tabId ||
+					(list+'|').indexOf(aTab.tabId+'|') < 0) {
+					aParent.setAttribute('tab-childTabs', list ? list+'|'+aTab.tabId : aTab.tabId );
+				}
+
+				var color = aParent.getAttribute('tab-color');
+				if (color) aTab.setTabColor(color);
+
+				list = aParent.getAttribute('tab-childTabs') || '';
+				aParent.setAttribute('tab-childTabs-count', list.split('|').length);
+				aParent.mUpdateDescendantTabsCount();
+
+				if ((aTab.selected || aParent.selected) &&
+					(aParent.tabSubgroupCollapsed || isFirstChild) &&
+					this.mPrefs.getBoolPref('browser.tabs.extensions.group.tree.simple_operation')) {
+					aParent.collapseOtherSubgroups();
+					aParent.tabSubgroupCollapsed = false;
+					aTab.tabCollapsed = false;
+				}
+
+				this.updateTabTree();
+				this.dispatchEvent(event);
+			]]></body>
+		</method>
+	
+		<method name="canAttachTabTo"> 
+			<parameter name="aTab"/>
+			<parameter name="aParent"/>
+			<body><![CDATA[
+				if (aParent && typeof aParent == 'string')
+					aParent = this.getTabByTabId(aParent);
+				if (aTab && typeof aTab == 'string')
+					aTab = this.getTabByTabId(aTab);
+
+				if (!aTab || !this.tabGroupsAvailable) return false;
+				if (!aParent) return true;
+
+				// 親にしようとしているタブが子供である場合は関連付けられない
+				// we cannot attach the parent to their children
+				var tabs = aTab.descendantTabs;
+				for (var i in tabs)
+					if (tabs[i] == aParent) return false;
+
+				// 既に関連付けられている場合
+				// if the tab has been already attached to the parent
+				if (aParent && aTab.parentTab == aParent) return false;
+
+				return true;
+			]]></body>
+		</method>
+  
+		<method name="detachTab"> 
+			<parameter name="aTab"/>
+			<parameter name="aKeepChildTabs"/>
+			<body><![CDATA[
+				if (aTab && typeof aTab == 'string')
+					aTab = this.getTabByTabId(aTab);
+
+				if (!this.tabGroupsAvailable) return;
+
+				var i;
+				var event;
+
+				var autocolor = false;
+				var autopurge_root = false;
+				try {
+					autocolor = this.mPrefs.getBoolPref('browser.tabs.extensions.group.auto_color');
+				}
+				catch(e) {
+				}
+				try {
+					autopurge_root = this.mPrefs.getBoolPref('browser.tabs.extensions.group.auto_purge_root');
+				}
+				catch(e) {
+				}
+
+				var groupColor = autocolor ? 'auto' : 'default' ;
+
+				var detachedParent = aTab.getAttribute('tab-parentTab');
+				var parent = this.getTabByTabId(detachedParent);
+				var children;
+				if (parent) {
+					var cid = parent.mChildTabs;
+					for (i = cid.length-1; i > -1; i--)
+						if (cid[i] == aTab.tabId) {
+							cid.splice(i, 1);
+							parent.setAttribute('tab-childTabs', cid.join('|'));
+							if (cid.length)
+								parent.setAttribute('tab-childTabs-count', cid.length);
+							else
+								parent.removeAttribute('tab-childTabs-count');
+
+							parent.mUpdateDescendantTabsCount();
+							break;
+						}
+
+					if (!aKeepChildTabs) {
+						children = aTab.childTabs;
+						for (i = 0; i < children.length; i++)
+						{
+							if (i == 0 && parent.shouldPurgeChildren)
+								children[i].shouldPurgeChildren = true;
+
+							if (children[i]) {
+								this.attachTabTo(children[i], aTab.parentTab, children[i].getAttribute('tab-openedAutomatically'));
+							}
+						}
+
+						aTab.removeAttribute('tab-childTabs');
+						aTab.removeAttribute('tab-childTabs-count');
+						aTab.mUpdateDescendantTabsCount();
+					}
+				}
+				else if (!autopurge_root &&
+						(aTab.getAttribute('tab-childTabs') || '').indexOf('|') > -1) {
+					children = aTab.childTabs;
+					for (i = children.length-1; i > 0; i--)
+					{
+						if (i == 0 && parent.shouldPurgeChildren)
+							children[i].shouldPurgeChildren = true;
+
+						if (children[i]) {
+							this.attachTabTo(children[i], children[0], children[i].getAttribute('tab-openedAutomatically'));
+						}
+					}
+
+					children[0].removeAttribute('tab-parentTab');
+/*
+					event = document.createEvent('Events');
+					event.initEvent('XULTabbrowserTabGroupModified', false, true);
+					event.tabId = children[0].tabId;
+					event.parentTabId = null;
+					this.dispatchEvent(event);
+*/
+					aTab.removeAttribute('tab-childTabs');
+					aTab.removeAttribute('tab-childTabs-count');
+					aTab.mUpdateDescendantTabsCount();
+				}
+				else {
+					var t;
+					var cid = aTab.mChildTabs;
+					if (cid.length)
+						for (i = 0; i < cid.length; i++)
+						{
+							t = this.getTabByTabId(cid[i]);
+							if (!t) continue;
+
+							t.removeAttribute('tab-parentTab');
+							t.removeAttribute('tab-groupTargetHost');
+/*
+							event = document.createEvent('Events');
+							event.initEvent('XULTabbrowserTabGroupModified', false, true);
+							event.tabId = t.tabId;
+							event.parentTabId = null;
+							this.dispatchEvent(event);
+*/
+							// 子供がいる時は別の色にする
+							// chenge the color if the tab has children
+							if (t.hasChildTabs())
+								t.setTabColor(groupColor);
+							else
+								t.clearTabColor();
+						}
+
+					aTab.removeAttribute('tab-childTabs');
+					aTab.removeAttribute('tab-childTabs-count');
+					aTab.mUpdateDescendantTabsCount();
+				}
+
+				if (aTab.hasChildTabs())
+					aTab.setTabColor(groupColor);
+				else
+					aTab.clearTabColor();
+
+				aTab.removeAttribute('tab-parentTab');
+				var hostURI = aTab.getAttribute('tab-loadingURI') || aTab.mBrowser.currentURI.spec ;
+				try {
+					var testURI = this.makeURIFromSpec(hostURI);
+					if (!testURI) hostURI = 'about:blank';
+				}
+				catch(e) {
+					hostURI = 'about:blank';
+				}
+				try {
+					aTab.setAttribute('tab-groupTargetHost', this.makeURIFromSpec(hostURI).host);
+				}
+				catch(e) {
+					aTab.removeAttribute('tab-groupTargetHost');
+				}
+
+				aTab.removeAttribute('tab-openedAutomatically');
+
+
+				this.updateTabTree();
+
+
+				// dispatch "XULTabbrowserTabGroupModified" event
+				event = document.createEvent('Events');
+				event.initEvent('XULTabbrowserTabGroupModified', false, true);
+				event.tabId = aTab.tabId;
+				event.parentTabId = detachedParent;
+				this.dispatchEvent(event);
+			]]></body>
+		</method>
+ 
+		<!-- グループをまとめて閉じる --> 
+		<method name="removeTabGroup">
+			<parameter name="aTab"/>
+			<body><![CDATA[
+				var tabs = (this.tabGroupTreeAvailable) ? aTab.ownerGroup : aTab.sameColorGroup ;
+
+				if (tabs.length == 1) {
+					if (!aTab.hasChildTabs()) aTab = aTab.parentTab;
+					this.removeTabInternal(aTab, { children : this.tabGroupsAvailable });
+				}
+				else {
+					for (var i in tabs)
+						this.removeTab(tabs[i]);
+				}
+			]]></body>
+		</method>
+ 
+		<!-- タブをグループ順で整理 --> 
+		<method name="sortTabsByGroup">
+			<body><![CDATA[
+				if (!this.tabGroupsAvailable) return;
+
+				var i;
+
+				var root = { childTabs : [] };
+				var max = this.mTabs.length;
+				for (i = 0; i < max; i++)
+					if (!this.mTabs[i].parentTab)
+						root.childTabs.push(this.mTabs[i]);
+				root.childTabs.sort(this.conpareHasChildTabs);
+
+				var tabs = this.getDescendantTabsOf(root);
+				for (i in tabs)
+					this.moveTabTo(tabs[i], i);
+			]]></body>
+		</method>
+	
+		<method name="conpareHasChildTabs"> 
+			<parameter name="aTabA"/>
+			<parameter name="aTabB"/>
+			<body><![CDATA[
+				// move tabs have children to left
+				var childrenA = aTabA.childTabs;
+				var childrenB = aTabB.childTabs;
+				return (childrenA.length && !childrenB.length) ? -1 :
+					(!childrenA.length && childrenB.length) ? 1 :
+					// 子供の数が多い方が前 ordered by the number of children
+					(childrenA.length > childrenB.length) ? -1 :
+					(childrenA.length < childrenB.length) ? 1 :
+					// 名前順 ordered by their name
+					(aTabA.getAttribute('label') < aTabB.getAttribute('label')) ? -1 :
+					(aTabA.getAttribute('label') > aTabB.getAttribute('label')) ? 1 :
+					0;
+			]]></body>
+		</method>
+ 
+		<method name="conpareTabOrder"> 
+			<parameter name="aTabA"/>
+			<parameter name="aTabB"/>
+			<body><![CDATA[
+				return aTabA.tabIndex - aTabB.tabIndex;
+			]]></body>
+		</method>
+  
+		<!-- タブを規準のタブのグループの右端・左端に移動する --> 
+		<method name="moveTabToGroupEdge">
+			<parameter name="aTab"/>
+			<parameter name="aParentTab"/>
+			<parameter name="aOrder"/>
+			<body><![CDATA[
+				if (!this.tabGroupsAvailable || !aTab) return;
+
+				var defOrder;
+				try {
+					defOrder = this.mPrefs.getIntPref('browser.tabs.extensions.open_tab_in');
+				}
+				catch(e) {
+					defOrder = 3;
+				}
+				var order = ((aOrder === void(0) ? defOrder : aOrder ) < 2) ? -1 : 1 ;
+
+				var newIndex = this.getGroupEdgeIndexOf(aParentTab, aOrder);
+				if (order > 0 && newIndex < aTab.tabIndex)
+					newIndex++;
+
+				this.moveTabTo(aTab, newIndex);
+			]]></body>
+		</method>
+		<method name="getGroupEdgeIndexOf">
+			<parameter name="aParentTab"/>
+			<parameter name="aOrder"/>
+			<body><![CDATA[
+				var defOrder;
+				try {
+					defOrder = this.mPrefs.getIntPref('browser.tabs.extensions.open_tab_in');
+				}
+				catch(e) {
+					defOrder = 3;
+				}
+				var order = ((aOrder === void(0) ? defOrder : aOrder ) < 2) ? -1 : 1 ;
+
+				var range = this.getGroupRangeOf(aParentTab, aOrder);
+				return (order > 0) ? range.max : range.min ;
+			]]></body>
+		</method>
+		<method name="getGroupRangeOf">
+			<parameter name="aParentTab"/>
+			<parameter name="aOrder"/>
+			<body><![CDATA[
+				var defOrder;
+				try {
+					defOrder = this.mPrefs.getIntPref('browser.tabs.extensions.open_tab_in');
+				}
+				catch(e) {
+					defOrder = 3;
+				}
+				var order = ((aOrder === void(0) ? defOrder : aOrder ) < 2) ? -1 : 1 ;
+
+				var i;
+				var parentTab = aParentTab || this.selectedTab;
+				var tabs      = parentTab.descendantTabs;
+
+				if (!tabs.length) {
+					return {
+							min : parentTab.tabIndex,
+							max : parentTab.tabIndex
+					};
+				}
+
+				tabs.push(parentTab);
+				tabs.sort(this.conpareTabOrder);
+
+				var parentIndex = 'indexOf' in tabs ? tabs.indexOf(parentTab) : -1 ;
+				var max   = tabs.length;
+				if (parentIndex < 0) { // for Firefox 1.4 or before
+					for (i = 0; i < max; i++)
+					{
+						if (tabs[i] == parentTab) {
+							parentIndex = i;
+							break;
+						}
+					}
+				}
+
+				var indexObj = {
+						min : tabs[0].tabIndex,
+						max : tabs[max-1].tabIndex
+					};
+
+				var sortAfterParentTab = (order > 0 || this.tabGroupTreeAvailable);
+				if (sortAfterParentTab)
+					indexObj.min = Math.max(indexObj.min, parentTab.tabIndex);
+				else
+					indexObj.max = Math.min(indexObj.max, parentTab.tabIndex);
+
+
+				if (!sortAfterParentTab && parentIndex > 0) {
+					for (i = parentIndex-1; i > 0; i--)
+					{
+						if (tabs[i-1].tabIndex - tabs[i].tabIndex > 1) {
+							indexObj.min = tabs[i-1].tabIndex;
+							break;
+						}
+					}
+				}
+				if (parentIndex < max-1) {
+					for (i = parentIndex+1; i < max; i++)
+					{
+						if (tabs[i].tabIndex - tabs[i-1].tabIndex > 1) {
+							indexObj.max = tabs[i-1].tabIndex;
+							break;
+						}
+					}
+				}
+
+				return indexObj;
+			]]></body>
+		</method>
+ 
+		<!-- グループのハイライト表示 --> 
+		<method name="highlightGroupFromTab">
+			<parameter name="aTab"/>
+			<parameter name="aOnlyLowerLevel"/>
+			<parameter name="aKeepHighlighted"/>
+			<body><![CDATA[
+				if (!this.tabGroupsAvailable) return;
+				if (aTab.localName == 'tabs') aTab = this.selectedTab;
+
+				var i;
+
+				var tabset = {
+						parents  : [],
+						children : [],
+						brothers : [],
+						root     : null,
+						current  : null
+					};
+
+				var children = aTab.descendantTabss;
+				for (i in children)
+					tabset.children.push(children[i]);
+
+				if (aTab.parentTab &&
+					!aOnlyLowerLevel) {
+					tabset.parents.push(aTab.parentTab);
+					children = aTab.parentTab.childTabs;
+					for (i in children)
+						tabset.brothers.push(children[i]);
+
+					var root = aTab.rootTab;
+					if (root != aTab.parentTab)
+						tabset.root = root;
+				}
+
+				tabset.current = aTab;
+
+				this.highlightTabs(tabset, aKeepHighlighted);
+			]]></body>
+		</method>
+		<method name="highlightTabs">
+			<parameter name="aTabSet"/>
+			<parameter name="aKeepHighlighted"/>
+			<body><![CDATA[
+				if (!aTabSet) return;
+
+				var i;
+
+				// reset highlighting
+				var max = this.mTabs.length;
+				for (i = 0; i < max; i++)
+					this.mTabs[i].removeAttribute('group-relation');
+
+				if (this.mHighlightTimer)
+					window.clearTimeout(this.mHighlightTimer);
+
+
+				if ('children' in aTabSet && aTabSet.children.length)
+					for (i in aTabSet.children)
+						aTabSet.children[i].setAttribute('group-relation', 'child');
+
+				if ('parents' in aTabSet && aTabSet.parents.length)
+					for (i in aTabSet.parents)
+						aTabSet.parents[i].setAttribute('group-relation', 'parent');
+
+				if ('brothers' in aTabSet && aTabSet.brothers.length)
+					for (i in aTabSet.brothers)
+						aTabSet.brothers[i].setAttribute('group-relation', 'brother');
+
+				if ('root' in aTabSet && aTabSet.root)
+					aTabSet.root.setAttribute('group-relation', 'root');
+
+				if ('current' in aTabSet && aTabSet.current)
+					aTabSet.current.setAttribute('group-relation', 'current');
+
+
+				if (!aKeepHighlighted)
+					this.cancelHighlight(2000);
+			]]></body>
+		</method>
+	
+		<method name="cancelHighlight"> 
+			<parameter name="aTimeout"/>
+			<body><![CDATA[
+				this.mHighlightTimer = window.setTimeout(function(aTabBrowser) {
+					var max = aTabBrowser.mTabs.length;
+					for (var i = 0; i < max; i++)
+						aTabBrowser.mTabs[i].removeAttribute('group-relation');
+				}, aTimeout || 0, this);
+			]]></body>
+		</method>
+  
+		<method name="setGroupColorFor"><!-- old name --> 
+			<parameter name="aTab"/>
+			<parameter name="aTabColor"/>
+			<body><![CDATA[
+				return aTab.setTabColor(aTabColor);
+			]]></body>
+		</method>
+	
+		<method name="getRandomGroupColorFor"><!-- old name --> 
+			<parameter name="aTab"/>
+			<parameter name="aColor"/>
+			<parameter name="aCount"/>
+			<body><![CDATA[
+				return this.getRandomTabColorFor(aTab, aColor, aCount);
+			]]></body>
+		</method>
+  
+		<method name="updateTabTree"> 
+			<parameter name="aReset"/>
+			<body><![CDATA[
+				if (!this.tabGroupTreeAvailable && !aReset) return;
+
+				if (this.mUpdateTabTreeTimer) {
+					window.clearTimeout(this.mUpdateTabTreeTimer);
+					this.mUpdateTabTreeTimer = null;
+				}
+				this.mTabTreeUpdating = true;
+				this.mUpdateTabTreeTimer = window.setTimeout(this.mUpdateTabTreeTimeout, 0, this, aReset);
+			]]></body>
+		</method>
+		<field name="mUpdateTabTreeTimer">
+			null
+		</field>
+		<field name="mTabTreeUpdating">
+			false
+		</field>
+	
+		<method name="mUpdateTabTreeTimeout"> 
+			<parameter name="aTabBrowser"/>
+			<parameter name="aReset"/>
+			<body><![CDATA[
+				aTabBrowser.mUpdateTabTreeItem(
+					aTabBrowser.rootTabs,
+					{
+						value : 0
+					},
+					aReset
+				);
+				aTabBrowser.mTabTreeUpdating = false;
+			]]></body>
+		</method>
+		<method name="mUpdateTabTreeItem">
+			<parameter name="aTabs"/>
+			<parameter name="aIndexObj"/>
+			<parameter name="aReset"/>
+			<body><![CDATA[
+				var tab,
+					level,
+					originalStyle;
+
+				var max_level = this.mPrefs.getIntPref('browser.tabs.extensions.group.tree.max_level');
+
+				var marginSide = (this.mPrefs.getIntPref('browser.tabs.extensions.tabbar_place') == 2) ? 'left' : 'right' ;
+
+				var max = aTabs.length;
+				var parent;
+				for (var i = 0; i < max; i++)
+				{
+					var tab = ('item' in aTabs) ? aTabs.item(i) : aTabs[i] ;
+
+					if (aIndexObj.value != tab.tabIndex)
+						this.moveTabTo(tab, aIndexObj.value);
+
+					level = tab.groupNestingLevel;
+					if (tab.lastLevel != level || aReset) {
+						originalStyle = tab.getAttribute('tabextensions-original-style');
+						if (!originalStyle) {
+							originalStyle = tab.getAttribute('style') || ' ';
+							tab.setAttribute('tabextensions-original-style', originalStyle);
+						}
+
+						if (level > 0 && !aReset) {
+							if (level > max_level) level = max_level + (level/5);
+							tab.setAttribute('style', originalStyle+'; margin-'+marginSide+':'+level+'em !important;');
+						}
+						else if (originalStyle) {
+							tab.setAttribute('style', originalStyle);
+							tab.removeAttribute('tabextensions-original-style');
+						}
+						else {
+							tab.removeAttribute('style');
+						}
+						tab.lastLevel = level;
+					}
+					parent = tab.parentTab;
+					if (parent && parent.tabSubgroupCollapsed && !tab.tabCollapsed)
+						tab.tabCollapsed = true;
+
+					aIndexObj.value++;
+
+					this.mUpdateTabTreeItem(tab.childTabs, aIndexObj);
+				}
+			]]></body>
+		</method>
+   
+		<!-- prevent to close the browser when "window.close()" is called in the last tab --> 
+	
+		<field name="onlyPrimalyTab"> 
+			true
+		</field>
+ 
+		<field name="onWindowCloseInLastTabEventListener"><![CDATA[ 
+			({
+				owner       : this,
+				handleEvent : function(aEvent)
+				{
+					if (
+						this.owner.mTabs.length != 1 ||
+						this.owner.onlyPrimalyTab
+						)
+						return;
+
+					switch (this.owner.mPrefs.getIntPref('browser.tabs.extensions.last_tab_closing'))
+					{
+						case 1:
+						case 3:
+							this.owner.removeCurrentTab();
+							aEvent.preventDefault();
+							return;
+						default:
+							break;
+					}
+				}
+			})
+		]]></field>
+  
+	</implementation> 
+  
+	<handlers> 
+	
+		<handler event="select"> 
+			<![CDATA[
+				if (!('mTabContainer' in this) ||
+					event.originalTarget != this.mTabContainer) return;
+
+				this.updateLastFocusedTime(this.selectedTab);
+				this.selectedTab.selected = true;
+
+				this.scrollTabbarToTab(this.selectedTab);
+
+				this.selectedTab.mBrowser.contentWindow.__tabextensions__selected  = true;
+
+				this.mFocusChangedCount++;
+			]]>
+		</handler>
+ 
+	</handlers> 
+  
+</binding> 
+  
+<!-- toolbar buttons --> 
+<binding id="toolbarbutton-menu"
+	extends="chrome://global/content/bindings/toolbarbutton.xml#menu">
+	<content>
+		<children includes="observes|template|menupopup|tooltip"/>
+		<xul:box orient="vertical" align="center"
+			anonclass="toolbarbutton-icon-and-text">
+			<xul:image class="toolbarbutton-icon"
+				xbl:inherits="validate,src=image,toolbarmode,buttonstyle"/>
+			<xul:label class="toolbarbutton-text" crop="right" flex="1"
+				xbl:inherits="value=label,accesskey,crop,dragover-top,toolbarmode,buttonstyle"/>
+		</xul:box>
+		<xul:dropmarker type="menu" class="toolbarbutton-menu-dropmarker"
+			xbl:inherits="disabled"/>
+	</content>
+</binding>
+ 
+<binding id="tabbrowser-strip" 
+	extends="xul:hbox">
+	<content>
+		<xul:vbox tabid="tab-drop-indicator-bar-container" flex="1">
+			<xul:hbox flex="1">
+				<children/>
+			</xul:hbox>
+			<xul:hbox tabid="tab-drop-indicator-bar">
+				<xul:hbox tabid="tab-drop-indicator"/>
+			</xul:hbox>
+		</xul:vbox>
+	</content>
+	<implementation>
+		<constructor><![CDATA[
+			var node = this.parentNode;
+			while (node.localName != 'tabbrowser')
+				node = node.parentNode;
+
+			node._mTabDropIndicatorBar = document.getAnonymousElementByAttribute(this, 'tabid', 'tab-drop-indicator-bar');
+			node._mTabDropIndicator    = document.getAnonymousElementByAttribute(this, 'tabid', 'tab-drop-indicator');
+		]]></constructor>
+	</implementation>
+</binding>
+  
+</bindings> 
+ 

@@ -1,0 +1,464 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
+
+<?xml-stylesheet href="pref-tabsThumbnail.css" type="text/css"?>
+
+<?xul-overlay href="chrome://tabextensions/content/pref/prefOverlay.xul"?>
+
+<!DOCTYPE page SYSTEM "chrome://tabextensions/locale/pref/thumbnail.dtd">
+
+<page
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	orient="vertical"
+	headertitle="&tabPref.appearance.thumbnail.title;"
+	onload="init();">
+
+
+<script type="application/x-javascript"><![CDATA[
+
+if (!('_elementIDs' in window) || !window._elementIDs)
+	var _elementIDs = [];
+
+_elementIDs = _elementIDs.concat([
+	'thumbnailEnabled',
+	'thumbnailWidth',
+	'thumbnailHeight',
+	'thumbnailPower'
+]);
+
+
+
+
+var gThumbnailWidth,
+	gThumbnailWidthInput,
+	gThumbnailHeight,
+	gThumbnailHeightInput,
+	gTabWidth,
+	gDummyThumbnailBox,
+	gWidthResizer,
+	gHeightResizer;
+
+function init()
+{
+	window.parent.initPanel(location.href);
+
+
+	var tabPrefPanel = 'chrome://tabextensions/content/pref/pref-tabsAppearanceTab.xul';
+	var type = getModifiedValue('browser.tabs.extensions.tabs_width_type', tabPrefPanel);
+	gTabWidth = (type == 0) ? getModifiedValue('browser.tabs.extensions.tabs_max_width', tabPrefPanel) :
+			(type == 2) ? getModifiedValue('browser.tabs.extensions.tabs_width', tabPrefPanel) :
+			250 ;
+	gTabWidth = Number(gTabWidth);
+
+	document.getElementById('dummyTab').width = gTabWidth;
+
+
+
+
+	gDummyThumbnailBox = document.getElementById('dummyTabThumbnailBox');
+	gWidthResizer      = document.getElementById('dummyTabThumbnailWidthResizer');
+	gHeightResizer     = document.getElementById('dummyTabThumbnailHeightResizer');
+
+
+	gThumbnailWidth  = document.getElementById('thumbnailWidth');
+	gThumbnailHeight = document.getElementById('thumbnailHeight');
+
+	var radiogroup  = document.getElementById('thumbnailWidthRadio');
+	var radiochecks = radiogroup.getElementsByTagName('radio');
+	var field       = document.getElementById('thumbnailWidthInput');
+	if (Number(gThumbnailWidth.value) < 0) {
+		radiogroup.value = 'auto';
+		radiogroup.selectedItem = radiochecks[0];
+		field.value = TabbrowserService.getPref('browser.tabs.extensions.thumbnail.width.default');
+	}
+	else {
+		radiogroup.value = 'fix';
+		radiogroup.selectedItem = radiochecks[1];
+		field.value = gThumbnailWidth.value;
+	}
+	gThumbnailWidthInput = radiochecks[1].nextSibling.getElementsByTagName('textbox')[0];
+
+	radiogroup  = document.getElementById('thumbnailHeightRadio');
+	radiochecks = radiogroup.getElementsByTagName('radio');
+	field       = document.getElementById('thumbnailHeightInput');
+	if (Number(gThumbnailHeight.value) < 0) {
+		radiogroup.value = 'auto';
+		radiogroup.selectedItem = radiochecks[0];
+		field.value = TabbrowserService.getPref('browser.tabs.extensions.thumbnail.height.default');
+	}
+	else {
+		radiogroup.value = 'fix';
+		radiogroup.selectedItem = radiochecks[1];
+		field.value = gThumbnailHeight.value;
+	}
+	gThumbnailHeightInput = radiochecks[1].nextSibling.getElementsByTagName('textbox')[0];
+
+
+
+	activateThumbnailPrefs();
+}
+
+
+function onThumbnailRadioChange(aType)
+{
+
+	var group, valueHolder, inputField;
+	switch (aType)
+	{
+		case 'width':
+			group       = document.getElementById('thumbnailWidthRadio');
+			valueHolder = gThumbnailWidth;
+			inputField  = gThumbnailWidthInput;
+			break;
+		case 'height':
+			group       = document.getElementById('thumbnailHeightRadio');
+			valueHolder = gThumbnailHeight;
+			inputField  = gThumbnailHeightInput;
+			break;
+		default:
+			return;
+	}
+
+
+	var radiochecks = group.getElementsByTagName('radio');
+
+	for (var i = 0, max = radiochecks.length; i < max; i++)
+	{
+		if (radiochecks[i].nextSibling &&
+			radiochecks[i].nextSibling.localName != 'radio')
+			activateAllControlsIn(radiochecks[i].nextSibling, radiochecks[i] == group.selectedItem);
+	}
+
+	if (group.value == 'auto')
+		valueHolder.value = '-1';
+	else
+		valueHolder.value = inputField.value;
+
+	updateDummyThumbnailBox();
+}
+
+
+
+function updateDummyThumbnailBox() {
+	var w        = gThumbnailWidth.value;
+	var defaultW = TabbrowserService.getPref('browser.tabs.extensions.thumbnail.width.default');
+	if (w == '-1') {
+		w = Number(document.getElementById('thumbnailPower').value);
+		if (isNaN(w)) w = 50;
+		w = gTabWidth * (Math.max(w, 0)/100);
+	}
+	else
+		w = Number(w);
+	if (isNaN(w)) w = defaultW;
+
+	w = parseInt(w);
+	gDummyThumbnailBox.width = gHeightResizer.width = w;
+	if (gThumbnailWidthInput.value != w) gThumbnailWidthInput.value = w;
+
+
+	var h        = gThumbnailHeight.value;
+	var defaultH = TabbrowserService.getPref('browser.tabs.extensions.thumbnail.height.default');
+	if (h == '-1') {
+		h = w * 0.75;
+	}
+	else
+		h = Number(h);
+	if (isNaN(h)) h = defaultH;
+
+	h = parseInt(h);
+	gDummyThumbnailBox.height = gWidthResizer.height = h;
+	if (gThumbnailHeightInput.value != h) gThumbnailHeightInput.value = h;
+}
+
+
+
+
+var gResizeWidth       = false;
+var gResizeHeight      = false;
+
+var gResizeStartX      = 0;
+var gResizeStartY      = 0;
+var gResizeStartWidth  = 0;
+var gResizeStartHeight = 0;
+
+function onStartResize(aEvent)
+{
+	if (document.getElementById('thumbnailEnabled').getAttribute('checked') != 'true')
+		return;
+
+	var wRadio = document.getElementById('thumbnailWidthRadio');
+	var hRadio = document.getElementById('thumbnailHeightRadio');
+
+
+	switch (aEvent.target.id)
+	{
+		case 'dummyTabThumbnailWidthResizer':
+			gResizeWidth = true;
+			break;
+		case 'dummyTabThumbnailHeightResizer':
+			gResizeHeight = true;
+			break;
+		case 'dummyTabThumbnailBothResizer':
+			gResizeWidth  = true;
+			gResizeHeight = true;
+			break;
+		default:
+			return;
+	}
+
+	gResizeStartX      = aEvent.clientX;
+	gResizeStartY      = aEvent.clientY;
+	gResizeStartWidth  = gDummyThumbnailBox.boxObject.width;
+	gResizeStartHeight = gDummyThumbnailBox.boxObject.height;
+
+	var radiochecks;
+
+	if (gResizeWidth) {
+		radiochecks = wRadio.getElementsByTagName('radio');
+		wRadio.value = 'fix';
+		wRadio.selectedItem = radiochecks[1];
+		gThumbnailWidthInput.value = gResizeStartWidth;
+	}
+
+	if (gResizeHeight) {
+		radiochecks = hRadio.getElementsByTagName('radio');
+		hRadio.value = 'fix';
+		hRadio.selectedItem = radiochecks[1];
+		gThumbnailHeightInput.value = gResizeStartHeight;
+	}
+
+	if (gResizeWidth)  onThumbnailRadioChange('width');
+	if (gResizeHeight) onThumbnailRadioChange('height');
+
+	gDummyThumbnailBox.setAttribute('state-resizing', true);
+}
+
+function onEndResize(aEvent)
+{
+	if (!gResizeWidth && !gResizeHeight) return;
+
+	if (gResizeWidth) {
+		gResizeWidth  = false;
+		window.parent.PrefDialogService.onModified({
+			type   : 'input',
+			target : gThumbnailWidth
+		});
+	}
+	if (gResizeHeight) {
+		gResizeHeight = false;
+		window.parent.PrefDialogService.onModified({
+			type   : 'input',
+			target : gThumbnailHeight
+		});
+	}
+
+	gDummyThumbnailBox.removeAttribute('state-resizing');
+}
+
+function onResizing(aEvent)
+{
+	if (!gResizeWidth && !gResizeHeight) return;
+
+	if (gResizeWidth)
+		gThumbnailWidthInput.value =
+			gThumbnailWidth.value =
+			Math.max(0, (gResizeStartWidth + aEvent.clientX - gResizeStartX));
+
+	if (gResizeHeight)
+		gThumbnailHeightInput.value =
+			gThumbnailHeight.value =
+			Math.max(0, (gResizeStartHeight + aEvent.clientY - gResizeStartY));
+
+	updateDummyThumbnailBox();
+}
+
+
+
+
+function activateThumbnailPrefs()
+{
+	var active = (document.getElementById('thumbnailEnabled').getAttribute('checked') == 'true');
+
+	if (active)
+		activateAllControlsIn(document.getElementById('thumbnailPrefs'), active);
+
+	onThumbnailRadioChange('width');
+	onThumbnailRadioChange('height');
+
+	if (!active)
+		activateAllControlsIn(document.getElementById('thumbnailPrefs'), active);
+}
+
+]]></script>
+
+
+<groupbox>
+	<caption label="&thumbnail.caption;"/>
+	<vbox>
+
+	<checkbox id="thumbnailEnabled"
+		label="&thumbnail.enabled;"
+		prefstring="browser.tabs.extensions.thumbnail.enabled"
+		oncommand="activateThumbnailPrefs();"/>
+
+<vbox id="thumbnailPrefs">
+
+<grid oncommand="updateDummyThumbnailBox()"
+	oninput="updateDummyThumbnailBox()">
+	<columns>
+		<column/>
+		<column/>
+	</columns>
+	<rows>
+		<row>
+			<vbox>
+				<label value="&thumbnail.width;"/>
+				<spacer flex="1"/>
+			</vbox>
+			<radiogroup orient="vertical" id="thumbnailWidthRadio"
+				oncommand="onThumbnailRadioChange('width');">
+				<hbox>
+					<radio value="auto" label="&thumbnail.width.auto;"/>
+					<hbox align="center">
+						<spacer style="width:1em;"/>
+						<label value="&thumbnail.power.before;"
+							conrol="thumbnailPower"/>
+						<textbox id="thumbnailPower"
+							size="4"
+							preftype="int"
+							prefstring="browser.tabs.extensions.thumbnail.power"/>
+						<spinbuttons
+							onup="spinButtonsUpDown(event, 'thumbnailPower', 100);"
+							ondown="spinButtonsUpDown(event, 'thumbnailPower', 1);"/>
+						<label value="&thumbnail.power.after;"
+							conrol="thumbnailPower"/>
+					</hbox>
+				</hbox>
+				<hbox>
+					<radio value="fix"  label="&thumbnail.width.fix;"/>
+					<hbox align="center">
+						<spacer style="width:1em;"/>
+						<label value="&thumbnail.width.fix.before;"
+							conrol="thumbnailWidthInput"/>
+						<textbox id="thumbnailWidthInput"
+							size="4"
+							oninput="gThumbnailWidth.value = this.value; inputToTextField('thumbnailWidth');"/>
+						<spinbuttons
+							onup="spinButtonsUpDown(event, 'thumbnailWidthInput'); gThumbnailWidth.value = this.previousSibling.value;"
+							ondown="spinButtonsUpDown(event, 'thumbnailWidthInput', 0); gThumbnailWidth.value = this.previousSibling.value;"/>
+						<label value="&thumbnail.width.fix.after;"
+							conrol="thumbnailWidthInput"/>
+					</hbox>
+				</hbox>
+			</radiogroup>
+		</row>
+		<row>
+			<vbox>
+				<label value="&thumbnail.height;"/>
+				<spacer flex="1"/>
+			</vbox>
+			<radiogroup orient="vertical" id="thumbnailHeightRadio"
+				oncommand="onThumbnailRadioChange('height');">
+				<hbox>
+					<radio value="auto" label="&thumbnail.height.auto;"/>
+				</hbox>
+				<hbox>
+					<radio value="fix"  label="&thumbnail.height.fix;"/>
+					<hbox align="center">
+						<spacer style="width:1em;"/>
+						<label value="&thumbnail.height.fix.before;"
+							conrol="thumbnailHeightInput"/>
+						<textbox id="thumbnailHeightInput"
+							size="4"
+							oninput="gThumbnailHeight.value = this.value;"/>
+						<spinbuttons
+							onup="spinButtonsUpDown(event, 'thumbnailHeightInput'); gThumbnailHeight.value = this.previousSibling.value;"
+							ondown="spinButtonsUpDown(event, 'thumbnailHeightInput', 0); gThumbnailHeight.value = this.previousSibling.value;"/>
+						<label value="&thumbnail.height.fix.after;"
+							conrol="thumbnailHeightInput"/>
+					</hbox>
+				</hbox>
+			</radiogroup>
+		</row>
+	</rows>
+</grid>
+
+
+
+
+<vbox id="dummyWidgetContainer"
+	onmousedown="onStartResize(event);"
+	onmouseup="onEndResize(event);"
+	onmousemove="onResizing(event);">
+<tabbox orient="vertical">
+	<tabs>
+		<tab id="dummyTab">
+			<vbox>
+				<spacer flex="1"/>
+				<grid id="dummyTabThumbnailBoxContainer">
+					<columns>
+						<column/>
+						<column/>
+					</columns>
+					<rows>
+						<row>
+							<vbox id="dummyTabThumbnailBox"
+								class="control"
+								width="120"
+								height="90"/>
+							<vbox id="dummyTabThumbnailWidthResizer"
+								class="control"/>
+						</row>
+						<row>
+							<hbox id="dummyTabThumbnailHeightResizer"
+								class="control"/>
+							<hbox id="dummyTabThumbnailBothResizer"
+								class="control"/>
+						</row>
+					</rows>
+				</grid>
+				<spacer flex="1"/>
+			</vbox>
+			<vbox>
+				<spacer flex="1"/>
+				<label value="&thumbnail.dummy.tabLabel;"/>
+				<spacer flex="1"/>
+			</vbox>
+		</tab>
+	</tabs>
+	<tabpanels>
+		<tabpanel>
+			<description flex="1">&thumbnail.dummy.desc;</description>
+		</tabpanel>
+	</tabpanels>
+</tabbox>
+</vbox>
+
+
+
+	<box collapsed="true">
+
+		<textbox id="thumbnailWidth"
+			preftype="int"
+			prefstring="browser.tabs.extensions.thumbnail.width"/>
+		<textbox id="thumbnailHeight"
+			preftype="int"
+			prefstring="browser.tabs.extensions.thumbnail.height"/>
+	</box>
+
+</vbox>
+
+
+	</vbox>
+</groupbox>
+
+
+
+<spacer flex="1"/>
+
+
+<box id="tabextensionsAboutBox"/>
+
+</page>

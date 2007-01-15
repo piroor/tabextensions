@@ -1,0 +1,85 @@
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+/* Extra tab icons */
+
+
+/* single */
+tab[tab-autoreload] .tab-extra-status
+{
+	list-style-image: url("chrome://tabextensions/skin/tab-a.png");
+}
+
+tab[tab-forbidden] .tab-extra-status
+{
+	list-style-image: url("chrome://tabextensions/skin/tab-f.png");
+}
+
+tab[tab-locked] .tab-extra-status
+{
+	list-style-image: url("chrome://tabextensions/skin/tab-l.png");
+}
+
+tab[tab-referrerblocked] .tab-extra-status
+{
+	list-style-image: url("chrome://tabextensions/skin/tab-r.png");
+}
+
+/* double */
+tab[tab-autoreload][tab-forbidden] .tab-extra-status
+{
+	list-style-image: url("chrome://tabextensions/skin/tab-af.png");
+}
+
+tab[tab-autoreload][tab-locked] .tab-extra-status
+{
+	list-style-image: url("chrome://tabextensions/skin/tab-al.png");
+}
+
+tab[tab-autoreload][tab-referrerblocked] .tab-extra-status
+{
+	list-style-image: url("chrome://tabextensions/skin/tab-ar.png");
+}
+
+tab[tab-forbidden][tab-locked] .tab-extra-status
+{
+	list-style-image: url("chrome://tabextensions/skin/tab-fl.png");
+}
+
+tab[tab-forbidden][tab-referrerblocked] .tab-extra-status
+{
+	list-style-image: url("chrome://tabextensions/skin/tab-fr.png");
+}
+
+tab[tab-locked][tab-referrerblocked] .tab-extra-status
+{
+	list-style-image: url("chrome://tabextensions/skin/tab-lr.png");
+}
+
+/* triple */
+tab[tab-autoreload][tab-forbidden][tab-locked] .tab-extra-status
+{
+	list-style-image: url("chrome://tabextensions/skin/tab-afl.png");
+}
+
+tab[tab-autoreload][tab-forbidden][tab-referrerblocked] .tab-extra-status
+{
+	list-style-image: url("chrome://tabextensions/skin/tab-afr.png");
+}
+
+tab[tab-autoreload][tab-locked][tab-referrerblocked] .tab-extra-status
+{
+	list-style-image: url("chrome://tabextensions/skin/tab-alr.png");
+}
+
+tab[tab-forbidden][tab-locked][tab-referrerblocked] .tab-extra-status
+{
+	list-style-image: url("chrome://tabextensions/skin/tab-flr.png");
+}
+
+/* tetra */
+tab[tab-autoreload][tab-forbidden][tab-locked][tab-referrerblocked] .tab-extra-status
+{
+	list-style-image: url("chrome://tabextensions/skin/tab-aflr.png");
+}
+
+

@@ -1,0 +1,25 @@
+<!ENTITY tabPref.javascript.newwindow.active "Open Blacklisted pages in New Tab">
+<!ENTITY tabPref.javascript.newwindow.background "Open Blacklisted pages in New Background Tab">
+
+
+<!ENTITY windowOpenException.go.white  "Exceptions Whitelist...">
+<!ENTITY windowOpenException.go.black  "Exceptions Blacklist...">
+
+
+
+<!ENTITY windowOpenException.title.white "Tab Exceptions - Popup Allowed Web Pages">
+<!ENTITY windowOpenException.title.black "Tab Exceptions - Popup Denied Web Pages">
+<!ENTITY windowOpenException.description.white "Allow to open popups for web pages with following URIs (Normally, open tabs instead of any popup window):">
+<!ENTITY windowOpenException.description.black "Deny to open popups for web pages with following URIs (Normally, open popup-windows instead of any tab):">
+<!ENTITY windowOpenException.note.white "* For example, if you would like to allow popup the page &quot;foobar.com/popup&quot; from &quot;foobar.com&quot;, you should add an URI &quot;foobar.com/popup&quot;, not &quot;foobar.com&quot;.">
+<!ENTITY windowOpenException.note.black "* For example, if you would like to deny popup the page &quot;foobar.com/popup&quot; from &quot;foobar.com&quot;, you should add an URI &quot;foobar.com/popup&quot;, not &quot;foobar.com&quot;.">
+<!ENTITY windowOpenException.sites  "URI (partial matching)">
+<!ENTITY windowOpenException.add.label "Add">
+<!ENTITY windowOpenException.add.accesskey "A">
+<!ENTITY windowOpenException.remove.label "Remove">
+<!ENTITY windowOpenException.remove.accesskey "R">
+<!ENTITY windowOpenException.removeAll.label "Remove All">
+<!ENTITY windowOpenException.removeAll.accesskey "e">
+
+<!ENTITY windowOpenException.exceptionsForAnyWebPage.group "Allowed popups for any web page">
+<!ENTITY windowOpenException.allowPopupWithOption.label "Allow popups with options">

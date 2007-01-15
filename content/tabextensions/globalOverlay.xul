@@ -1,0 +1,190 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://tabextensions/content/tabextensions.css" type="text/css"?>
+<?xml-stylesheet href="chrome://tabextensions/skin/tabbrowser.css" type="text/css"?>
+<?xml-stylesheet href="chrome://tabextensions/skin/buttons.css" type="text/css"?>
+<?xml-stylesheet href="chrome://tabextensions/skin/icons.css" type="text/css"?>
+
+<!DOCTYPE overlay [
+<!ENTITY % tabBrowserDTD SYSTEM "chrome://global/locale/tabbrowser.dtd">
+%tabBrowserDTD;
+<!ENTITY % tabextensionsDTD SYSTEM "chrome://tabextensions/locale/">
+%tabextensionsDTD;
+]>
+
+<overlay
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+<!-- DND -->
+<script type="application/x-javascript" src="chrome://global/content/nsDragAndDrop.js"/>
+<script type="application/x-javascript" src="chrome://global/content/nsTransferable.js"/>
+<script type="application/x-javascript" src="chrome://global/content/nsJSSupportsUtils.js"/>
+<script type="application/x-javascript" src="chrome://global/content/nsJSComponentManager.js"/>
+
+<script type="application/x-javascript" src="chrome://global/content/XPCNativeWrapper.js"/>
+<script type="application/x-javascript" src="chrome://tabextensions/content/pXPCNativeWrapper.js"/>
+
+<script type="application/x-javascript" src="chrome://tabextensions/content/globalOverlay.js"/>
+
+<script type="application/x-javascript" src="chrome://tabextensions/content/modules/clickEventService.js"/>
+<script type="application/x-javascript" src="chrome://tabextensions/content/modules/bookmarksService.js"/>
+<script type="application/x-javascript" src="chrome://tabextensions/content/modules/contextMenuService.js"/>
+<script type="application/x-javascript" src="chrome://tabextensions/content/modules/historyService.js"/>
+<script type="application/x-javascript" src="chrome://tabextensions/content/modules/miscOverlay.js"/>
+
+<script type="application/x-javascript" src="chrome://tabextensions/content/modules/compatibility/autohide.js"/>
+
+<script type="application/x-javascript" src="chrome://tabextensions/content/pRDFData.js"/>
+
+
+
+<!-- old Mozilla -->
+<commandset id="commands">
+	<commandset id="mainCommandSet"/>
+</commandset>
+
+<commandset id="mainCommandSet">
+	<commandset id="commandset_tabextensions">
+		<command id="cmd_undoRemoveTab"
+			oncommand="gBrowser.undoRemoveTab();"/>
+		<command id="cmd_moveTabRight"
+			oncommand="gBrowser.moveTabRight();"/>
+		<command id="cmd_moveTabLeft"
+			oncommand="gBrowser.moveTabLeft();"/>
+	</commandset>
+</commandset>
+
+
+<!-- old Mozilla -->
+<keyset id="navKeys">
+	<keyset id="mainKeyset"/>
+</keyset>
+
+<keyset id="mainKeyset">
+	<keyset id="keyset_tabextensions">
+		<key id="key_undoRemoveTab"
+			key="Z"
+			modifiers="accel,shift"
+			command="cmd_undoRemoveTab"/>
+		<key id="key_moveTabRight"
+			keycode="VK_PAGE_DOWN"
+			modifiers="accel,shift"
+			command="cmd_moveTabRight"/>
+		<key id="key_moveTabRight2"
+			keycode="VK_TAB"
+			modifiers="accel,alt"
+			command="cmd_moveTabRight"/>
+		<key id="key_moveTabLeft"
+			keycode="VK_PAGE_UP"
+			modifiers="accel,shift"
+			command="cmd_moveTabLeft"/>
+		<key id="key_moveTabLeft2"
+			keycode="VK_TAB"
+			modifiers="accel,shift,alt"
+			command="cmd_moveTabLeft"/>
+	</keyset>
+</keyset>
+
+
+
+<popup id="contentAreaContextMenu">
+	<menuitem id="context-bookmarkTabGroup"
+		insertafter="context-bookmarkpage"
+		label="&bookmarkTabGroup.label;"
+		accesskey="&bookmarkTabGroup.accesskey;"
+		oncommand="TabbrowserService.bookmarkTabGroup();"/>
+
+	<menuitem id="context-openAllLinksInTabs"
+		insertafter="context-openlinkintab"
+		label="&openAllLinksInTabs.label;"
+		accesskey="&openAllLinksInTabs.accesskey;"
+		oncommand="TabbrowserService.openAllLinksInTabs();"/>
+	<menuitem id="context-openAllLinksInGroup"
+		insertafter="context-openlinkintab"
+		label="&openAllLinksInGroup.label;"
+		accesskey="&openAllLinksInGroup.accesskey;"
+		oncommand="TabbrowserService.openAllLinksInTabs(true);"/>
+	<menuseparator id="context-sep-openAllLinksInGroup"
+		insertafter="context-openlinkintab"/>
+
+	<menuitem id="context-openAllLinksInGroup-onLink"
+		insertafter="context-openlinkintab"
+		label="&openAllLinksInGroup.label;"
+		accesskey="&openAllLinksInGroup.accesskey;"
+		oncommand="TabbrowserService.openAllLinksInTabs(true);"/>
+	<menuitem id="context-openAllLinksInTabs-onLink"
+		insertafter="context-openlinkintab"
+		label="&openAllLinksInTabs.label;"
+		accesskey="&openAllLinksInTabs.accesskey;"
+		oncommand="TabbrowserService.openAllLinksInTabs();"/>
+	<menuitem id="context-openLinkInNewActiveTab"
+		insertafter="context-openlinkintab"
+		label="&openLinkInNewActiveTab.label;"
+		accesskey="&openLinkInNewActiveTab.accesskey;"
+		oncommand="TabbrowserService.openLinkInNewTab('getLinkURI' in gContextMenu ? gContextMenu.linkURI : gContextMenu.linkURL() , gContextMenu.link, true);"/>
+	<menuitem id="context-openLinkInThisTab"
+		insertafter="context-openlinkintab"
+		label="&openLinkInThisTab.label;"
+		accesskey="&openLinkInThisTab.accesskey;"
+		oncommand="loadURI('getLinkURI' in gContextMenu ? gContextMenu.linkURI.spec : gContextMenu.linkURL() , TabbrowserService.shouldSendReferrerWithLinkClick(gContextMenu.link) ? TabbrowserService.getReferrer(gContextMenu.link) : null );"/>
+
+
+	<menuitem id="context-bookmarkAllLinksAsGroup-onLink"
+		insertafter="context-bookmarklink"
+		label="&bookmarkAllLinksAsGroup.label;"
+		accesskey="&bookmarkAllLinksAsGroup.accesskey;"
+		oncommand="TabbrowserService.bookmarkAllLinksAsGroup();"/>
+
+	<menuseparator id="context-sep-bookmarkAllLinksAsGroup"
+		insertafter="context-bookmarklink"/>
+	<menuitem id="context-bookmarkAllLinksAsGroup"
+		insertafter="context-bookmarklink"
+		label="&bookmarkAllLinksAsGroup.label;"
+		accesskey="&bookmarkAllLinksAsGroup.accesskey;"
+		oncommand="TabbrowserService.bookmarkAllLinksAsGroup();"/>
+</popup>
+
+
+<popupset id="mainPopupSet">
+	<popupset id="popupset_tabextensions">
+		<menupopup id="tabextensions-blankWindow-contextMenu"
+			onpopupshowing="
+				var b = TabbrowserService.browser;
+				var undo = this.getElementsByAttribute('tabid', 'tab-item-undoRemoveTab')[0];
+				var sep = this.getElementsByAttribute('tabid', 'tab-sep-undoRemoveTab')[0];
+
+				if (b.mRemovedTabInfoList.length)
+					undo.removeAttribute('disabled');
+				else
+					undo.setAttribute('disabled', true);
+
+				if (b.mUndoRemoveTabCache > 0) {
+					undo.removeAttribute('hidden');
+					sep.removeAttribute('hidden');
+				}
+				else {
+					undo.setAttribute('hidden', true);
+					sep.setAttribute('hidden', true);
+				}
+			">
+			<menuitem id="tabextensions-blankWindow-contextMenu-newTab"
+				label="&newTab.label;"
+				oncommand="eval(TabbrowserService.browser.getAttribute('onnewtab'));"/>
+			<menuseparator id="tabextensions-blankWindow-contextMenu-sep"
+				tabid="tab-sep-undoRemoveTab"/>
+			<menuitem id="tabextensions-blankWindow-contextMenu-undoRemoveTab"
+				tabid="tab-item-undoRemoveTab"
+				label="&ontabclick.undoRemoveTab;"
+				oncommand="TabbrowserService.browser.undoRemoveTab();"/>
+		</menupopup>
+
+
+		<popup id="tabextensions-alert-popup"
+			onclick="if (this.timerTimeout) window.clearTimeout(this.timerTimeout); if (this.timerInterval) window.clearInterval(this.timerInterval); this.popupIsShown = false; this.hidePopup();"/>
+
+
+	</popupset>
+</popupset>
+
+
+</overlay>

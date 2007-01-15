@@ -1,0 +1,64 @@
+<!ENTITY tabPref.gestures.title "簡易ジェスチャ">
+
+<!ENTITY tabPrefsDisabled       "タブバーを常に表示しない設定になっているため、タブの設定は変更できません。">
+
+<!ENTITY tabPref.gestures.wheel.label "タブの上でのホイールスクロール">
+
+<!ENTITY tabPref.gestures.wheel.scroll "タブバーをスクロールする">
+<!ENTITY tabPref.gestures.wheel.switch "アクティブなタブを切り替える">
+
+<!ENTITY tabPref.gestures.wheel.switch.go    "詳細...">
+<!ENTITY tabPref.gestures.wheel.switch.title "ホイールスクロールでアクティブなタブを切り替える">
+
+<!ENTITY tabPref.gestures.wheel.switch.speed    "切り替え速度">
+<!ENTITY tabPref.gestures.wheel.switch.veryfast "超高速">
+<!ENTITY tabPref.gestures.wheel.switch.fast     "高速">
+<!ENTITY tabPref.gestures.wheel.switch.medium   "普通">
+<!ENTITY tabPref.gestures.wheel.switch.slow     "低速">
+<!ENTITY tabPref.gestures.wheel.switch.veryslow "超低速">
+
+<!ENTITY tabPref.gestures.wheel.switch.roop         "タブバーの端でスクロールした場合">
+<!ENTITY tabPref.gestures.wheel.switch.roop.allow   "先頭と末尾の間でフォーカスを循環する">
+<!ENTITY tabPref.gestures.wheel.switch.roop.prevent "循環しない">
+
+
+<!ENTITY tabPref.gestures.click.group "タブのクリック操作に割り付ける機能">
+
+<!ENTITY tabPref.gestures.click.tab.double   "ダブルクリック">
+<!ENTITY tabPref.gestures.click.tab.middle   "中クリック">
+<!ENTITY tabPref.gestures.click.tab.right    "右クリック">
+<!ENTITY tabPref.gestures.click.tab.shift    "Shift-クリック">
+<!ENTITY tabPref.gestures.click.tab.ctrl     "Ctrl-クリック">
+<!ENTITY tabPref.gestures.click.tab.ctrl.mac "Command-クリック">
+<!ENTITY tabPref.gestures.click.tab.alt      "Alt-クリック">
+
+<!ENTITY tabPref.gestures.click.tabbar.group "タブバーのクリック操作に割り付ける機能">
+<!ENTITY tabPref.gestures.click.tabbar.double   "ダブルクリック">
+<!ENTITY tabPref.gestures.click.tabbar.middle   "中クリック">
+<!ENTITY tabPref.gestures.click.tabbar.right    "右クリック">
+<!ENTITY tabPref.gestures.click.tabbar.shift    "Shift-クリック">
+<!ENTITY tabPref.gestures.click.tabbar.ctrl     "Ctrl-クリック">
+<!ENTITY tabPref.gestures.click.tabbar.ctrl.mac "Command-クリック">
+<!ENTITY tabPref.gestures.click.tabbar.alt      "Alt-クリック">
+
+
+<!ENTITY tabPref.gestures.misc.group "その他">
+
+<!ENTITY tabPref.gestures.point "ポイント操作だけでタブをアクティブにする">
+
+<!ENTITY tabPref.gestures.focusTabOnDrag "タブ上でのドラッグでタブのフォーカスを切り替える">
+
+<!ENTITY tabPref.gestures.advanced.go    "詳細...">
+<!ENTITY tabPref.gestures.advanced.title "その他のジェスチャの詳細">
+
+<!ENTITY tabPref.gestures.point.delay.group "ポイントしてからアクティブにするまでの遅延">
+<!ENTITY tabPref.gestures.point.delay.label_before "ポイントして">
+<!ENTITY tabPref.gestures.point.delay.label_after  "ミリ秒経過したらタブをアクティブにする">
+
+
+<!ENTITY tabPref.gestures.tabFlip.enabled "タブフリップを有効にする（現在のタブをクリックすると、一つ前に選択していたタブにフォーカスする）">
+<!ENTITY tabPref.gestures.tabFlip.group              "タブフリップ">
+<!ENTITY tabPref.gestures.tabFlip.delay.label_before "タブフリップの遅延：">
+<!ENTITY tabPref.gestures.tabFlip.delay.label_after  "ミリ秒">
+<!ENTITY tabPref.gestures.tabFlip.roop               "フォーカスを循環する">
+

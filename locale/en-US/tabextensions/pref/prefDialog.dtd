@@ -1,0 +1,40 @@
+<!ENTITY tabextensions.label    "Tabbrowser Extensions">
+
+<!ENTITY prefDialog.title       "Preferences of Tabbrowser Extensions">
+<!ENTITY prefDialog.category    "Category">
+<!ENTITY prefDialog.size        "width: 52em; height: 41em;">
+<!ENTITY prefDialog.apply       "Apply">
+
+
+
+<!ENTITY tabPref.general.tree        "General">
+
+<!ENTITY tabPref.new.tree            "New Tab">
+<!ENTITY tabPref.close.tree          "Close Tab">
+<!ENTITY tabPref.closeWindow.tree    "Close Window">
+<!ENTITY tabPref.undo.tree           "Undo">
+
+<!ENTITY tabPref.useTab.tree         "Use Tab">
+
+<!ENTITY tabPref.links.tree          "Links">
+<!ENTITY tabPref.platformNative.tree "External Links">
+<!ENTITY tabPref.javascript.tree     "Popups">
+<!ENTITY tabPref.bookmarks.tree      "Bookmarks">
+<!ENTITY tabPref.history.tree        "History">
+<!ENTITY tabPref.location.tree       "Location bar">
+<!ENTITY tabPref.viewSource.tree     "View Source">
+<!ENTITY tabPref.search.tree      "Web Search">
+
+<!ENTITY tabPref.appearance.tree       "Appearance">
+
+<!ENTITY tabPref.appearance.tab.tree    "Tab">
+<!ENTITY tabPref.appearance.tabbar.tree "Tab bar">
+<!ENTITY tabPref.appearance.thumbnail.tree "Thumbnail">
+
+<!ENTITY tabPref.gestures.tree      "Gestures">
+<!ENTITY tabPref.features.tree      "Features">
+<!ENTITY tabPref.group.tree         "Tab Mode">
+<!ENTITY tabPref.menu.tree          "Context Menu">
+<!ENTITY tabPref.menuTab.tree       "Tab Menu">
+
+<!ENTITY tabPref.misc.tree          "Misc">

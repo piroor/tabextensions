@@ -1,0 +1,94 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://tabextensions/content/loadPresetPrefs.css" type="text/css"?>
+
+<!DOCTYPE dialog SYSTEM "chrome://tabextensions/locale/">
+
+<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+		windowtype="tabextensions:loadPresetPrefs"
+		orient="vertical"
+		buttons="accept,cancel"
+		ondialogaccept="accept();"
+		ondialogcancel="window.close();"
+		onload="init();"
+		style="width: 35em;">
+
+<script type="application/x-javascript" src="chrome://global/content/XPCNativeWrapper.js"/>
+<script type="application/x-javascript" src="chrome://tabextensions/content/pXPCNativeWrapper.js"/>
+
+<script type="application/x-javascript" src="chrome://tabextensions/content/globalOverlay.js"/>
+<script type="application/x-javascript" src="chrome://tabextensions/content/loadPresetPrefs.js"/>
+
+
+<box orient="vertical" flex="1">
+	<box class="onlyForInitializing" orient="horizontal">
+		<spacer flex="1"/>
+		<image src="chrome://tabextensions/content/res/logo.png"/>
+		<spacer flex="1"/>
+	</box>
+	<groupbox>
+		<caption label="&preset.desc;"/>
+		<radiogroup id="presetRadio">
+			<radio id="fromList" class="onlyForInitializing"
+				label="&preset.fromList;"
+				oncommand="onChangeRadio();"
+				selected="true"/>
+			<box orient="horizontal">
+				<spacer class="onlyForInitializing" style="width: 1em;"/>
+				<box orient="vertical" flex="1">
+					<listbox id="presetPrefs" flex="1" rows="6"
+						onselect="onListSelect();"
+						ondblclick="if (isValidLeftClick(event, 'listitem')) accept();">
+						<listitem name="_restore"
+							label="&preset._restore;"
+							description="&preset._restore.desc;"/>
+						<listitem name="novice"
+							label="&preset.novice;"
+							description="&preset.novice.desc;"/>
+						<listitem name="professional"
+							label="&preset.professional;"
+							description="&preset.professional.desc;"/>
+						<listitem name="tree"
+							label="&preset.tree;"
+							description="&preset.tree.desc;"/>
+						<listitem name="mdi"
+							label="&preset.mdi;"
+							description="&preset.mdi.desc;"/>
+						<listitem name="sleipnir"
+							label="&preset.sleipnir;"
+							description="&preset.sleipnir.desc;"/>
+						<listitem name="sleipnir-tree"
+							label="&preset.sleipnir-tree;"
+							description="&preset.sleipnir-tree.desc;"/>
+						<listitem name="irider"
+							label="&preset.irider;"
+							description="&preset.irider.desc;"/>
+						<listitem name="piro"
+							label="&preset.piro;"
+							description="&preset.piro.desc;"/>
+					</listbox>
+					<box orient="vertical" style="border: -moz-bg-inset 1px;">
+						<label id="caption"/>
+						<box orient="vertical"
+							style="overflow:auto; height: 4em;" flex="1">
+							<description id="description" flex="1"/>
+						</box>
+					</box>
+				</box>
+			</box>
+
+			<radio id="fromFile" class="onlyForInitializing"
+				label="&preset.fromFile;"
+				oncommand="onChangeRadio();"/>
+			<box class="onlyForInitializing" orient="horizontal">
+				<spacer style="width: 1em;"/>
+				<textbox id="importFileURL" flex="1"
+					readonly="true"/>
+			</box>
+		</radiogroup>
+	</groupbox>
+</box>
+
+</dialog>

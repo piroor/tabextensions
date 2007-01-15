@@ -1,0 +1,168 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE overlay SYSTEM "chrome://tabextensions/locale/pref/prefDialog.dtd">
+
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+<treechildren id="panelChildren">
+	<treeitem container="true" id="tabextensions-root">
+		<treerow>
+			<treecell label="&tabextensions.label;"
+				url="chrome://tabextensions/content/pref/pref-tabs.xul"/>
+		</treerow>
+		<treechildren id="tabextensionsChildren">
+			<treeitem container="true">
+				<treerow>
+					<treecell label="&tabPref.general.tree;"
+						url="chrome://tabextensions/content/pref/pref-tabsGeneral.xul"/>
+				</treerow>
+				<treechildren id="tabPrefsGeneralChildren">
+					<treeitem>
+						<treerow>
+							<treecell label="&tabPref.new.tree;"
+								url="chrome://tabextensions/content/pref/pref-tabsNew.xul"/>
+						</treerow>
+					</treeitem>
+					<treeitem>
+						<treerow>
+							<treecell label="&tabPref.close.tree;"
+								url="chrome://tabextensions/content/pref/pref-tabsClose.xul"/>
+						</treerow>
+					</treeitem>
+					<treeitem>
+						<treerow>
+							<treecell label="&tabPref.closeWindow.tree;"
+								url="chrome://tabextensions/content/pref/pref-tabsCloseWindow.xul"/>
+						</treerow>
+					</treeitem>
+					<treeitem>
+						<treerow>
+							<treecell label="&tabPref.undo.tree;"
+								url="chrome://tabextensions/content/pref/pref-tabsUndo.xul"/>
+						</treerow>
+					</treeitem>
+				</treechildren>
+			</treeitem>
+			<treeitem>
+				<treerow>
+					<treecell label="&tabPref.group.tree;"
+						url="chrome://tabextensions/content/pref/pref-tabsGroup.xul"/>
+				</treerow>
+			</treeitem>
+			<treeitem container="true">
+				<treerow>
+					<treecell label="&tabPref.useTab.tree;"
+						url="chrome://tabextensions/content/pref/pref-tabsUseTab.xul"/>
+				</treerow>
+				<treechildren id="tabPrefsUseTabChildren">
+					<treeitem>
+						<treerow>
+							<treecell label="&tabPref.links.tree;"
+								url="chrome://tabextensions/content/pref/pref-tabsLinks.xul"/>
+						</treerow>
+					</treeitem>
+					<treeitem>
+						<treerow>
+							<treecell label="&tabPref.platformNative.tree;"
+								url="chrome://tabextensions/content/pref/pref-tabsPlatformNative.xul"/>
+						</treerow>
+					</treeitem>
+					<treeitem>
+						<treerow>
+							<treecell label="&tabPref.javascript.tree;"
+								url="chrome://tabextensions/content/pref/pref-tabsJavascript.xul"/>
+						</treerow>
+					</treeitem>
+					<treeitem>
+						<treerow>
+							<treecell label="&tabPref.bookmarks.tree;"
+								url="chrome://tabextensions/content/pref/pref-tabsBookmarks.xul"/>
+						</treerow>
+					</treeitem>
+					<treeitem>
+						<treerow>
+							<treecell label="&tabPref.history.tree;"
+								url="chrome://tabextensions/content/pref/pref-tabsHistory.xul"/>
+						</treerow>
+					</treeitem>
+					<treeitem>
+						<treerow>
+							<treecell label="&tabPref.location.tree;"
+								url="chrome://tabextensions/content/pref/pref-tabsLocation.xul"/>
+						</treerow>
+					</treeitem>
+					<treeitem>
+						<treerow>
+							<treecell label="&tabPref.search.tree;"
+								url="chrome://tabextensions/content/pref/pref-tabsSearch.xul"/>
+						</treerow>
+					</treeitem>
+					<treeitem>
+						<treerow>
+							<treecell label="&tabPref.viewSource.tree;"
+								url="chrome://tabextensions/content/pref/pref-tabsViewSource.xul"/>
+						</treerow>
+					</treeitem>
+				</treechildren>
+			</treeitem>
+			<treeitem container="true">
+				<treerow>
+					<treecell label="&tabPref.appearance.tree;"
+						url="chrome://tabextensions/content/pref/pref-tabsAppearance.xul"/>
+				</treerow>
+				<treechildren id="tabPrefsAppearanceChildren">
+					<treeitem>
+						<treerow>
+							<treecell label="&tabPref.appearance.tab.tree;"
+								url="chrome://tabextensions/content/pref/pref-tabsAppearanceTab.xul"/>
+						</treerow>
+					</treeitem>
+					<treeitem>
+						<treerow>
+							<treecell label="&tabPref.appearance.tabbar.tree;"
+								url="chrome://tabextensions/content/pref/pref-tabsAppearanceTabbar.xul"/>
+						</treerow>
+					</treeitem>
+					<treeitem>
+						<treerow>
+							<treecell label="&tabPref.appearance.thumbnail.tree;"
+								url="chrome://tabextensions/content/pref/pref-tabsThumbnail.xul"/>
+						</treerow>
+					</treeitem>
+					<treeitem>
+						<treerow>
+							<treecell label="&tabPref.menuTab.tree;"
+								url="chrome://tabextensions/content/pref/pref-tabsMenuTab.xul"/>
+						</treerow>
+					</treeitem>
+					<treeitem>
+						<treerow>
+							<treecell label="&tabPref.menu.tree;"
+								url="chrome://tabextensions/content/pref/pref-tabsMenu.xul"/>
+						</treerow>
+					</treeitem>
+				</treechildren>
+			</treeitem>
+			<treeitem>
+				<treerow>
+					<treecell label="&tabPref.gestures.tree;"
+						url="chrome://tabextensions/content/pref/pref-tabsGestures.xul"/>
+				</treerow>
+			</treeitem>
+			<treeitem>
+				<treerow>
+					<treecell label="&tabPref.features.tree;"
+						url="chrome://tabextensions/content/pref/pref-tabsFeatures.xul"/>
+				</treerow>
+			</treeitem>
+			<treeitem id="tabextensionsMiscItem">
+				<treerow>
+					<treecell label="&tabPref.misc.tree;"
+						url="chrome://tabextensions/content/pref/pref-tabsMisc.xul"/>
+				</treerow>
+			</treeitem>
+		</treechildren>
+	</treeitem>
+</treechildren>
+
+</overlay>

@@ -1,0 +1,8 @@
+novice=novice.js
+professional=professional.js
+tree=tree.js
+mdi=mdi.js
+sleipnir=sleipnir.js
+sleipnir-tree=sleipnir-tree.js
+irider=irider.js
+piro=piro.js

@@ -1,0 +1,116 @@
+<!ENTITY tabPref.appearance.tab.title "タブの外観">
+
+<!ENTITY tabPrefsDisabled       "タブバーを常に表示しない設定になっているため、タブの設定は変更できません。">
+
+
+<!ENTITY showTabClosebox           "タブのクローズボタン">
+<!ENTITY showTabClosebox.never     "なし">
+<!ENTITY showTabClosebox.any       "常に全てのタブに表示">
+<!ENTITY showTabClosebox.current   "現在のタブのみ表示">
+<!ENTITY showTabClosebox.pointed   "ポイントされているタブにのみ表示">
+
+<!ENTITY showTabClosebox.advanced.go    "詳細...">
+<!ENTITY showTabClosebox.advanced.title "タブのクローズボタンの詳細設定">
+<!ENTITY showTabClosebox.pointed.delay.group "ポイントしてからクローズボックスを表示するまでの遅延">
+<!ENTITY showTabClosebox.pointed.delay.label_before "">
+<!ENTITY showTabClosebox.pointed.delay.label_after "ミリ秒後にクローズボックスを表示">
+
+<!ENTITY showTabClosebox.appearance.group    "表示スタイル">
+<!ENTITY showTabClosebox.appearance.builtin  "タブブラウザ拡張の組み込みスタイル">
+<!ENTITY showTabClosebox.appearance.winstrip "Firefoxの標準テーマ（Winstrip）に合わせた専用スタイル">
+<!ENTITY showTabClosebox.appearance.default  "標準のスタイル（現在のテーマに依存）">
+
+
+<!ENTITY tabsWidth.group        "タブの表示幅">
+<!ENTITY tabsWidth.default      "ウィンドウに合わせる">
+<!ENTITY tabsWidth.fitLabel     "タイトルに合わせる">
+<!ENTITY tabsWidth.fix          "固定する">
+<!ENTITY tabsWidth.width.label_before       "">
+<!ENTITY tabsWidth.width.label_after        "ピクセル">
+<!ENTITY tabsWidth.minMaxWidth.label_before "最小">
+<!ENTITY tabsWidth.minMaxWidth.label_middle "～最大">
+<!ENTITY tabsWidth.minMaxWidth.label_after  "ピクセル">
+
+<!ENTITY tabsCrop.go     "詳細...">
+<!ENTITY tabsCrop.label  "省略の形式">
+<!ENTITY tabsCrop.title  "収まりきらない長いタイトル">
+<!ENTITY tabsCrop.start  "前を省略">
+<!ENTITY tabsCrop.center "中央を省略">
+<!ENTITY tabsCrop.end    "後ろを省略">
+<!ENTITY tabsCrop.start.sample  "[...タイトル]">
+<!ENTITY tabsCrop.center.sample "[タイ...トル]">
+<!ENTITY tabsCrop.end.sample    "[タイトル...]">
+
+
+<!ENTITY tabPref.appearance.tab.misc.group "その他">
+
+<!ENTITY showProgress           "読み込み状況をプログレスバーで表示する">
+<!ENTITY showProgressInStatusbar "ステータスバーにもプログレスバーを表示する">
+<!ENTITY highlightCurrentTab    "現在のタブを目立たせる">
+<!ENTITY highlightUnreadTab     "未読のタブを目立たせる">
+
+
+<!ENTITY tabPref.appearance.tab.misc.go    "詳細...">
+<!ENTITY tabPref.appearance.tab.misc.title "タブの外観の設定">
+
+
+
+<!ENTITY showLinkTextAsLabel    "読み込み中の新しいタブに仮のラベルを表示する">
+<!ENTITY showLinkTextAsLabelPermanently "読み込み完了後も仮のラベルをそのまま表示する">
+
+<!ENTITY overlayIcon "タブのアイコンとステータスアイコンを重ねて表示する">
+
+
+
+<!ENTITY highlightCurrentTab.style.group        "現在のタブの表示スタイル">
+<!ENTITY highlightCurrentTab.style.italic       "斜体">
+<!ENTITY highlightCurrentTab.style.bold         "太字">
+<!ENTITY highlightCurrentTab.style.underline    "下線">
+<!ENTITY highlightCurrentTab.style.transparent  "半透明">
+
+<!ENTITY highlightCurrentTab.style.color.label  "文字の色を変える">
+<!ENTITY highlightCurrentTab.style.color.red    "赤">
+<!ENTITY highlightCurrentTab.style.color.blue   "青">
+<!ENTITY highlightCurrentTab.style.color.yellow "黄">
+<!ENTITY highlightCurrentTab.style.color.green  "緑">
+<!ENTITY highlightCurrentTab.style.color.white  "白">
+<!ENTITY highlightCurrentTab.style.color.gray   "灰">
+<!ENTITY highlightCurrentTab.style.color.black  "黒">
+<!ENTITY highlightCurrentTab.style.color.purple "紫">
+<!ENTITY highlightCurrentTab.style.color.aqua   "水色">
+<!ENTITY highlightCurrentTab.style.color.highlight "選択テキスト">
+<!ENTITY highlightCurrentTab.style.color.info      "情報テキスト">
+
+<!ENTITY highlightCurrentTab.style.bg.label       "背景色を変える">
+<!ENTITY highlightCurrentTab.style.bg.desktop     "デスクトップ">
+<!ENTITY highlightCurrentTab.style.bg.highlight   "選択背景色">
+<!ENTITY highlightCurrentTab.style.bg.3Dhighlight "3D明部の色">
+<!ENTITY highlightCurrentTab.style.bg.3Dshadow    "3D暗部の色">
+<!ENTITY highlightCurrentTab.style.bg.info        "情報">
+
+
+<!ENTITY highlightUnreadTab.style.group        "未読タブの表示スタイル">
+<!ENTITY highlightUnreadTab.style.italic       "斜体">
+<!ENTITY highlightUnreadTab.style.bold         "太字">
+<!ENTITY highlightUnreadTab.style.underline    "下線">
+<!ENTITY highlightUnreadTab.style.transparent  "半透明">
+
+<!ENTITY highlightUnreadTab.style.color.label  "文字の色を変える">
+<!ENTITY highlightUnreadTab.style.color.red    "赤">
+<!ENTITY highlightUnreadTab.style.color.blue   "青">
+<!ENTITY highlightUnreadTab.style.color.yellow "黄">
+<!ENTITY highlightUnreadTab.style.color.green  "緑">
+<!ENTITY highlightUnreadTab.style.color.white  "白">
+<!ENTITY highlightUnreadTab.style.color.gray   "灰">
+<!ENTITY highlightUnreadTab.style.color.black  "黒">
+<!ENTITY highlightUnreadTab.style.color.purple "紫">
+<!ENTITY highlightUnreadTab.style.color.aqua   "水色">
+<!ENTITY highlightUnreadTab.style.color.highlight "選択テキスト">
+<!ENTITY highlightUnreadTab.style.color.info      "情報テキスト">
+
+<!ENTITY highlightUnreadTab.style.bg.label       "背景色を変える">
+<!ENTITY highlightUnreadTab.style.bg.desktop     "デスクトップ">
+<!ENTITY highlightUnreadTab.style.bg.highlight   "選択背景色">
+<!ENTITY highlightUnreadTab.style.bg.3Dhighlight "3D明部の色">
+<!ENTITY highlightUnreadTab.style.bg.3Dshadow    "3D暗部の色">
+<!ENTITY highlightUnreadTab.style.bg.info        "情報">

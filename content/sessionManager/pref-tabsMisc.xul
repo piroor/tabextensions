@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
+<?xul-overlay href="chrome://tabextensions/content/pref/prefOverlay.xul"?>
+
+<!DOCTYPE overlay SYSTEM "chrome://tabextensions_sessionmanager/locale/">
+
+<overlay
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+	<script type="application/x-javascript"><![CDATA[
+
+if (!('_elementIDs' in window) || !window._elementIDs)
+	var _elementIDs = [];
+
+_elementIDs.push('saveBlankTabSession');
+_elementIDs.push('reloadRestoredSession');
+
+	]]></script>
+
+<box id="miscPrefPanelContainer">
+	<groupbox insertafter="miscGroup">
+		<caption label="&tabPref.session.group;"/>
+		<box orient="vertical">
+			<checkbox id="saveBlankTabSession"
+				label="&saveBlankTabSession;"
+				prefstring="browser.tabs.extensions.session.save_blank_tab"/>
+			<checkbox id="reloadRestoredSession"
+				label="&reloadRestoredSession;"
+				prefstring="browser.tabs.extensions.reload_restored_session"/>
+		</box>
+	</groupbox>
+</box>
+
+</overlay>

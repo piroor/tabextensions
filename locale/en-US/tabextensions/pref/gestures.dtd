@@ -1,0 +1,63 @@
+<!ENTITY tabPref.gestures.title "Simple Gestures">
+
+<!ENTITY tabPrefsDisabled       "Any tab preferences cannot be edited because you set the tab bar to be hidden.">
+
+<!ENTITY tabPref.gestures.wheel.label "Wheel Scroll on Tabs">
+
+<!ENTITY tabPref.gestures.wheel.scroll "Scroll the Tab bar">
+<!ENTITY tabPref.gestures.wheel.switch "Switch Active Tab">
+
+<!ENTITY tabPref.gestures.wheel.switch.go    "Advanced...">
+<!ENTITY tabPref.gestures.wheel.switch.title "Switch Active Tab by Wheel Scrolling">
+
+<!ENTITY tabPref.gestures.wheel.switch.speed    "Speed">
+<!ENTITY tabPref.gestures.wheel.switch.veryfast "Very Fast">
+<!ENTITY tabPref.gestures.wheel.switch.fast     "Fast">
+<!ENTITY tabPref.gestures.wheel.switch.medium   "Medium">
+<!ENTITY tabPref.gestures.wheel.switch.slow     "Slow">
+<!ENTITY tabPref.gestures.wheel.switch.veryslow "Very Slow">
+
+<!ENTITY tabPref.gestures.wheel.switch.roop         "For over-scrolling on head and tail">
+<!ENTITY tabPref.gestures.wheel.switch.roop.allow   "Circulate focus between head and tail">
+<!ENTITY tabPref.gestures.wheel.switch.roop.prevent "No circulation">
+
+
+<!ENTITY tabPref.gestures.click.group "Binding to Click Actions on Tabs">
+<!ENTITY tabPref.gestures.click.tab.double   "Double-click">
+<!ENTITY tabPref.gestures.click.tab.middle   "Middle-click">
+<!ENTITY tabPref.gestures.click.tab.right    "Right-click">
+<!ENTITY tabPref.gestures.click.tab.shift    "Shift-click">
+<!ENTITY tabPref.gestures.click.tab.ctrl     "Ctrl-click">
+<!ENTITY tabPref.gestures.click.tab.ctrl.mac "Command-click">
+<!ENTITY tabPref.gestures.click.tab.alt      "Alt-click">
+
+<!ENTITY tabPref.gestures.click.tabbar.group "Binding to Click Actions on Tab bar">
+<!ENTITY tabPref.gestures.click.tabbar.double   "Double-click">
+<!ENTITY tabPref.gestures.click.tabbar.middle   "Middle-click">
+<!ENTITY tabPref.gestures.click.tabbar.right    "Right-click">
+<!ENTITY tabPref.gestures.click.tabbar.shift    "Shift-click">
+<!ENTITY tabPref.gestures.click.tabbar.ctrl     "Ctrl-click">
+<!ENTITY tabPref.gestures.click.tabbar.ctrl.mac "Command-click">
+<!ENTITY tabPref.gestures.click.tabbar.alt      "Alt-click">
+
+
+<!ENTITY tabPref.gestures.misc.group "Miscellaneous">
+
+<!ENTITY tabPref.gestures.point "Switch active tab only with Pointing">
+
+<!ENTITY tabPref.gestures.focusTabOnDrag "Switch active tab with Dragging on tabs">
+
+<!ENTITY tabPref.gestures.advanced.go    "Advanced...">
+<!ENTITY tabPref.gestures.advanced.title "Advanced configuration of misc gestures">
+
+<!ENTITY tabPref.gestures.point.delay.group "Delay to switch to the pointed tab">
+<!ENTITY tabPref.gestures.point.delay.label_before "Focus to the tab after">
+<!ENTITY tabPref.gestures.point.delay.label_after  "msec pointing">
+
+
+<!ENTITY tabPref.gestures.tabFlip.enabled "Enable tab flip (When you click on the current tab, the previously selected tab will be selected)">
+<!ENTITY tabPref.gestures.tabFlip.group              "Tab flip">
+<!ENTITY tabPref.gestures.tabFlip.delay.label_before "Flip tab after">
+<!ENTITY tabPref.gestures.tabFlip.delay.label_after  "msec">
+<!ENTITY tabPref.gestures.tabFlip.roop               "Circulate focus between head and tail">
+

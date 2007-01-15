@@ -1,0 +1,175 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://tabextensions/content/pref/prefOverlay.css" type="text/css"?>
+<?xul-overlay href="chrome://tabextensions/content/globalOverlay.xul"?>
+
+<!DOCTYPE page SYSTEM "chrome://tabextensions/locale/pref/appearanceTab.dtd">
+
+<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	windowtype="tabextensions:advancedApparanceTabMiscPrefs"
+	orient="vertical"
+	title="&tabPref.appearance.tab.misc.title;"
+	buttons="accept,cancel"
+	ondialogaccept="apply();"
+	ondialogcancel="cancel();"
+	onload="initDialog();">
+
+
+<script type="application/x-javascript" src="chrome://tabextensions/content/pref/prefOverlay.js"/>
+<script type="application/x-javascript" src="chrome://tabextensions/content/pref/advancedPrefs.js"/>
+
+<script type="application/x-javascript"><![CDATA[
+
+var gThumbnailWidth, gThumbnailHeight;
+
+
+function initDialog()
+{
+	init();
+
+
+
+	gThumbnailWidth  = document.getElementById('thumbnailWidth');
+	gThumbnailHeight = document.getElementById('thumbnailHeight');
+
+	var radiogroup = document.getElementById('thumbnailWidthRadio');
+	var field      = document.getElementById('thumbnailWidthInput');
+	if (Number(gThumbnailWidth.value) < 0) {
+		radiogroup.value = 'auto';
+		radiogroup.selectedItem = radiogroup.getElementsByTagName('radio')[0];
+		field.value = TabbrowserService.getPref('browser.tabs.extensions.thumbnail.width.default');
+	}
+	else {
+		radiogroup.value = 'fix';
+		radiogroup.selectedItem = radiogroup.getElementsByTagName('radio')[1];
+		field.value = gThumbnailWidth.value;
+	}
+	onThumbnailRadioChange(radiogroup, gThumbnailWidth);
+
+	radiogroup = document.getElementById('thumbnailHeightRadio');
+	field      = document.getElementById('thumbnailHeightInput');
+	if (Number(gThumbnailHeight.value) < 0) {
+		radiogroup.value = 'auto';
+		radiogroup.selectedItem = radiogroup.getElementsByTagName('radio')[0];
+		field.value = TabbrowserService.getPref('browser.tabs.extensions.thumbnail.height.default');
+	}
+	else {
+		radiogroup.value = 'fix';
+		radiogroup.selectedItem = radiogroup.getElementsByTagName('radio')[1];
+		field.value = gThumbnailHeight.value;
+	}
+	onThumbnailRadioChange(radiogroup, gThumbnailHeight);
+
+
+}
+
+
+function onThumbnailRadioChange(aGroup, aValueHolder)
+{
+	var radiochecks = aGroup.getElementsByTagName('radio');
+
+	for (var i = 0, max = radiochecks.length, j, maxj; i < max; i++)
+	{
+		if (!radiochecks[i].controlledChildren) {
+			if (radiochecks[i].nextSibling &&
+				radiochecks[i].nextSibling.localName != 'radio')
+				radiochecks[i].controlledChildren = radiochecks[i].nextSibling.childNodes;
+			else
+				radiochecks[i].controlledChildren = [];
+		}
+
+		for (j = 0, maxj = radiochecks[i].controlledChildren.length; j < maxj; j++)
+			if (radiochecks[i] == aGroup.selectedItem)
+				radiochecks[i].controlledChildren[j].removeAttribute('disabled');
+			else
+				radiochecks[i].controlledChildren[j].setAttribute('disabled', true);
+	}
+
+	if (aGroup.value == 'auto')
+		aValueHolder.value = '-1';
+	else
+		aValueHolder.value = radiochecks[1].nextSibling.getElementsByTagName('textbox')[0].value;
+
+	updateValue(aValueHolder.id, aValueHolder.value);
+}
+
+
+]]></script>
+
+<vbox oncommand="onCommand(event)">
+	<groupbox orient="vertical">
+		<caption label="&thumbnail.caption;"/>
+		<groupbox>
+			<caption label="&thumbnail.width;"/>
+			<radiogroup orient="vertical" id="thumbnailWidthRadio"
+				oncommand="onThumbnailRadioChange(this, gThumbnailWidth);">
+				<hbox>
+					<radio value="auto" label="&thumbnail.width.auto;"/>
+					<hbox align="center">
+						<spacer style="width:1em;"/>
+						<label value="&thumbnail.power.before;"
+							conrol="thumbnailPower"/>
+						<textbox id="thumbnailPower"
+							size="4"
+							oninput="onCommand(event)"/>
+						<spinbuttons
+							onup="spinButtonsUpDown(event, 'thumbnailPower', 100); inputToTextField('thumbnailPower');"
+							ondown="spinButtonsUpDown(event, 'thumbnailPower', 1); inputToTextField('thumbnailPower');"/>
+						<label value="&thumbnail.power.after;"
+							conrol="thumbnailPower"/>
+					</hbox>
+				</hbox>
+				<hbox>
+					<radio value="fix"  label="&thumbnail.width.fix;"/>
+					<hbox align="center">
+						<spacer style="width:1em;"/>
+						<label value="&thumbnail.width.fix.before;"
+							conrol="thumbnailWidthInput"/>
+						<textbox id="thumbnailWidthInput"
+							size="4"
+							oninput="gThumbnailWidth.value = this.value; inputToTextField('thumbnailWidth');"/>
+						<spinbuttons
+							onup="spinButtonsUpDown(event, 'thumbnailWidthInput'); gThumbnailWidth.value = this.previousSibling.value; inputToTextField('thumbnailWidth');"
+							ondown="spinButtonsUpDown(event, 'thumbnailWidthInput', 0); gThumbnailWidth.value = this.previousSibling.value; inputToTextField('thumbnailWidth');"/>
+						<label value="&thumbnail.width.fix.after;"
+							conrol="thumbnailWidthInput"/>
+					</hbox>
+				</hbox>
+			</radiogroup>
+		</groupbox>
+		<groupbox>
+			<caption label="&thumbnail.height;"/>
+			<radiogroup orient="vertical" id="thumbnailHeightRadio"
+				oncommand="onThumbnailRadioChange(this, gThumbnailHeight);">
+				<hbox>
+					<radio value="auto" label="&thumbnail.height.auto;"/>
+				</hbox>
+				<hbox>
+					<radio value="fix"  label="&thumbnail.height.fix;"/>
+					<hbox align="center">
+						<spacer style="width:1em;"/>
+						<label value="&thumbnail.height.fix.before;"
+							conrol="thumbnailHeightInput"/>
+						<textbox id="thumbnailHeightInput"
+							size="4"
+							oninput="gThumbnailHeight.value = this.value; inputToTextField('thumbnailHeight');"/>
+						<spinbuttons
+							onup="spinButtonsUpDown(event, 'thumbnailHeightInput'); gThumbnailHeight.value = this.previousSibling.value; inputToTextField('thumbnailHeight');"
+							ondown="spinButtonsUpDown(event, 'thumbnailHeightInput', 0); gThumbnailHeight.value = this.previousSibling.value; inputToTextField('thumbnailHeight');"/>
+						<label value="&thumbnail.height.fix.after;"
+							conrol="thumbnailHeightInput"/>
+					</hbox>
+				</hbox>
+			</radiogroup>
+		</groupbox>
+		<box collapsed="true">
+			<textbox id="thumbnailWidth"/>
+			<textbox id="thumbnailHeight"/>
+		</box>
+	</groupbox>
+</vbox>
+
+
+
+</dialog>

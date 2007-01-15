@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://tabextensions/content/pref/prefOverlay.css" type="text/css"?>
+<?xul-overlay href="chrome://tabextensions/content/globalOverlay.xul"?>
+
+<!DOCTYPE page SYSTEM "chrome://tabextensions/locale/pref/appearanceTab.dtd">
+
+<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	windowtype="tabextensions:advancedTabsCropPrefs"
+	orient="vertical"
+	title="&tabsCrop.title;"
+	buttons="accept,cancel"
+	ondialogaccept="apply();"
+	ondialogcancel="cancel();"
+	onload="init();">
+
+
+<script type="application/x-javascript" src="chrome://tabextensions/content/pref/prefOverlay.js"/>
+<script type="application/x-javascript" src="chrome://tabextensions/content/pref/advancedPrefs.js"/>
+
+<groupbox
+	oncommand="onCommand(event)">
+	<caption label="&tabsCrop.label;"/>
+	<radiogroup id="tabsCrop"
+		orient="horizontal">
+		<box orient="vertical" align="center">
+			<radio value="0" id="tabsCropStart" label="&tabsCrop.start;"/>
+			<label value="&tabsCrop.start.sample;" control="tabsCropStart"/>
+		</box>
+		<box orient="vertical" align="center">
+			<radio value="1" id="tabsCropCenter" label="&tabsCrop.center;"/>
+			<label value="&tabsCrop.center.sample;" control="tabsCropCenter"/>
+		</box>
+		<box orient="vertical" align="center">
+			<radio value="2" id="tabsCropEnd" label="&tabsCrop.end;"/>
+			<label value="&tabsCrop.end.sample;" control="tabsCropEnd"/>
+		</box>
+	</radiogroup>
+</groupbox>
+
+
+
+</dialog>

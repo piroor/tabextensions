@@ -1,0 +1,109 @@
+<?xml version="1.0"?>
+
+<RDF:RDF xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+		xmlns:chrome="http://www.mozilla.org/rdf/chrome#">
+
+	<!-- list all the packages being supplied by this jar -->
+	<RDF:Seq about="urn:mozilla:package:root">
+		<RDF:li resource="urn:mozilla:package:tabextensions"/>
+	</RDF:Seq>
+
+	<!-- package information -->
+	<RDF:Description about="urn:mozilla:package:tabextensions"
+		chrome:name="tabextensions"
+		chrome:displayName="Tabbrowser Extensions"
+		chrome:author="SHIMODA Hiroshi"
+		chrome:authorURL="http://piro.sakura.ne.jp/"
+		chrome:settingsURL="chrome://tabextensions/content/pref/prefDialogCall.xul"
+		chrome:extension="true"
+		chrome:description="Improves tabbed browsing."/>
+
+
+	<!-- overlay information -->
+	<RDF:Seq about="urn:mozilla:overlays">
+		<!-- General -->
+		<RDF:li resource="chrome://global/content/globalOverlay.xul"/>
+		<RDF:li resource="chrome://global/content/hiddenWindow.xul"/>
+		<!--RDF:li resource="chrome://communicator/content/directory/directory.xul"/-->
+
+		<!-- Navigator -->
+		<RDF:li resource="chrome://navigator/content/navigatorOverlay.xul"/>
+		<RDF:li resource="chrome://communicator/content/history/historyTreeOverlay.xul"/>
+		<RDF:li resource="chrome://communicator/content/bookmarks/addBookmark.xul"/>
+		<RDF:li resource="chrome://communicator/content/bookmarks/bm-props.xul"/>
+		<RDF:li resource="chrome://communicator/content/pref/preftree.xul"/>
+		<RDF:li resource="chrome://communicator/content/pref/pref-tabs.xul"/>
+
+		<!-- Firefox -->
+		<RDF:li resource="chrome://browser/content/browser.xul"/>
+		<RDF:li resource="chrome://browser/content/bookmarks/addBookmark.xul"/>
+		<RDF:li resource="chrome://browser/content/bookmarks/addBookmark2.xul"/>
+		<RDF:li resource="chrome://browser/content/bookmarks/bookmarksProperties.xul"/>
+		<RDF:li resource="chrome://browser/content/bookmarks/bookmarksPanel.xul"/>
+		<RDF:li resource="chrome://browser/content/history/history-panel.xul"/>
+		<RDF:li resource="chrome://global/content/customizeToolbar.xul"/>
+		<RDF:li resource="chrome://browser/content/pref/pref-tabs.xul"/>
+	</RDF:Seq>
+
+
+	<!-- General -->
+	<RDF:Seq about="chrome://global/content/globalOverlay.xul">
+		<RDF:li>chrome://tabextensions/content/globalOverlay.xul</RDF:li>
+	</RDF:Seq>
+	<RDF:Seq about="chrome://global/content/hiddenWindow.xul">
+		<RDF:li>chrome://tabextensions/content/globalOverlay.xul</RDF:li>
+	</RDF:Seq>
+	<!--RDF:Seq about="chrome://communicator/content/directory/directory.xul">
+		<RDF:li>chrome://tabextensions/content/globalOverlay.xul</RDF:li>
+	</RDF:Seq-->
+
+
+	<!-- Navigator -->
+	<RDF:Seq about="chrome://navigator/content/navigatorOverlay.xul">
+		<RDF:li>chrome://tabextensions/content/browserOverlay.xul</RDF:li>
+	</RDF:Seq>
+	<RDF:Seq about="chrome://communicator/content/history/historyTreeOverlay.xul">
+		<RDF:li>chrome://tabextensions/content/globalOverlay.xul</RDF:li>
+	</RDF:Seq>
+	<RDF:Seq about="chrome://communicator/content/bookmarks/addBookmark.xul">
+		<RDF:li>chrome://tabextensions/content/bookmarks/addBookmarkOverlay.xul</RDF:li>
+	</RDF:Seq>
+	<RDF:Seq about="chrome://communicator/content/bookmarks/bm-props.xul">
+		<RDF:li>chrome://tabextensions/content/bookmarks/bookmarksPropertyOverlay.xul</RDF:li>
+	</RDF:Seq>
+	<RDF:Seq about="chrome://communicator/content/pref/preftree.xul">
+		<RDF:li>chrome://tabextensions/content/pref/preftreeOverlay.xul</RDF:li>
+	</RDF:Seq>
+	<RDF:Seq about="chrome://communicator/content/pref/pref-tabs.xul">
+		<RDF:li>chrome://tabextensions/content/pref/pref-tabsOverlay.xul</RDF:li>
+	</RDF:Seq>
+
+
+	<!-- Firefox -->
+	<RDF:Seq about="chrome://browser/content/browser.xul">
+		<RDF:li>chrome://tabextensions/content/globalOverlay.xul</RDF:li>
+		<RDF:li>chrome://tabextensions/content/browserOverlay.xul</RDF:li>
+	</RDF:Seq>
+	<RDF:Seq about="chrome://browser/content/bookmarks/addBookmark.xul">
+		<RDF:li>chrome://tabextensions/content/bookmarks/addBookmarkOverlay.xul</RDF:li>
+	</RDF:Seq>
+	<RDF:Seq about="chrome://browser/content/bookmarks/addBookmark2.xul">
+		<RDF:li>chrome://tabextensions/content/bookmarks/addBookmarkOverlay.xul</RDF:li>
+	</RDF:Seq>
+	<RDF:Seq about="chrome://browser/content/bookmarks/bookmarksProperties.xul">
+		<RDF:li>chrome://tabextensions/content/bookmarks/bookmarksPropertyOverlay.xul</RDF:li>
+	</RDF:Seq>
+	<RDF:Seq about="chrome://browser/content/bookmarks/bookmarksPanel.xul">
+		<RDF:li>chrome://tabextensions/content/globalOverlay.xul</RDF:li>
+	</RDF:Seq>
+	<RDF:Seq about="chrome://browser/content/history/history-panel.xul">
+		<RDF:li>chrome://tabextensions/content/globalOverlay.xul</RDF:li>
+	</RDF:Seq>
+	<RDF:Seq about="chrome://global/content/customizeToolbar.xul">
+		<RDF:li>chrome://tabextensions/content/buttonsOverlay.xul</RDF:li>
+	</RDF:Seq>
+	<RDF:Seq about="chrome://browser/content/pref/pref-tabs.xul">
+		<RDF:li>chrome://tabextensions/content/pref/pref-tabsOverlay.xul</RDF:li>
+	</RDF:Seq>
+
+</RDF:RDF>

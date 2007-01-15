@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://tabextensions/content/pref/prefOverlay.css" type="text/css"?>
+<?xul-overlay href="chrome://tabextensions/content/globalOverlay.xul"?>
+
+<!DOCTYPE page SYSTEM "chrome://tabextensions/locale/pref/gestures.dtd">
+
+<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	windowtype="tabextensions:advancedWheelScrolling"
+	orient="vertical"
+	title="&tabPref.gestures.wheel.switch.title;"
+	buttons="accept,cancel"
+	ondialogaccept="apply();"
+	ondialogcancel="cancel();"
+	onload="init();">
+
+
+<script type="application/x-javascript" src="chrome://tabextensions/content/pref/prefOverlay.js"/>
+<script type="application/x-javascript" src="chrome://tabextensions/content/pref/advancedPrefs.js"/>
+
+<groupbox
+	oncommand="onCommand(event);">
+	<caption label="&tabPref.gestures.wheel.switch.speed;"/>
+	<radiogroup id="wheelCount"
+		orient="horizontal">
+		<radio value="1"
+			label="&tabPref.gestures.wheel.switch.veryfast;"/>
+		<radio value="2"
+			label="&tabPref.gestures.wheel.switch.fast;"/>
+		<radio value="3"
+			label="&tabPref.gestures.wheel.switch.medium;"/>
+		<radio value="6"
+			label="&tabPref.gestures.wheel.switch.slow;"/>
+		<radio value="9"
+			label="&tabPref.gestures.wheel.switch.veryslow;"/>
+	</radiogroup>
+</groupbox>
+
+<groupbox
+	oncommand="onCommand(event);">
+	<caption label="&tabPref.gestures.wheel.switch.roop;"/>
+	<radiogroup id="wheelRoop"
+		orient="vertical">
+		<radio value="true"
+			label="&tabPref.gestures.wheel.switch.roop.allow;"/>
+		<radio value="false"
+			label="&tabPref.gestures.wheel.switch.roop.prevent;"/>
+	</radiogroup>
+</groupbox>
+
+
+</dialog>

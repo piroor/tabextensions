@@ -1,0 +1,26 @@
+<!ENTITY tabPref.general.title "General">
+
+<!ENTITY winHookMode.label      "Window Mode">
+<!ENTITY winHookMode.normal     "Use multiple windows normally">
+<!ENTITY winHookMode.byOthersAndContent "Use multiple windows only for my request">
+<!ENTITY winHookMode.byAll      "Use only one window always (Single Window Mode)">
+
+<!ENTITY tabPref.general.group  "General Behavior">
+
+<!ENTITY cancelWindowClose.label   "When several pages are in a closing window:">
+<!ENTITY cancelWindowClose.confirm "Confirm to close the window">
+<!ENTITY cancelWindowClose.allow   "Close all tabs and windows">
+<!ENTITY cancelWindowClose.forbid  "Don't close the window">
+
+
+<!ENTITY exitTabbedBrowsing.label  "When only one page is left in window">
+<!ENTITY exitTabbedBrowsing.auto   "Hide Tab Bar automatically, so that you can see a little wider view for the page (Firefox default)">
+<!ENTITY exitTabbedBrowsing.manual "Hide Tab Bar by closing the last tab by hand, so that you can see a little wider view for the page">
+<!ENTITY exitTabbedBrowsing.never  "Never hide Tab Bar (recommended)">
+
+<!ENTITY lastTabBehavior.go     "Advanced...">
+<!ENTITY lastTabBehavior.title  "State After Closing All Tabs">
+<!ENTITY lastTabBehavior.label  "State After Closing All Tabs">
+<!ENTITY lastTabBehavior.close  "Blank window">
+<!ENTITY lastTabBehavior.unload "With a blank tab">
+<!ENTITY lastTabBehavior.exit   "No window. Close window.">

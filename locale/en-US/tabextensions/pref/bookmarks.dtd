@@ -1,0 +1,57 @@
+<!ENTITY tabPref.bookmarks.title "Advanced Bookmarks">
+
+
+<!ENTITY tabPref.bookmarks.load.group   "Bookmarks Loading">
+<!ENTITY tabPref.bookmarks.load.current "Open in Current Tab">
+<!ENTITY tabPref.bookmarks.load.newtab  "Open in New Tab">
+<!ENTITY tabPref.bookmarks.load.newtabBackground "Open in New Background Tab">
+
+
+<!ENTITY advancedBookmarksPrefs.go    "Advanced...">
+<!ENTITY advancedBookmarksPrefs.title "Advance preferences of Bookmarks">
+
+<!ENTITY tabPref.bookmarks.middleClick.group   "Bookmarks Loading for Middle-click (or Ctrl-click)">
+<!ENTITY tabPref.bookmarks.middleClick.group.mac "Bookmarks Loading for Middle-click (or Command-click)">
+<!ENTITY tabPref.bookmarks.middleClick.none    "No reaction">
+<!ENTITY tabPref.bookmarks.middleClick.current "Open in Current Tab">
+<!ENTITY tabPref.bookmarks.middleClick.newtab  "Open in New Tab">
+<!ENTITY tabPref.bookmarks.middleClick.newtabBackground "Open in New Background Tab">
+
+<!ENTITY openChildFolders            "Open bookmark-groups recursively">
+
+
+<!ENTITY advancedBookmarksPrefs.menu.group "Context Menu on Bookmarks">
+
+<!ENTITY showThisTabItemBookmark "Use &quot;Open in This Tab&quot; for bookmarks which are opened in new tab">
+<!ENTITY showNewActiveTabItemBookmark "Use &quot;Open in New Active Tab&quot; for bookmarks which are opened in new background tab">
+
+
+
+<!ENTITY tabPref.bookmarks.appearance.group "Appearance of Tabs">
+
+<!ENTITY useFixedLabelForAnyBookmark "Show bookmark names as tab labels, instead of page titles">
+
+
+<!ENTITY tabPref.bookmarks.tabs.group "Save tab status to bookmark">
+
+<!ENTITY saveBookmarksTextZoom    "Text zooming">
+<!ENTITY saveBookmarksStatus      "Features (locked, auto-reloading, etc.)">
+<!ENTITY saveBookmarksPermissions "Permissions of features">
+
+
+
+
+<!ENTITY tabPref.livemark.tab           "Livemarks">
+<!ENTITY tabPref.livemark.behavior      "Livemark Behavior for Middle-click or Ctrl-click">
+<!ENTITY tabPref.livemark.behavior.mac  "Livemark Behavior for Middle-click or Command-click">
+<!ENTITY tabPref.livemark.behavior.current "Open in Current Tab">
+<!ENTITY tabPref.livemark.behavior.newtab  "Open in New Tab">
+<!ENTITY tabPref.livemark.behavior.newtabBackground "Open in New Background Tab">
+<!ENTITY tabPref.livemark.behavior.group   "Open All Items as a Bookmark Group">
+
+<!ENTITY tabPref.livemarkItem.tab           "Livemark Articles">
+<!ENTITY tabPref.livemarkItem.behavior      "Livemark Articles Loading">
+<!ENTITY tabPref.livemarkItem.behavior.inherit "Same to Normal Bookmarks">
+<!ENTITY tabPref.livemarkItem.behavior.current "Open in Current Tab">
+<!ENTITY tabPref.livemarkItem.behavior.newtab  "Open in New Tab">
+<!ENTITY tabPref.livemarkItem.behavior.newtabBackground "Open in New Background Tab">

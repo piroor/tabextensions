@@ -1,0 +1,19 @@
+<!ENTITY tabPref.features.title "タブの設定">
+
+<!ENTITY enabledFeatures.default.caption       "初期状態で以下の機能を有効にする">
+<!ENTITY enabledFeatures.locked.label          "ロック（全てのリンクを新しいタブで開く）">
+<!ENTITY enabledFeatures.referrerBlocked.label "HTTP_REFERERの送信をブロック">
+
+
+<!ENTITY tabPref.features.misc.group             "その他">
+
+<!ENTITY slowAutoreloadBackgoundTabs             "バックグラウンドのタブについて自動リロードの頻度を下げる">
+
+<!ENTITY keepStatusCheck "別のページを読み込んだらタブの状態を初期化する">
+
+
+<!ENTITY advancedBackgoundAutoreloadPrefs.go    "詳細...">
+<!ENTITY advancedBackgoundAutoreloadPrefs.title "自動リロードの間隔">
+
+<!ENTITY slowAutoreloadBackgoundTabs_rate_before "バックグラウンドのタブは通常の">
+<!ENTITY slowAutoreloadBackgoundTabs_rate_after  "分の1の頻度でリロードする">

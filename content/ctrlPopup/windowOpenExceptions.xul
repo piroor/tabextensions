@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://tabextensions/content/pref/prefOverlay.css" type="text/css"?>
+<?xul-overlay href="chrome://tabextensions/content/globalOverlay.xul"?>
+<?xul-overlay href="chrome://tabextensions_ctrlpopup/content/globalOverlay.xul"?>
+
+<!DOCTYPE dialog SYSTEM "chrome://tabextensions_ctrlpopup/locale/">
+
+<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	windowtype="tabextensions:windowOpenExceptions"
+	orient="vertical"
+	title=""
+	buttons="accept"
+	ondialogaccept="onAccept();"
+	onload="init();"
+	persist="width height screenX screenY">
+
+<data id="labelTitle-white" label="&windowOpenException.title.white;"/>
+<data id="labelTitle-black" label="&windowOpenException.title.black;"/>
+<data id="labelDesc-white" label="&windowOpenException.description.white;"/>
+<data id="labelDesc-black" label="&windowOpenException.description.black;"/>
+<data id="labelNote-white" label="&windowOpenException.note.white;"/>
+<data id="labelNote-black" label="&windowOpenException.note.black;"/>
+
+
+
+<script type="application/x-javascript" src="chrome://tabextensions_ctrlpopup/content/windowOpenExceptions.js"/>
+
+<box orient="vertical" flex="1">
+
+	<box orient="horizontal">
+		<description id="description"
+			style="width: 25em;"
+			flex="1"/>
+	</box>
+
+	<box orient="horizontal">
+		<box orient="vertical" flex="1">
+			<textbox id="URIBox" flex="1"/>
+		</box>
+		<button id="addButton"
+			label="&windowOpenException.add.label;"
+			accesskey="&windowOpenException.add.accesskey;"
+			oncommand="addURI();"/>
+	</box>
+
+	<listbox id="exceptions"
+		flex="1"
+		style="min-height: 10em;"
+		onselect="onSelect();"/>
+
+	<box orient="horizontal">
+		<button id="removeButton" disabled="true"
+			label="&windowOpenException.remove.label;"
+			accesskey="&windowOpenException.remove.accesskey;"
+			oncommand="removeURI();"/>
+		<button id="removeAllButton"
+			label="&windowOpenException.removeAll.label;"
+			accesskey="&windowOpenException.removeAll.accesskey;"
+			oncommand="removeAllURIs();"/>
+		<spacer flex="1"/>
+	</box>
+
+	<box orient="horizontal">
+		<description id="note"
+			style="width: 25em;"
+			flex="1"/>
+	</box>
+
+	<vbox id="exceptionsForAnyWebPage">
+		<separator/>
+		<groupbox>
+			<caption label="&windowOpenException.exceptionsForAnyWebPage.group;"/>
+			<hbox>
+				<checkbox id="allowPopupWithOption"
+					flex="1"
+					label="&windowOpenException.allowPopupWithOption.label;"
+					oncommand="gAllowPopupWithOptionValue.value = this.checked ? 2 : 0 ;"/>
+				<hbox collapsed="true">
+					<textbox id="allowPopupWithOptionValue"
+						prefstring="browser.link.open_newwindow.restriction"/>
+				</hbox>
+			</hbox>
+		</groupbox>
+	</vbox>
+</box>
+
+
+</dialog>

@@ -1,0 +1,338 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
+<?xul-overlay href="chrome://tabextensions/content/pref/prefOverlay.xul"?>
+
+<!DOCTYPE page SYSTEM "chrome://tabextensions/locale/pref/appearanceTabbar.dtd">
+
+<page
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	orient="vertical"
+	headertitle="&tabPref.appearance.tabbar.title;"
+	onload="init();">
+
+
+<script type="application/x-javascript"><![CDATA[
+
+if (!('_elementIDs' in window) || !window._elementIDs)
+	var _elementIDs = [];
+
+_elementIDs = _elementIDs.concat([
+	'tabbarPlace',
+	'tabScroller',
+	'showTabbarClosebox',
+	'showBlankSpaces',
+	'tabbarMaxRow',
+	'narrowTab',
+	'dropIndicatorType'
+]);
+
+var gTabScroller;
+
+var gMaxRowData;
+
+function init()
+{
+	initMacLabel();
+
+	gTabScroller = document.getElementById('tabScroller');
+
+	window.parent.initPanel(location.href);
+
+
+
+	var tabTreeEnabled = getModifiedValue('browser.tabs.extensions.group.enabled', 'chrome://tabextensions/content/pref/pref-tabsGroup.xul') &&
+				getModifiedValue('browser.tabs.extensions.group.tree.enabled', 'chrome://tabextensions/content/pref/pref-tabsGroup.xul');
+	var treeModeItems = {
+			'tabbarPlace-top'           : false,
+			'tabbarPlace-bottom'        : false,
+			'tabScrollerCheck-multirow' : false
+		};
+	for (var i in treeModeItems)
+	{
+		if (
+			(tabTreeEnabled && !treeModeItems[i]) ||
+			(!tabTreeEnabled && treeModeItems[i])
+			)
+			document.getElementById(i).setAttribute('disabled', true);
+		else
+			document.getElementById(i).removeAttribute('disabled');
+	}
+
+
+	var topRadio    = document.getElementById('tabbarPlace-top');
+	var bottomRadio = document.getElementById('tabbarPlace-bottom');
+	var group       = document.getElementById('tabbarPlace');
+	if ((topRadio.disabled && group.selectedItem == topRadio) ||
+		(topRadio.disabled && group.selectedItem == topRadio)) {
+		group.selectedItem = document.getElementById('tabbarPlace-left');
+	}
+
+	group = document.getElementById('tabScrollerCheck');
+	var multirow = document.getElementById('tabScrollerCheck-multirow');
+	if (multirow.disabled && group.selectedItem == multirow) {
+		group.selectedItem = document.getElementById('tabScrollerCheck-button');
+	}
+
+
+
+	gMaxRowData = {
+		tabbarMaxRow : {
+			node : document.getElementById('tabbarMaxRow')
+		}
+	};
+
+	onTabbarPlaceChange();
+	onTabScrollerChange();
+}
+
+
+
+function onTabbarPlaceChange()
+{
+	var place = document.getElementById('tabbarPlace')
+	onModified(place.getAttribute('prefstring'), place.value);
+
+	var narrowTab = document.getElementById('narrowTab');
+
+	if (Number(place.value) > 1) {
+		var scroller = gTabScroller;
+		if (scroller.value == 3) {
+			gTabScroller.value = 0;
+			scroller.selectedItem = scroller.getElementsByAttribute('value', '0')[0];
+			onTabScrollerChange();
+		}
+
+		narrowTab.removeAttribute('disabled');
+	}
+	else {
+		narrowTab.setAttribute('disabled', true);
+	}
+}
+
+
+function onTabScrollerChange()
+{
+	var node = gTabScroller;
+	onModified(gTabScroller.getAttribute('prefstring'), gTabScroller.value);
+
+	updateTabScrollerChecks();
+
+	var maxRowButton = document.getElementById('tabbarMaxRowButton');
+	if (gTabScroller.value == 3) {
+		maxRowButton.removeAttribute('disabled');
+		var place = document.getElementById('tabbarPlace');
+		if (Number(place.value) > 1) {
+			place.selectedItem = place.getElementsByAttribute('value', '0')[0];
+		}
+	}
+	else
+		maxRowButton.setAttribute('disabled', true);
+}
+
+function updateTabScrollerChecks()
+{
+	var group     = document.getElementById('tabScrollerCheck');
+	var subGroup1 = document.getElementById('tabScrollerCheckSub1');
+	var subGroup2 = document.getElementById('tabScrollerCheckSub2');
+
+	if (!subGroup1.selectedItem) subGroup1.selectedItem = subGroup1.childNodes[0];
+	if (!subGroup2.selectedItem) subGroup2.selectedItem = subGroup2.childNodes[0];
+
+
+	var mainItems = document.getElementsByAttribute('class', 'tabScrollerCheckMainItems');
+	var subItems  = {
+			'0' : subGroup1.getElementsByAttribute('value', '0')[0],
+			'1' : subGroup2.getElementsByAttribute('value', '1')[0],
+			'2' : subGroup2.getElementsByAttribute('value', '2')[0],
+			'4' : subGroup1.getElementsByAttribute('value', '4')[0]
+		};
+
+	var value = gTabScroller.value;
+	switch (value)
+	{
+		case '0':
+		case '4':
+			subGroup1.selectedItem = subItems[value];
+			group.selectedItem = mainItems[0];
+			break;
+		case '1':
+		case '2':
+			subGroup2.selectedItem = subItems[value];
+			group.selectedItem = mainItems[1];
+			break;
+		case '-1':
+			group.selectedItem = mainItems[2];
+			break;
+		case '3':
+			group.selectedItem = mainItems[3];
+			break;
+	}
+
+
+	if (group.selectedItem != mainItems[0]) {
+		subItems[0].setAttribute('disabled', true);
+		subItems[4].setAttribute('disabled', true);
+	}
+	else {
+		subItems[0].removeAttribute('disabled');
+		subItems[4].removeAttribute('disabled');
+	}
+
+	if (group.selectedItem != mainItems[1]) {
+		subItems[1].setAttribute('disabled', true);
+		subItems[2].setAttribute('disabled', true);
+	}
+	else {
+		subItems[1].removeAttribute('disabled');
+		subItems[2].removeAttribute('disabled');
+	}
+
+}
+]]></script>
+
+
+
+	<groupbox>
+		<caption label="&tabbarPlace.label;"/>
+		<radiogroup id="tabbarPlace"
+			prefstring="browser.tabs.extensions.tabbar_place"
+			preftype="int"
+			oncommand="onTabbarPlaceChange();">
+			<box orient="horizontal">
+			<spacer flex="1"/>
+			<grid flex="2">
+				<columns>
+					<column/>
+					<column flex="1"/>
+					<column/>
+				</columns>
+				<rows>
+					<row>
+						<spacer/>
+						<radio id="tabbarPlace-top"
+							value="0" label="&tabbarPlace.top;"
+							style="border: thin -moz-bg-inset;"/>
+						<spacer/>
+					</row>
+					<row style="height: 2em;">
+						<radio id="tabbarPlace-left"
+							value="2" label="&tabbarPlace.left;"
+							style="border: thin -moz-bg-inset; height: inherit;"/>
+						<box orient="horizontal"
+							style="border: thin -moz-bg-inset; height: inherit;background: gray;"/>
+						<radio id="tabbarPlace-right"
+							value="3" label="&tabbarPlace.right;"
+							style="border: thin -moz-bg-inset; height: inherit;"/>
+					</row>
+					<row>
+						<spacer/>
+						<radio id="tabbarPlace-bottom"
+							value="1" label="&tabbarPlace.bottom;"
+							style="border: thin -moz-bg-inset;"/>
+						<radio id="tabbarPlace-hidden"
+							value="-1" label="&tabbarPlace.hidden;"/>
+					</row>
+				</rows>
+			</grid>
+			<spacer flex="1"/>
+			</box>
+		</radiogroup>
+	</groupbox>
+
+	<groupbox>
+		<caption label="&tabScroller;"/>
+		<radiogroup id="tabScrollerCheck"
+			oncommand="onTabScrollerChange();">
+			<grid>
+				<columns>
+					<column/>
+					<column/>
+				</columns>
+				<rows>
+					<row>
+						<radio id="tabScrollerCheck-button"
+							label="&tabScroller.button;"
+							class="tabScrollerCheckMainItems"
+							oncommand="gTabScroller.value = document.getElementById('tabScrollerCheckSub1').value;"/>
+						<radiogroup orient="horizontal"
+							id="tabScrollerCheckSub1"
+							oncommand="gTabScroller.value = this.value">
+							<radio value="0" label="&tabScroller.auto;"/>
+							<radio value="4" label="&tabScroller.always;"/>
+						</radiogroup>
+					</row>
+					<row>
+						<radio id="tabScrollerCheck-bar"
+							label="&tabScroller.scrollbar;"
+							class="tabScrollerCheckMainItems"
+							oncommand="gTabScroller.value = document.getElementById('tabScrollerCheckSub2').value;"/>
+						<radiogroup orient="horizontal"
+							id="tabScrollerCheckSub2"
+							oncommand="gTabScroller.value = this.value">
+							<radio value="1" label="&tabScroller.auto;"/>
+							<radio value="2" label="&tabScroller.always;"/>
+						</radiogroup>
+					</row>
+				</rows>
+			</grid>
+			<radio id="tabScrollerCheck-never"
+				label="&tabScroller.never;" value="-1"
+				class="tabScrollerCheckMainItems"
+				oncommand="gTabScroller.value = this.value"/>
+			<box orient="horizontal">
+				<radio id="tabScrollerCheck-multirow"
+					label="&tabScroller.multirow;" value="3"
+					class="tabScrollerCheckMainItems"
+					oncommand="gTabScroller.value = this.value"/>
+				<button id="tabbarMaxRowButton"
+					label="&tabScroller.multirow.max.button;"
+					oncommand="advancedPrefs('chrome://tabextensions/content/pref/advancedTabbarMaxRow.xul', gMaxRowData);"/>
+			</box>
+		</radiogroup>
+		<box collapsed="true">
+			<textbox id="tabScroller"
+				prefstring="browser.tabs.extensions.tab_scroller"
+				preftype="int"/>
+			<textbox id="tabbarMaxRow"
+				prefstring="browser.tabs.extensions.tabbar_max_row"
+				preftype="int"/>
+		</box>
+	</groupbox>
+
+	<groupbox>
+		<caption label="&tabPref.appearance.tabbar.misc.group;"/>
+		<checkbox id="showTabbarClosebox"
+			label="&showTabbarClosebox;"
+			prefstring="browser.tabs.extensions.show_closebox.tabbar"/>
+		<checkbox id="showBlankSpaces"
+			label="&showBlankSpaces;"
+			prefstring="browser.tabs.extensions.show_blankspaces"
+			flex="1"/>
+		<checkbox id="narrowTab"
+			label="&narrowTab;"
+			prefstring="browser.tabs.extensions.vertical.narrow_tabs"/>
+		<box orient="horizontal">
+			<label value="&dropIndicatorType.label;" control="dropIndicatorType"/>
+			<radiogroup orient="horizontal"
+				id="dropIndicatorType"
+				preftype="string"
+				prefstring="browser.tabs.extensions.dragdrop.indicator">
+					<radio id="dropIndicatorType-default"
+						value="default" label="&dropIndicatorType.default;"
+						src="chrome://tabextensions/content/res/tabDragIndicator.png"/>
+					<radio id="dropIndicatorType-old"
+						value="old" label="&dropIndicatorType.old;"
+						src="chrome://tabextensions/content/res/dropmarker-leftright.png"/>
+			</radiogroup>
+		</box>
+	</groupbox>
+
+
+	<spacer flex="1"/>
+
+
+	<box id="tabextensionsAboutBox"/>
+
+</page>

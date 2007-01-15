@@ -1,0 +1,135 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
+<?xul-overlay href="chrome://tabextensions/content/pref/prefOverlay.xul"?>
+
+<!DOCTYPE page SYSTEM "chrome://tabextensions/locale/pref/useTab.dtd">
+
+<page
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	orient="vertical"
+	headertitle="&tabPref.useTab.title;"
+	onload="init();">
+
+<script type="application/x-javascript"><![CDATA[
+
+if (!('_elementIDs' in window) || !window._elementIDs)
+	var _elementIDs = [];
+
+_elementIDs = _elementIDs.concat([
+	'loadInBackground',
+	'loadInBackgroundWindow',
+	'preventSameURITab',
+	'preventSameURITabShowAlert',
+	'reuseCurrentBlankTab',
+	'ignoreTarget',
+	'tabsLimitNumber',
+	'tabsLimitOverflow'
+]);
+
+var gTabsOverflowEnabled;
+var gAdvanceTabUsePrefsData;
+
+function init()
+{
+	window.parent.initPanel(location.href);
+
+	gTabsOverflowEnabled = (getModifiedValue('browser.tabs.extensions.window_hook_mode', 'chrome://tabextensions/content/pref/pref-tabsGeneral.xul') == 2);
+
+	gAdvanceTabUsePrefsData = {
+		reuseCurrentBlankTab : {
+			node : document.getElementById('reuseCurrentBlankTab')
+		},
+		ignoreTarget : {
+			node : document.getElementById('ignoreTarget')
+		},
+		tabsLimitOverflow : {
+			node : document.getElementById('tabsLimitOverflow'),
+			get disabled() {
+				return (
+					Number(document.getElementById('tabsLimitNumber').value) &&
+					isNaN(Number(document.getElementById('tabsLimitNumber').value)) &&
+					gTabsOverflowEnabled
+				);
+			}
+		}
+	};
+
+	controlLinkedItems(document.getElementById('preventSameURITab'));
+}
+
+]]></script>
+
+	<groupbox>
+		<caption label="&tabPref.useTab.focus.group;"/>
+		<vbox>
+		<radiogroup id="loadInBackground"
+			prefstring="browser.tabs.loadInBackground"
+			preftype="bool"
+			orient="horizontal">
+			<radio value="false" label="&loadInForeground;"/>
+			<radio value="true"  label="&loadInBackground;"/>
+		</radiogroup>
+		<description flex="1">&loadInBackground.desc;</description>
+
+		<separator/>
+		<checkbox id="loadInBackgroundWindow"
+			label="&backgroundWindow;"
+			prefstring="browser.tabs.extensions.loadInBackgroundWindow"
+			oncommand="onModified(this.getAttribute('prefstring'), this.checked);"/>
+		</vbox>
+	</groupbox>
+
+
+	<groupbox>
+		<caption label="&tabPref.useTab.misc.group;"/>
+		<vbox>
+		<box orient="vertical">
+
+		<checkbox id="preventSameURITab"
+			label="&preventSameURITab;"
+			prefstring="browser.tabs.extensions.prevent_same_uri_tab"
+			oncommand="controlLinkedItems(this);"
+			linked="preventSameURITabShowAlert"/>
+		<box orient="horizontal" align="center">
+			<spacer style="width:1em;"/>
+			<checkbox id="preventSameURITabShowAlert"
+				label="&preventSameURITab.showAlert;"
+				prefstring="browser.tabs.extensions.prevent_same_uri_tab.alert.show"/>
+		</box>
+		<box orient="horizontal" align="center">
+			<label value="&tabsLimit;" control="tabsLimitNumber"/>
+			<textbox id="tabsLimitNumber"
+				size="4"
+				preftype="int"
+				prefstring="browser.tabs.extensions.limit.number"
+				oninput="if (Number(this.value) &lt; 0) this.value = 0;"
+				linked="tabsLimitOverflow"/>
+			<spinbuttons
+				onup="spinButtonsUpDown(event, 'tabsLimitNumber');"
+				ondown="spinButtonsUpDown(event, 'tabsLimitNumber', 0);"/>
+		</box>
+		<box orient="horizontal">
+			<spacer flex="1"/>
+			<button label="&advancedUseTabPrefs.go;"
+				oncommand="advancedPrefs('chrome://tabextensions/content/pref/advancedUseTabPrefs.xul', gAdvanceTabUsePrefsData);"/>
+		</box>
+
+		</box>
+		<box collapsed="true">
+			<checkbox id="reuseCurrentBlankTab"
+				prefstring="browser.tabs.extensions.reuse_current_blank_tab"/>
+			<checkbox id="ignoreTarget"
+				prefstring="browser.tabs.extensions.ignore_target"/>
+			<checkbox id="tabsLimitOverflow"
+				prefstring="browser.tabs.extensions.limit.overflow"/>
+		</box>
+		</vbox>
+	</groupbox>
+
+	<spacer flex="1"/>
+
+	<box id="tabextensionsAboutBox"/>
+
+</page>

@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
+<?xul-overlay href="chrome://tabextensions/content/pref/prefOverlay.xul"?>
+
+<!DOCTYPE page SYSTEM "chrome://tabextensions/locale/pref/undo.dtd">
+
+<page
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	orient="vertical"
+	headertitle="&tabPref.undo.title;"
+	onload="init();">
+
+	<script type="application/x-javascript"><![CDATA[
+
+if (!('_elementIDs' in window) || !window._elementIDs)
+	var _elementIDs = [];
+
+_elementIDs = _elementIDs.concat([
+	'cacheBlankTab',
+	'applyOriginalIndex',
+	'undoCacheMax'
+]);
+
+
+var gTabGroupEnabled;
+
+function init()
+{
+	window.parent.initPanel(location.href);
+}
+
+
+	]]></script>
+
+	<groupbox id="undoCacheGroup">
+		<caption label="&tabPref.undoCache.group;"/>
+		<vbox>
+		<box orient="vertical" id="undoCachePrefContainer">
+		<checkbox id="cacheBlankTab"
+			label="&cacheBlankTab;"
+			prefstring="browser.tabs.extensions.undo_cache.cache_blank_tab"/>
+		<checkbox id="applyOriginalIndex"
+			label="&applyOriginalIndex;"
+			prefstring="browser.tabs.extensions.undo.apply_original_index"/>
+
+		<box orient="horizontal">
+			<label value="&undoCacheMax_before;"
+				control="undoCacheMax"/>
+			<textbox id="undoCacheMax"
+				size="6"
+				preftype="int"
+				prefstring="browser.tabs.extensions.undo_cache.local"
+				oninput="if (Number(this.value) &lt; 0) this.value = 0;"/>
+			<spinbuttons
+				onup="spinButtonsUpDown(event, 'undoCacheMax');"
+				ondown="spinButtonsUpDown(event, 'undoCacheMax', 1);"/>
+			<label value="&undoCacheMax_after;"
+				control="undoCacheMax"/>
+		</box>
+
+		</box>
+		</vbox>
+	</groupbox>
+
+	<spacer flex="1"/>
+
+	<box id="tabextensionsAboutBox"/>
+
+</page>

@@ -1,0 +1,77 @@
+<!ENTITY tabPref.links.title "ブラウザ内のリンクの挙動">
+
+
+<!ENTITY tabPref.links.target.tab     "ウィンドウを開くリンク">
+<!ENTITY tabPref.links.target.group   "ウィンドウを開くよう指定されたリンクやフォームを読み込む時の動作">
+<!ENTITY tabPref.links.target.none    "制御しない">
+<!ENTITY tabPref.links.target.current "現在のタブで開く">
+<!ENTITY tabPref.links.target.newtab  "新しいタブで開く">
+<!ENTITY tabPref.links.target.newtabBackground "新しいバックグラウンドのタブで開く">
+
+<!ENTITY tabPref.links.middleClick.tab "中クリック">
+<!ENTITY tabPref.links.middleClick.group "リンクを中クリックまたはCtrl-クリックした時の動作">
+<!ENTITY tabPref.links.middleClick.group.mac "リンクを中クリックまたはCommand-クリックした時の動作">
+<!ENTITY tabPref.links.middleClick.none    "何もしない（リンクを読み込まない）">
+<!ENTITY tabPref.links.middleClick.current "現在のタブで開く">
+<!ENTITY tabPref.links.middleClick.newtab  "新しいタブで開く">
+<!ENTITY tabPref.links.middleClick.newtabBackground "新しいバックグラウンドのタブで開く">
+
+
+<!ENTITY tabPref.links.block_uri.tab   "ダウンロード用リンク">
+<!ENTITY tabPref.links.block_uri.group "ファイルをダウンロードするリンクから新しいタブが開かれる時の動作">
+<!ENTITY tabPref.links.block_uri.none  "制御しない（空のタブでも開く）">
+<!ENTITY tabPref.links.block_uri.auto  "勝手に空のタブを開く時だけブロックする">
+<!ENTITY tabPref.links.block_uri.any   "常にブロックする">
+
+<!ENTITY tabPref.links.block_uri.rule.tab "ダウンロード用リンク">
+<!ENTITY tabPref.links.block_uri.rule.caption "ダウンロード用リンクで開かれる空のタブのブロック">
+<!ENTITY tabPref.links.block_uri.rule.label   "以下の文字列を拡張子やURIの一部に含むリンクをダウンロード用リンクと見なす（正規表現での指定も可能）">
+
+
+
+<!ENTITY tabPref.links.misc.group "その他の設定">
+
+<!ENTITY advancedLinksPrefs.menu.group "リンクの上でのコンテキストメニュー">
+
+<!ENTITY showThisTabItemLink "新しいタブで開かれるリンクについて、コンテキストメニューに「このタブで開く」を加える">
+<!ENTITY showNewActiveTabItemLink "バックグラウンドのタブで開かれるリンクについて、メニューに「アクティブなタブで開く」を加える">
+
+
+
+
+<!ENTITY advancedStateInheritancePrefs.go    "タブに設定された機能の継承...">
+<!ENTITY advancedStateInheritancePrefs.title "Inheritance of Tab Features">
+
+<!ENTITY tabPref.inheritance.group "リンクから開いたタブの設定">
+
+<!ENTITY inheritTextZoom        "文字の拡大率を継承する">
+<!ENTITY inheritLocked          "ロックの状態を継承する">
+<!ENTITY inheritReferrerBlocked "HTTP_REFERERのブロックの状態を継承する">
+<!ENTITY inheritAllow           "機能の許可の状態を継承する">
+
+<!ENTITY inheritOnlySameSite    "同じサイトのページからタブを開いた場合にのみ設定を継承する">
+
+
+
+<!ENTITY advancedLinksPrefs.go    "リンクの詳細...">
+<!ENTITY advancedLinksPrefs.title "リンクの詳細設定">
+
+<!ENTITY tabPref.links.newTabActions.tab  "タブを開く動作">
+<!ENTITY tabPref.links.newTabPosition.tab "タブを開く位置">
+
+<!ENTITY tabPref.links.normal.group   "通常のリンクを開くときの動作">
+<!ENTITY tabPref.links.normal.current "現在のタブで開く">
+<!ENTITY tabPref.links.normal.newtab  "新しいタブで開く">
+<!ENTITY tabPref.links.normal.newtabBackground "新しいバックグラウンドのタブで開く">
+
+<!ENTITY tabPref.links.outer.group     "他のサイトへのリンクを読み込む時の動作">
+<!ENTITY tabPref.links.outer.none      "通常のリンクの設定に従う">
+<!ENTITY tabPref.links.outer.newtab    "新しいタブで開く">
+<!ENTITY tabPref.links.outer.newtabBackground "新しいバックグラウンドのタブで開く">
+<!ENTITY tabPref.links.outer.strict    "他のサイトへのリンクかどうかを厳しく判定する">
+
+<!ENTITY tabPref.links.locked.group    "ロックされたタブのリンクを読み込む時の動作">
+<!ENTITY tabPref.links.locked.newtab    "新しいタブで開く">
+<!ENTITY tabPref.links.locked.newtabBackground "新しいバックグラウンドのタブで開く">
+
+<!ENTITY openTabIn.group "リンクから開くタブの位置">

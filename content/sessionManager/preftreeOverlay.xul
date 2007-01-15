@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE overlay SYSTEM "chrome://tabextensions_sessionmanager/locale/">
+
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+<treechildren id="tabextensionsChildren">
+	<treeitem insertbefore="tabextensionsMiscItem">
+		<treerow>
+			<treecell label="&tabPref.startup.tree;"
+				url="chrome://tabextensions_sessionmanager/content/pref-tabsStartup.xul"/>
+		</treerow>
+	</treeitem>
+</treechildren>
+
+</overlay>

@@ -1,0 +1,69 @@
+<!ENTITY tabPref.group.title    "Tab Mode">
+
+
+<!ENTITY tabPref.group.caption  "Tab Mode">
+
+<!ENTITY tabPref.group.flat     "Flat Mode : operate any tab equally">
+<!ENTITY tabPref.group.group    "Group Mode : operate related tabs as groups">
+<!ENTITY tabPref.group.tree     "Tree Mode : show tab bar like a tree and operate tabs as groups">
+
+
+<!ENTITY advancedTabGroupPrefs.go    "Advanced...">
+
+<!ENTITY advancedTabGroupPrefs.title "Advance Settings of TabGroup Mode">
+
+<!ENTITY advancedTabGroupPrefs.group.tab     "Group Mode and Tree Mode">
+<!ENTITY advancedTabGroupPrefs.group.caption "Group Mode and Tree Mode">
+
+<!ENTITY autoPurge                  "Release the tab from the group automatically, when other sites are loaded">
+<!ENTITY autoSetGroupColor          "Set color to grouped tabs automatically">
+<!ENTITY editGroupBySimpleDragDrop  "Edit group by simple drag'n'drop of tabs (default:Ctrl-drag'n'drop)">
+<!ENTITY editGroupBySimpleDragDrop.mac "Edit group by simple drag'n'drop of tabs (default:Command-drag'n'drop)">
+<!ENTITY openGroupAsTabGroup        "Open bookmark-groups as tabgroups">
+
+<!ENTITY advancedTabGroupPrefs.inheritance.caption "Inherit following status of features from the parent tab to subgroup tabs">
+<!ENTITY inheritTextZoom        "Text size">
+<!ENTITY inheritLocked          "Locked state">
+<!ENTITY inheritReferrerBlocked "HTTP Referrer Blocked state">
+<!ENTITY inheritAllow           "Permission">
+
+<!ENTITY advancedTabGroupPrefs.tree.tab     "Tree Mode">
+<!ENTITY advancedTabGroupPrefs.tree.caption "Tree Mode">
+
+<!ENTITY treeMaxLevel.label_before "Max level of group nesting:">
+<!ENTITY treeMaxLevel.label_after  "">
+<!ENTITY animateCollapseExpand       "Animate subgroup collapsing/expanding">
+<!ENTITY simpleOperation             "Expand subgroup only single click, and Keep only one subgroup expanded (other groups are collapsed automatically)">
+<!ENTITY onSubgroupRootRemoved.group  "When a parent tab is closed">
+<!ENTITY onSubgroupRootRemoved.keep   "Keep open all of child tabs">
+<!ENTITY onSubgroupRootRemoved.remove "Close all of child tabs too">
+<!ENTITY onSubgroupRootRemoved.desc   "*When the tab has collapsed subgroup, descendant tabs in the subgroup are always closed automatically.">
+
+
+
+<!ENTITY tabPref.group.bookmarkgroup "Bookmark-groups">
+
+<!ENTITY clearTabsbookmarkGroupBehavior "Clear other tabs before opening bookmark-groups">
+<!ENTITY bookmarkGroupBehavior.label    "When opening a bookmark-group/folder in tabs:">
+<!ENTITY bookmarkGroupBehavior.append "Append to the current set of tabs">
+<!ENTITY bookmarkGroupBehavior.insert "Insert to the current group">
+<!ENTITY bookmarkGroupBehavior.replace "Replace all tabs">
+<!ENTITY bookmarkGroupBehavior.replace_group "Replace the current group">
+<!ENTITY bookmarkGroupBehavior.onetab_append "Replace the tab when only one tab is open (normally:append)">
+<!ENTITY bookmarkGroupBehavior.onetab_insert "Replace the tab when it doesn't belong to group (normally:insert)">
+
+
+
+<!ENTITY bookmarkGroupBehavior.label  "Bookmark Groups">
+
+<!ENTITY bookmarkGroupBehavior.append.item        "Append new tabs to the current set of tabs">
+
+<!ENTITY bookmarkGroupBehavior.replace.item  "Replace the current set of tabs to new tabs">
+<!ENTITY bookmarkGroupBehavior.replace.all   "Replace all tabs">
+<!ENTITY bookmarkGroupBehavior.replace.group "Replace only the current group">
+
+
+<!ENTITY advancedBookmarkGroupPrefs.go      "Advanced...">
+<!ENTITY advancedBookmarkGroupPrefs.title   "Advanced Behavior of Bookmark Groups">
+<!ENTITY advancedBookmarkGroupPrefs.insert  "Insert to the current group">
+<!ENTITY advancedBookmarkGroupPrefs.replace "Replace the tab to the new tabs, when only one tab is open or the tab has no group">

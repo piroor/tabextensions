@@ -1,0 +1,43 @@
+#dummyWidgetContainer {
+	padding: 1.2em;
+}
+#dummyTab {
+	overflow: hidden;
+}
+
+
+#dummyTabThumbnailBox {
+	background: -moz-field;
+	border: 2px groove;
+}
+#dummyTabThumbnailBox[state-resizing] {
+	border-style: dotted;
+}
+
+
+#dummyTabThumbnailWidthResizer {
+	width: 10px;
+	cursor: w-resize;
+	position: relative;
+	margin-left: -10px;
+}
+#dummyTabThumbnailHeightResizer {
+	height: 10px;
+	cursor: n-resize;
+	position: relative;
+	margin-top: -10px;
+}
+#dummyTabThumbnailBothResizer {
+	height: 10px;
+	width: 10px;
+	cursor: se-resize;
+	position: relative;
+	margin-left: -10px;
+	margin-top: -10px;
+}
+
+.thumbnailResizer[disabled="true"] {
+	cursor: default !important;
+	opacity: 0.5 !important;
+	-moz-opacity: 0.5 !important;
+}

@@ -1,0 +1,7 @@
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+.tabextensions-menu-iconic .menu-iconic-icon {
+	max-width: 16px;
+	max-height: 16px;
+}
+

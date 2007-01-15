@@ -1,0 +1,34 @@
+<!ENTITY tabPref.history.title "履歴の挙動">
+
+
+
+<!ENTITY tabPref.goToHistoryIndex.load.group   "「移動」メニューおよび「戻る」「進む」ボタンから履歴を開く時の動作">
+<!ENTITY tabPref.goToHistoryIndex.load.current "現在のタブで開く">
+<!ENTITY tabPref.goToHistoryIndex.load.newtab  "新しいタブで開く">
+<!ENTITY tabPref.goToHistoryIndex.load.newtabBackground "新しいバックグラウンドのタブで開く">
+
+<!ENTITY advancedGoToHistoryIndexPrefs.go    "詳細...">
+<!ENTITY advancedGoToHistoryIndexPrefs.title "「移動」メニューおよび「戻る」「進む」ボタンの詳細">
+
+<!ENTITY tabPref.goToHistoryIndex.middleClick.group   "「移動」メニューおよび「戻る」「進む」ボタンを中クリック（またはCtrl-クリック）した際の動作">
+<!ENTITY tabPref.goToHistoryIndex.middleClick.group.mac "「移動」メニューおよび「戻る」「進む」ボタンを中クリック（またはCommand-クリック）した際の動作">
+<!ENTITY tabPref.goToHistoryIndex.middleClick.none    "何もしない">
+<!ENTITY tabPref.goToHistoryIndex.middleClick.current "現在のタブで開く">
+<!ENTITY tabPref.goToHistoryIndex.middleClick.newtab  "新しいタブで開く">
+<!ENTITY tabPref.goToHistoryIndex.middleClick.newtabBackground "新しいバックグラウンドのタブで開く">
+
+
+<!ENTITY tabPref.history.load.group   "履歴を開く時の動作">
+<!ENTITY tabPref.history.load.current "現在のタブで開く">
+<!ENTITY tabPref.history.load.newtab  "新しいタブで開く">
+<!ENTITY tabPref.history.load.newtabBackground "新しいバックグラウンドのタブで開く">
+
+<!ENTITY advancedHistoryPrefs.go    "詳細...">
+<!ENTITY advancedHistoryPrefs.title "履歴の詳細">
+
+<!ENTITY tabPref.history.middleClick.group   "履歴を中クリック（またはCtrl-クリック）した際の動作">
+<!ENTITY tabPref.history.middleClick.group.mac "履歴を中クリック（またはCommand-クリック）した際の動作">
+<!ENTITY tabPref.history.middleClick.none    "何もしない">
+<!ENTITY tabPref.history.middleClick.current "現在のタブで開く">
+<!ENTITY tabPref.history.middleClick.newtab  "新しいタブで開く">
+<!ENTITY tabPref.history.middleClick.newtabBackground "新しいバックグラウンドのタブで開く">

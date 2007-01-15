@@ -1,0 +1,338 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://tabextensions/content/tabextensions.css" type="text/css"?>
+<?xml-stylesheet href="chrome://tabextensions/skin/buttons.css" type="text/css"?>
+<?xml-stylesheet href="chrome://tabextensions/skin/icons.css" type="text/css"?>
+
+<!DOCTYPE overlay [
+<!ENTITY % tabBrowserDTD SYSTEM "chrome://global/locale/tabbrowser.dtd">
+%tabBrowserDTD;
+<!ENTITY % tabextensionsDTD SYSTEM "chrome://tabextensions/locale/">
+%tabextensionsDTD;
+]>
+
+<overlay
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+<script type="application/x-javascript" src="chrome://global/content/XPCNativeWrapper.js"/>
+<script type="application/x-javascript" src="chrome://tabextensions/content/pXPCNativeWrapper.js"/>
+
+<script type="application/x-javascript" src="chrome://tabextensions/content/globalOverlay.js"/>
+
+<script type="application/x-javascript" src="chrome://tabextensions/content/modules/tabDragDrop.js"/>
+<script type="application/x-javascript" src="chrome://tabextensions/content/modules/browserService.js"/>
+<script type="application/x-javascript" src="chrome://tabextensions/content/modules/locationBarService.js"/>
+<script type="application/x-javascript" src="chrome://tabextensions_eventhandler/content/linkEventService.js"/>
+
+<script type="application/x-javascript" src="chrome://tabextensions/content/modules/clickEventService.js"/>
+<script type="application/x-javascript" src="chrome://tabextensions/content/modules/bookmarksService.js"/>
+<script type="application/x-javascript" src="chrome://tabextensions/content/modules/contextMenuService.js"/>
+<script type="application/x-javascript" src="chrome://tabextensions/content/modules/historyService.js"/>
+<script type="application/x-javascript" src="chrome://tabextensions/content/modules/miscOverlay.js"/>
+
+<script type="application/x-javascript" src="chrome://tabextensions/content/modules/tabHighlightService.js"/>
+
+
+<menubar id="main-menubar">
+	<menu position="6"
+		id="tabMenu"
+		label="&tabMenu.label;"
+		accesskey="&tabMenu.accesskey;">
+		<menupopup id="tabMenuPopup"
+			onpopupshowing="TBEBrowserService.updateTabsMenu(this, event);">
+			<menu id="tabsListMenu"
+				insertbefore="tab-item-newTab:tabMenuPopup"
+				label="&tabsList.label;"
+				accesskey="&tabsList.menu.accesskey;"
+				key="key_tabextensions_tabsListMenu_openMenu">
+				<menupopup onpopupshowing="TabbrowserService.updateTabsListMenu(this); event.stopPropagation();"
+					onpopuphiding="event.stopPropagation();"
+					oncommand="gBrowser.selectedTab = gBrowser.mTabs[event.target.value]; gBrowser.scrollTabbarToTab(gBrowser.selectedTab);"
+					ondraggesture="if (event.target.localName != 'menuitem') return; if (!('onDragStart' in this)) this.onDragStart = TBEBrowserService.onTabListDragStart; nsDragAndDrop.startDrag(event, this); event.stopPropagation();">
+					<menu label="&tabsList.sorted;">
+						<menupopup onpopupshowing="TabbrowserService.updateTabsListMenu(this, true); event.stopPropagation();"/>
+					</menu>
+					<menuseparator class="tablist-sorted-separator"/>
+				</menupopup>
+			</menu>
+			<menuseparator id="tabsListMenuSep"/>
+			<menuitem id="tab-item-newTab"
+				tabid="tab-item-newTab"
+				label="&newTab.label;"
+				oncommand="eval(gBrowser.getAttribute('onnewtab'));"
+				key="key_newNavigatorTab"/>
+			<menuseparator/>
+			<menuitem tabid="tab-item-removeTab"
+				label="&closeTab.label;"
+				oncommand="gBrowser.removeTab(gBrowser.selectedTab);"
+				key="key_close"/>
+			<menu label="&tabMenu.close.label;">
+				<menupopup onpopupshowing="event.stopPropagation();"
+					onpopuphiding="event.stopPropagation();">
+					<menuitem tabid="tab-item-removeTabGroup"
+						label="&ontabclick.removeTabGroup;"
+						tbattr="tabbrowser-group"
+						oncommand="gBrowser.removeTabGroup(gBrowser.selectedTab);"/>
+					<menuseparator tbattr="tabbrowser-group"/>
+					<menuitem tabid="tab-item-removeLeft"
+						label="&ontabclick.removeLeft;"
+						label-for-horizontal-tabbar="&ontabclick.removeLeft.horizontal;"
+						label-for-vertical-tabbar="&ontabclick.removeLeft.vertical;"
+						tbattr="tabbrowser-multiple"
+						oncommand="gBrowser.removeLeftTabsFrom(gBrowser.selectedTab);"/>
+					<menuitem tabid="tab-item-removeRight"
+						label="&ontabclick.removeRight;"
+						label-for-horizontal-tabbar="&ontabclick.removeRight.horizontal;"
+						label-for-vertical-tabbar="&ontabclick.removeRight.vertical;"
+						tbattr="tabbrowser-multiple"
+						oncommand="gBrowser.removeRightTabsFrom(gBrowser.selectedTab);"/>
+					<menuseparator/>
+					<menuitem tabid="tab-item-removeAll"
+						label="&ontabclick.removeAll;"
+						oncommand="gBrowser.removeAllTabs();"/>
+					<menuitem tabid="tab-item-removeVisited"
+						label="&ontabclick.removeVisited;"
+						tbattr="tabbrowser-multiple"
+						oncommand="gBrowser.removeVisitedTabs();"/>
+					<menuseparator/>
+					<menuitem tabid="tab-item-removeOther"
+						label="&ontabclick.removeOther;"
+						tbattr="tabbrowser-multiple"
+						oncommand="gBrowser.removeAllTabsButInternal(gBrowser.selectedTab);"/>
+				</menupopup>
+			</menu>
+			<menuseparator/>
+			<menuitem id="tab-item-undoRemoveTab:tabMenu"
+				tabid="tab-item-undoRemoveTab"
+				label="&ontabclick.undoRemoveTab;"
+				oncommand="gBrowser.undoRemoveTab();"
+				key="key_undoRemoveTab"/>
+			<menuseparator/>
+			<menuitem tabid="tab-item-reloadTab"
+				label="&reloadTab.label;"
+				oncommand="gBrowser.reloadTab(gBrowser.selectedTab);"
+				key="key_reload"/>
+			<menuitem tabid="tab-item-reloadAll"
+				label="&reloadAllTabs.label;"
+				tbattr="tabbrowser-multiple"
+				oncommand="gBrowser.reloadAllTabs(gBrowser.selectedTab);"/>
+			<menuseparator/>
+			<menuitem tabid="tab-item-moveLeft"
+				label="&ontabclick.moveLeft;"
+				label-for-horizontal-tabbar="&ontabclick.moveLeft.horizontal;"
+				label-for-vertical-tabbar="&ontabclick.moveLeft.vertical;"
+				tbattr="tabbrowser-multiple"
+				oncommand="gBrowser.moveTabBy(gBrowser.selectedTab, -1);"
+				key="key_moveTabLeft"/>
+			<menuitem tabid="tab-item-moveRight"
+				label="&ontabclick.moveRight;"
+				label-for-horizontal-tabbar="&ontabclick.moveRight.horizontal;"
+				label-for-vertical-tabbar="&ontabclick.moveRight.vertical;"
+				tbattr="tabbrowser-multiple"
+				oncommand="gBrowser.moveTabBy(gBrowser.selectedTab, 1);"
+				key="key_moveTabRight"/>
+			<menuseparator/>
+			<menuitem tabid="tab-item-duplicateTab"
+				label="&ontabclick.duplicate;"
+				oncommand="gBrowser.duplicateTab(gBrowser.selectedTab);"/>
+			<menuitem tabid="tab-item-duplicateInWindow"
+				label="&ontabclick.duplicateInWindow;"
+				oncommand="gBrowser.duplicateTabInWindow(gBrowser.selectedTab);"/>
+			<menu label="&tabMenu.advanced.label;">
+				<menupopup onpopupshowing="event.stopPropagation();"
+					onpopuphiding="event.stopPropagation();">
+					<menuitem tabid="tab-item-setFixedLabelFor"
+						label="&ontabclick.setFixedLabelFor;"
+						oncommand="this.parentNode.hidePopup(); this.parentNode.parentNode.parentNode.hidePopup(); gBrowser.setFixedLabelFor(gBrowser.selectedTab);"/>
+					<menuitem tabid="tab-item-lockTab"
+						label="&ontabclick.lock;"
+						type="checkbox"
+						oncommand="gBrowser.toggleTabLocked(gBrowser.selectedTab);"/>
+					<menuitem tabid="tab-item-blockReferrer"
+						label="&ontabclick.blockReferrer;"
+						type="checkbox"
+						oncommand="gBrowser.toggleReferrerBlocked(gBrowser.selectedTab);"/>
+					<menuitem tabid="tab-item-autoreload"
+						label="&ontabclick.autoreload;"
+						type="checkbox"
+						oncommand="this.parentNode.hidePopup(); this.parentNode.parentNode.parentNode.hidePopup(); gBrowser.toggleTabAutoReload(gBrowser.selectedTab);"/>
+					<menuseparator/>
+					<menuitem tabid="tab-item-lockTabAll"
+						label="&ontabclick.lockAll;"
+						type="checkbox"
+						tbattr="tabbrowser-multiple"
+						oncommand="gBrowser.toggleAllTabsLocked();"/>
+					<menuitem tabid="tab-item-blockReferrerAll"
+						label="&ontabclick.blockReferrerAll;"
+						type="checkbox"
+						tbattr="tabbrowser-multiple"
+						oncommand="gBrowser.toggleReferrerBlockedForAllTabs();"/>
+					<menuitem tabid="tab-item-autoreloadAll"
+						label="&ontabclick.autoreloadAll;"
+						type="checkbox"
+						tbattr="tabbrowser-multiple"
+						oncommand="this.parentNode.hidePopup(); this.parentNode.parentNode.parentNode.hidePopup(); gBrowser.toggleAllTabsAutoReload();"/>
+				</menupopup>
+			</menu>
+			<menu tabid="tab-item-allow"
+				label="&ontabclick.allow;">
+				<menupopup onpopupshowing="event.stopPropagation();"
+					onpopuphiding="event.stopPropagation();">
+					<menuitem tabid="tab-item-allowPlugins"
+						label="&ontabclick.allowPlugins;"
+						type="checkbox"
+						oncommand="gBrowser.toggleDocShellPropertyFor(gBrowser.selectedTab, 'allowPlugins');"/>
+					<menuitem tabid="tab-item-allowJavascript"
+						label="&ontabclick.allowJavaScript;"
+						type="checkbox"
+						oncommand="gBrowser.toggleDocShellPropertyFor(gBrowser.selectedTab, 'allowJavascript');"/>
+					<menuitem tabid="tab-item-allowMetaRedirects"
+						label="&ontabclick.allowMetaRedirects;"
+						type="checkbox"
+						oncommand="gBrowser.toggleDocShellPropertyFor(gBrowser.selectedTab, 'allowMetaRedirects');"/>
+					<menuitem tabid="tab-item-allowSubframes"
+						label="&ontabclick.allowSubframes;"
+						type="checkbox"
+						oncommand="gBrowser.toggleDocShellPropertyFor(gBrowser.selectedTab, 'allowSubframes');"/>
+					<menuitem tabid="tab-item-allowImages"
+						label="&ontabclick.allowImages;"
+						type="checkbox"
+						oncommand="gBrowser.toggleDocShellPropertyFor(gBrowser.selectedTab, 'allowImages');"/>
+				</menupopup>
+			</menu>
+			<menuseparator/>
+			<menuitem tabid="tab-item-setGroupColor"
+				label="&ontabclick.setTabColor;"
+				oncommand="gBrowser.selectedTab.setTabColor();"/>
+			<menuitem tabid="tab-item-collapseExpandGroup"
+				label="&ontabclick.collapseExpandGroup;"
+				tbattr="tabbrowser-tree"
+				oncommand="if (gBrowser.selectedTab.hasChildTabs()) gBrowser.selectedTab.tabSubgroupCollapsed = !gBrowser.selectedTab.tabSubgroupCollapsed;"/>
+			<menu label="&tabMenu.group.label;"
+				tbattr="tabbrowser-group">
+				<menupopup onpopupshowing="event.stopPropagation();"
+					onpopuphiding="event.stopPropagation();">
+					<menuitem tabid="tab-item-sortTabsByGroup"
+						label="&ontabclick.sortTabsByGroup;"
+						oncommand="gBrowser.sortTabsByGroup();"/>
+					<menuitem tabid="tab-item-highlightGroup"
+						label="&ontabclick.highlightGroup;"
+						oncommand="gBrowser.highlightGroupFromTab(gBrowser.selectedTab);"/>
+				</menupopup>
+			</menu>
+			<menuseparator/>
+			<menuitem tabid="tab-item-bookmarkGroup"
+				label="&bookmarkGroup.label;"
+				oncommand="gBrowser.bookmarksManager.bookmarkTabGroup(gBrowser.selectedTab, !gBrowser.tabGroupsAvailable);"/>
+			<menuitem tabid="tab-item-editBookmark"
+				label="&ontabclick.editBookmark;"
+				oncommand="gBrowser.editBookmarkFromTab(gBrowser.selectedTab);"/>
+			<menuseparator/>
+			<menuitem tabid="tab-item-editMenu"
+				label="&ontabclick.editMenu;"
+				oncommand="this.parentNode.hidePopup(); window.openDialog('chrome://tabextensions/content/contextMenuEdit.xul', '', 'chrome,modal,resizable=no');"/>
+			<menuitem tabid="tab-item-preferences"
+				label="&tabMenu.preferences.label;"
+				oncommand="this.parentNode.hidePopup(); TabbrowserService.goPreferences();"/>
+		</menupopup>
+	</menu>
+</menubar>
+
+
+
+
+<!-- old Mozilla -->
+<keyset id="navKeys">
+	<keyset id="mainKeyset"/>
+</keyset>
+
+<keyset id="mainKeyset">
+	<keyset id="keyset_tabextensions">
+		<key id="key_tabextensions_tabsListMenu_openMenu"
+			key="&tabsList.menu.key;"
+			oncommand="TabbrowserService.popupMenu('tabextensions-tabsListMenu-shortcut');"
+			modifiers="alt"/>
+	</keyset>
+</keyset>
+
+
+
+<!-- old Mozilla -->
+<popupset id="contentAreaContextSet">
+	<popupset id="mainPopupSet"/>
+</popupset>
+
+<popupset id="mainPopupSet">
+	<popupset id="popupset_tabextensions">
+		<popup id="tabextensions-tabsListMenu-shortcut"
+			style="max-width:28em"
+			onpopupshowing="TabbrowserService.updateTabsListMenu(this);"
+			oncommand="gBrowser.selectedTab = gBrowser.mTabs[event.target.value]; gBrowser.scrollTabbarToTab(gBrowser.selectedTab);"
+			ondraggesture="if (event.target.localName != 'menuitem') return; if (!('onDragStart' in this)) this.onDragStart = TBEBrowserService.onTabListDragStart; nsDragAndDrop.startDrag(event, this); event.stopPropagation();">
+			<menu sorted="true"
+				label="&tabsList.sorted;">
+				<menupopup onpopupshowing="TabbrowserService.updateTabsListMenu(this, true); event.stopPropagation();"/>
+			</menu>
+			<menuseparator class="tablist-sorted-separator"/>
+		</popup>
+	</popupset>
+</popupset>
+
+
+
+<toolbarpalette id="BrowserToolbarPalette">
+	<toolbarbutton id="tabextensions-tabslist-button"
+		label="&tabsList.label;"
+		tooltiptext="&tabsList.tooltip;"
+		type="menu"
+		class="toolbarbutton-1">
+		<menupopup onpopupshowing="TabbrowserService.updateTabsListMenu(this);"
+			oncommand="gBrowser.selectedTab = gBrowser.mTabs[event.target.value]; gBrowser.scrollTabbarToTab(gBrowser.selectedTab);"
+			ondraggesture="if (!('onDragStart' in this)) this.onDragStart = TBEBrowserService.onTabListDragStart; nsDragAndDrop.startDrag(event, this); event.stopPropagation();">
+			<menu label="&tabsList.sorted;">
+				<menupopup onpopupshowing="TabbrowserService.updateTabsListMenu(this, true); event.stopPropagation();"/>
+			</menu>
+			<menuseparator class="tablist-sorted-separator"/>
+		</menupopup>
+	</toolbarbutton>
+</toolbarpalette>
+
+
+<!-- Toolbar -->
+<toolbarbutton id="bookmarks-button"
+	oncommand="TBEBookmarksService.openBookmarkURL(event.target, TabbrowserService.BookmarksDatabase, event, this);"
+	onclick="TBEBookmarksService.openBookmarkURL(event.target, TabbrowserService.BookmarksDatabase, event, this);"/>
+
+<!-- Menubar, for Mozilla 1.0-1.4 -->
+<menu id="BookmarksMenu"
+	oncommand="TBEBookmarksService.openBookmarkURL(event.target, TabbrowserService.BookmarksDatabase, event, this);"
+	onclick="TBEBookmarksService.openBookmarkURL(event.target, TabbrowserService.BookmarksDatabase, event, this);"/>
+
+<!-- Menubar, for Phoenix 0.5 -->
+<menu id="bookmarks-menu"
+	oncommand="TBEBookmarksService.openBookmarkURL(event.target, TabbrowserService.BookmarksDatabase, event, this);"
+	onclick="TBEBookmarksService.openBookmarkURL(event.target, TabbrowserService.BookmarksDatabase, event, this);"/>
+
+<!-- Personal Toolbar, for Mozilla 1.0.x and Netscape 7 -->
+<hbox id="innermostBox"
+	oncommand="TBEBookmarksService.openBookmarkURL(event.target, TabbrowserService.BookmarksDatabase, event, this);"
+	onclick="TBEBookmarksService.openBookmarkURL(event.target, TabbrowserService.BookmarksDatabase, event, this);"/>
+
+<!-- Personal Toolbar, for Mozilla 1.x(20020709) or later -->
+<hbox id="NC:PersonalToolbarFolder"
+	oncommand="TBEBookmarksService.openBookmarkURL(event.target, TabbrowserService.BookmarksDatabase, event, this);"
+	onclick="TBEBookmarksService.openBookmarkURL(event.target, TabbrowserService.BookmarksDatabase, event, this);"/>
+
+<!-- Personal Toolbar, for Firefox -->
+<menu id="bookmarks-ptf"
+	oncommand="TBEBookmarksService.openBookmarkURL(event.target, TabbrowserService.BookmarksDatabase, event, this);"
+	onclick="TBEBookmarksService.openBookmarkURL(event.target, TabbrowserService.BookmarksDatabase, event, this);"/>
+
+<!-- Personal Toolbar (overflow)  -->
+<menu id="bookmarks-chevron"
+	oncommand="TBEBookmarksService.openBookmarkURL(event.target, TabbrowserService.BookmarksDatabase, event, this);"
+	onclick="TBEBookmarksService.openBookmarkURL(event.target, TabbrowserService.BookmarksDatabase, event, this);"/>
+
+
+
+</overlay>

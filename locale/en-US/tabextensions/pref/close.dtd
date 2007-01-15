@@ -1,0 +1,21 @@
+<!ENTITY tabPref.close.title       "Advanced Close Tab">
+
+
+<!ENTITY tabPref.closeTab.group   "Advanced behavior of &quot;Close Tab&quot;">
+
+<!ENTITY dirOfClosing.label       "When the Current Tab is closed, Focus to">
+<!ENTITY dirOfClosing.rtl.horizontal "Just Left"><!-- old default -->
+<!ENTITY dirOfClosing.rtl.vertical   "Just Above">
+<!ENTITY dirOfClosing.ltr.horizontal "Just Right"><!-- new default -->
+<!ENTITY dirOfClosing.ltr.vertical   "Just Below">
+<!ENTITY dirOfClosing.reverse        "the tab Previously Opened">
+<!ENTITY dirOfClosing.prev           "the tab Previously Selected">
+
+<!ENTITY dirOfClosing.group.go     "Advanced...">
+<!ENTITY dirOfClosing.group.title  "Focus and TabGroup Mode">
+<!ENTITY dirOfClosing.group        "Move focus in the group, when the tab is in a group">
+
+
+
+<!ENTITY closeWindowOnlyForTab.group "&quot;Close Tab&quot; Actions">
+<!ENTITY closeWindowOnlyForTab       "Close the browser window when there is no tab which can be closed">

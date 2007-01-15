@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
+<?xul-overlay href="chrome://tabextensions/content/pref/prefOverlay.xul"?>
+
+<!DOCTYPE page SYSTEM "chrome://tabextensions/locale/pref/closeWindow.dtd">
+
+<page
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	orient="vertical"
+	headertitle="&tabPref.closeWindow.title;"
+	onload="init();">
+
+<script type="application/x-javascript"><![CDATA[
+
+if (!('_elementIDs' in window) || !window._elementIDs)
+	var _elementIDs = [];
+
+_elementIDs = _elementIDs.concat([
+	'windowCloseBehavior',
+	'confirmOnlyForMultipleTabs'
+]);
+
+
+function init()
+{
+	window.parent.initPanel(location.href);
+
+
+	var group = document.getElementById('windowCloseBehavior');
+	var radio = group.getElementsByTagName('radio');
+	if (getModifiedValue('browser.tabs.extensions.startup_action_overlay', 'chrome://tabextensions_sessionmanager/content/pref-tabsStartup.xul') == 0) {
+		radio[0].setAttribute('disabled', true);
+		radio[1].setAttribute('disabled', true);
+		if (group.value != 0 && group.value != 10)
+			group.selectedItem = radio[2];
+	}
+	else {
+		radio[0].removeAttribute('disabled');
+		radio[1].removeAttribute('disabled');
+	}
+
+	onRadioChange();
+}
+
+function onRadioChange()
+{
+	var check = document.getElementById('confirmOnlyForMultipleTabs');
+	if (document.getElementById('windowCloseBehavior').value == '-1')
+		check.removeAttribute('disabled');
+	else
+		check.setAttribute('disabled', true);
+}
+
+]]></script>
+
+
+	<groupbox id="windowCloseBehaviorGroup">
+		<caption label="&windowCloseBehavior.label;"/>
+		<radiogroup orient="vertical" id="windowCloseBehavior"
+			prefstring="browser.tabs.extensions.window_close.behavior"
+			preftype="int"
+			oncommand="onRadioChange()">
+			<radio value="-1" label="&windowCloseBehavior.confirm;"/>
+			<hbox>
+				<spacer style="width: 1em;"/>
+				<checkbox id="confirmOnlyForMultipleTabs"
+					label="&confirmOnlyForMultipleTabs;"
+					prefstring="browser.tabs.extensions.window_close.behavior.confirmOnlyForMultipleTabs"/>
+			</hbox>
+			<separator/>
+			<radio value="1"  label="&windowCloseBehavior.forbid;"/>
+			<radio value="0"  label="&windowCloseBehavior.allow;"/>
+			<radio value="10" label="&windowCloseBehavior.allowOneTab;"/>
+		</radiogroup>
+	</groupbox>
+
+	<spacer flex="1"/>
+
+	<box id="tabextensionsAboutBox"/>
+
+</page>

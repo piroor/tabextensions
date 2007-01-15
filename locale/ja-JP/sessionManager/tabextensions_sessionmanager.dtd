@@ -1,0 +1,55 @@
+<!ENTITY loadTabSession.menu.label          "タブセッションを読み込む">
+<!ENTITY loadTabSession.menu.accesskey      "L">
+<!ENTITY loadTabSession.menu.key            "L">
+<!ENTITY loadTabSession.full.label          "すべての項目を表示">
+<!ENTITY loadTabSession.full.accesskey      "M">
+<!ENTITY loadTabSession.save.label          "現在のタブセッションを保存">
+<!ENTITY loadTabSession.save.accesskey      "S">
+<!ENTITY loadTabSession.save.key            "T">
+<!ENTITY loadTabSession.rename.label        "リネーム">
+<!ENTITY loadTabSession.rename.accesskey    "R">
+<!ENTITY loadTabSession.delete.label        "削除">
+<!ENTITY loadTabSession.delete.accesskey    "D">
+<!ENTITY loadTabSession.deleteAll.label     "すべて削除">
+<!ENTITY loadTabSession.deleteAll.accesskey "A">
+
+<!ENTITY closedTabsHistory.menu.label      "最近閉じたタブ">
+<!ENTITY closedTabsHistory.menu.accesskey  "C">
+<!ENTITY closedTabsHistory.flush.label     "履歴のクリア">
+<!ENTITY closedTabsHistory.flush.accesskey "F">
+<!ENTITY closedTabsHistory.menu.key        "R">
+<!ENTITY closedTabsHistory.blank.label     "(なし)">
+<!ENTITY closedTabsHistory.full.label      "すべての項目を表示">
+<!ENTITY closedTabsHistory.full.accesskey  "M">
+
+
+
+
+
+
+<!ENTITY tabPref.startup.tree   "起動処理">
+<!ENTITY tabPref.startup.title  "ブラウザ起動時の特殊な動作">
+
+<!ENTITY startupActionOverlay             "ブラウザ起動時に読み込む内容">
+<!ENTITY startupActionOverlay.none        "通常どおりにブラウザのホームページを読み込む">
+<!ENTITY startupActionOverlay.lastSession "前回終了時に開いていたタブセッションを読み込む">
+<!ENTITY startupActionOverlay.storedSession "選択したタブセッションを読み込む">
+<!ENTITY selectedSession                  "読み込むタブセッション：">
+<!ENTITY selectedSession.default          "（選択してください）">
+<!ENTITY selectedSession.noitem           "（タブセッションが保存されていません）">
+<!ENTITY selectedSession.onetime          "一日に一度だけ読み込む">
+
+<!ENTITY ignoreStartedWithOpenURLRequests "他のアプリケーションから一時的に開いたウィンドウはタブセッションを保存しない">
+
+<!ENTITY tabPref.backupTabs.group  "タブセッションのバックアップ">
+<!ENTITY backupTabs "強制終了した時、次回起動時に全てのタブを復元する">
+
+
+
+<!ENTITY tabPref.session.group  "タブセッションの保存と読み込み">
+<!ENTITY saveBlankTabSession    "空のタブも保存する">
+<!ENTITY reloadRestoredSession  "タブセッションを読み込んだ後、自動でリロードする">
+
+<!ENTITY undoCacheGlobalMax_before "「最近閉じたタブ」の履歴を">
+<!ENTITY undoCacheGlobalMax_after  "件まで保持する">
+<!ENTITY undoCacheSave             "終了時に「最近閉じたタブ」の履歴を保存する">

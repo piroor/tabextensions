@@ -1,0 +1,161 @@
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"); 
+ 
+[tabs-scrollbox-right="true"] 
+{
+	-moz-binding: url("chrome://tabextensions/content/scrollableTabBar.xml#scrollbuttons");
+}
+	
+[tabid="scroll-buttons"], 
+[tabid="scroll-buttons-cotainer"]
+{
+	-moz-box-orient: horizontal;
+}
+ 
+.tabbrowser-tabbar-left [tabid="scroll-buttons"], 
+.tabbrowser-tabbar-right [tabid="scroll-buttons"],
+.tabbrowser-tabbar-left [tabid="scroll-buttons-container"],
+.tabbrowser-tabbar-right [tabid="scroll-buttons-container"]
+{
+	-moz-box-orient: vertical;
+}
+ 
+[tabid="scroll-buttons"] 
+{
+	visibility: collapse;
+}
+	
+[tab-scrollbar="button"][tabs-overflow="true"] [tabid="scroll-buttons"], 
+[tab-scrollbar="buttonalways"] [tabid="scroll-buttons"]
+{
+	visibility: visible;
+}
+
+   
+[tabs-scrollbox="true"]:not(tabs)
+{
+	-moz-binding: url("chrome://tabextensions/content/scrollableTabBar.xml#scrollbox");
+}
+[tabs-scrollbox="true"]:not([includes-scrollbox="true"]),
+[tabs-scrollbox="true"] .scrollbox-for-scrollable-contents
+{
+	overflow: auto;
+}
+[tabs-scrollbox="true"][includes-scrollbox="true"],
+[tabs-scrollbox="true"] .scrollbox-for-scrollable-contents > box
+{
+	overflow: visible;
+}
+[tabs-scrollbox="true"] .scrollbox-for-scrollable-contents > box
+{
+	-moz-box-flex: 1;
+}
+	
+[tab-scrollbar="scrollbar"][tabs-overflow="true"] [tabs-scrollbox="true"]:not([includes-scrollbox="true"]), 
+[tab-scrollbar="scrollbaralways"] [tabs-scrollbox="true"]:not([includes-scrollbox="true"]),
+[tab-scrollbar="button"] [tabs-scrollbox="true"]:not([includes-scrollbox="true"]),
+[tab-scrollbar="buttonalways"] [tabs-scrollbox="true"]:not([includes-scrollbox="true"]),
+[tab-scrollbar="never"] [tabs-scrollbox="true"]:not([includes-scrollbox="true"]),
+
+[tab-scrollbar="scrollbar"][tabs-overflow="true"] [tabs-scrollbox="true"] .scrollbox-for-scrollable-contents,
+[tab-scrollbar="scrollbaralways"] [tabs-scrollbox="true"] .scrollbox-for-scrollable-contents,
+[tab-scrollbar="button"] [tabs-scrollbox="true"] .scrollbox-for-scrollable-contents,
+[tab-scrollbar="buttonalways"] [tabs-scrollbox="true"] .scrollbox-for-scrollable-contents,
+[tab-scrollbar="never"] [tabs-scrollbox="true"] .scrollbox-for-scrollable-contents
+{
+	overflow: -moz-scrollbars-horizontal;
+}
+	
+.tabbrowser-tabbar-top [tabs-scrollbox="true"] scrollbar *, 
+.tabbrowser-tabbar-bottom [tabs-scrollbox="true"] scrollbar *
+{
+	height: 0.7em !important;
+	min-height: 0.7em !important;
+}
+  
+[tab-scrollbar="scrollbar"].tabbrowser-tabbar-left [tabs-scrollbox="true"]:not([includes-scrollbox="true"]), 
+[tab-scrollbar="scrollbaralways"].tabbrowser-tabbar-left [tabs-scrollbox="true"]:not([includes-scrollbox="true"]),
+[tab-scrollbar="button"].tabbrowser-tabbar-left [tabs-scrollbox="true"]:not([includes-scrollbox="true"]),
+[tab-scrollbar="buttonalways"].tabbrowser-tabbar-left [tabs-scrollbox="true"]:not([includes-scrollbox="true"]),
+[tab-scrollbar="never"].tabbrowser-tabbar-left [tabs-scrollbox="true"]:not([includes-scrollbox="true"]),
+[tab-scrollbar="scrollbar"].tabbrowser-tabbar-right [tabs-scrollbox="true"]:not([includes-scrollbox="true"]),
+[tab-scrollbar="scrollbaralways"].tabbrowser-tabbar-right [tabs-scrollbox="true"]:not([includes-scrollbox="true"]),
+[tab-scrollbar="button"].tabbrowser-tabbar-right [tabs-scrollbox="true"]:not([includes-scrollbox="true"]),
+[tab-scrollbar="buttonalways"].tabbrowser-tabbar-right [tabs-scrollbox="true"]:not([includes-scrollbox="true"]),
+[tab-scrollbar="never"].tabbrowser-tabbar-right [tabs-scrollbox="true"]:not([includes-scrollbox="true"]),
+
+[tab-scrollbar="scrollbar"].tabbrowser-tabbar-left [tabs-scrollbox="true"] .scrollbox-for-scrollable-contents,
+[tab-scrollbar="scrollbaralways"].tabbrowser-tabbar-left [tabs-scrollbox="true"] .scrollbox-for-scrollable-contents,
+[tab-scrollbar="button"].tabbrowser-tabbar-left [tabs-scrollbox="true"] .scrollbox-for-scrollable-contents,
+[tab-scrollbar="buttonalways"].tabbrowser-tabbar-left [tabs-scrollbox="true"] .scrollbox-for-scrollable-contents,
+[tab-scrollbar="never"].tabbrowser-tabbar-left [tabs-scrollbox="true"] .scrollbox-for-scrollable-contents,
+[tab-scrollbar="scrollbar"].tabbrowser-tabbar-right [tabs-scrollbox="true"] .scrollbox-for-scrollable-contents,
+[tab-scrollbar="scrollbaralways"].tabbrowser-tabbar-right [tabs-scrollbox="true"] .scrollbox-for-scrollable-contents,
+[tab-scrollbar="button"].tabbrowser-tabbar-right [tabs-scrollbox="true"] .scrollbox-for-scrollable-contents,
+[tab-scrollbar="buttonalways"].tabbrowser-tabbar-right [tabs-scrollbox="true"] .scrollbox-for-scrollable-contents,
+[tab-scrollbar="never"].tabbrowser-tabbar-right [tabs-scrollbox="true"] .scrollbox-for-scrollable-contents
+{
+	overflow: -moz-scrollbars-vertical;
+}
+	
+.tabbrowser-tabbar-right [tabs-scrollbox="true"] scrollbar *, 
+.tabbrowser-tabbar-left [tabs-scrollbox="true"] scrollbar *
+{
+	width: 0.7em !important;
+	min-width: 0.7em !important;
+}
+   
+.tabbrowser-strip tabs > scrollbar, 
+[tabs-scrollbox="true"] > scrollbar,
+[tabs-scrollbox="true"] .scrollbox-for-scrollable-contents > scrollbar
+{
+	visibility: collapse;
+	-moz-user-focus: none;
+	-moz-binding: url("chrome://tabextensions/content/scrollableTabBar.xml#scrollbar") !important;
+}
+	
+[tabbar-overflow="true"] .tabbrowser-strip tabs > scrollbar, 
+[tab-scrollbar="scrollbar"][tabs-overflow="true"] [tabs-scrollbox="true"] scrollbar,
+[tab-scrollbar="scrollbaralways"] [tabs-scrollbox="true"] scrollbar,
+[tab-scrollbar="multirow"][tabs-overflow="true"][tabbar-overflow="true"] scrollbar
+{
+	visibility: visible;
+}
+  
+/* multirow tab bar 
+
+some codes are from the Flowing Tabs
+http://extensionroom.mozdev.org/more-info/flowtabs
+
+see also:
+http://forums.mozillazine.org/viewtopic.php?p=476201
+http://forums.mozillazine.org/viewtopic.php?p=347499#347499
+*/
+	
+[tab-scrollbar="multirow"][tabs-overflow="true"] [tabs-scrollbox="true"]:not([includes-scrollbox="true"]), 
+[tab-scrollbar="multirow"][tabs-overflow="true"] [tabs-scrollbox="true"] .scrollbox-for-scrollable-contents > box
+{
+	display: block !important;
+	overflow: visible;
+}
+[tab-scrollbar="multirow"][tabs-overflow="true"] [tabs-scrollbox="true"] .scrollbox-for-scrollable-contents
+{
+	display: block !important;
+	overflow: -moz-scrollbars-vertical;
+}
+[tab-scrollbar="multirow"][tabs-overflow="true"][tabbar-overflow="true"] tabs:not([includes-scrollbox="true"]) 
+{
+	overflow: -moz-scrollbars-vertical;
+}
+ 
+[tab-scrollbar="multirow"][tabs-overflow="true"] tab 
+{
+	display: inline;
+}
+ 
+[tab-scrollbar="multirow"] .drop-position-marker, 
+[tab-scrollbar="multirow"][tabs-overflow="true"] [tabs-scrollbox="true"] .tabs-left,
+[tab-scrollbar="multirow"][tabs-overflow="true"] [tabs-scrollbox="true"] .tabs-right
+{
+	display: none !important;
+}
+  

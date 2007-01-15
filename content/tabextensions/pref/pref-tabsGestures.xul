@@ -1,0 +1,449 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
+<?xul-overlay href="chrome://tabextensions/content/pref/prefOverlay.xul"?>
+
+<!DOCTYPE page [
+<!ENTITY % tabextensionsDTD SYSTEM "chrome://tabextensions/locale/">
+%tabextensionsDTD;
+<!ENTITY % tabBrowserDTD SYSTEM "chrome://global/locale/tabbrowser.dtd">
+%tabBrowserDTD;
+<!ENTITY % tabextensionsGesturesDTD SYSTEM "chrome://tabextensions/locale/pref/gestures.dtd">
+%tabextensionsGesturesDTD;
+]>
+
+<page
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	orient="vertical"
+	headertitle="&tabPref.gestures.title;"
+	onload="init();">
+
+
+<script type="application/x-javascript"><![CDATA[
+
+if (!('_elementIDs' in window) || !window._elementIDs)
+	var _elementIDs = [];
+
+_elementIDs = _elementIDs.concat([
+	'switchTabsByWheel',
+	'wheelRoop',
+	'wheelCount',
+	'onTabDblClick',
+	'onTabMiddleClick',
+	'onTabRightClick',
+	'onTabShiftClick',
+	'onTabCtrlClick',
+	'onTabAltClick',
+	'onTabbarDblClick',
+	'onTabbarMiddleClick',
+	'onTabbarRightClick',
+	'onTabbarShiftClick',
+	'onTabbarCtrlClick',
+	'onTabbarAltClick',
+	'focusTabOnDrag',
+	'focusPointedTab',
+	'delayToFocusTab',
+	'tabFlip',
+	'tabFlipRoop',
+	'tabFlipDelay'
+]);
+
+var gWheelScrollingPrefsData;
+var gMiscGesturesPrefsData;
+
+function init()
+{
+	document.getElementById('onTabDblClick').builder.rebuild();
+	document.getElementById('onTabMiddleClick').builder.rebuild();
+	document.getElementById('onTabRightClick').builder.rebuild();
+	document.getElementById('onTabShiftClick').builder.rebuild();
+	document.getElementById('onTabCtrlClick').builder.rebuild();
+	document.getElementById('onTabAltClick').builder.rebuild();
+	document.getElementById('onTabbarDblClick').builder.rebuild();
+	document.getElementById('onTabbarMiddleClick').builder.rebuild();
+	document.getElementById('onTabbarRightClick').builder.rebuild();
+	document.getElementById('onTabbarShiftClick').builder.rebuild();
+	document.getElementById('onTabbarCtrlClick').builder.rebuild();
+	document.getElementById('onTabbarAltClick').builder.rebuild();
+
+	initMacLabel();
+
+	window.setTimeout('initWithDelay();', 0);
+}
+function initWithDelay()
+{
+//	var rearrangable = getModifiedValue('browser.tabs.extensions.tab_scroller', 'chrome://tabextensions/content/pref/pref-tabsAppearanceTabbar.xul') != 3;
+
+	var tabGroupEnabled = getModifiedValue('browser.tabs.extensions.group.enabled', 'chrome://tabextensions/content/pref/pref-tabsGroup.xul');
+	var disabledItems = {
+			duplicateInWindow : (getModifiedValue('browser.tabs.extensions.window_hook_mode', 'chrome://tabextensions/content/pref/pref-tabsGeneral.xul') == 2),
+			removeTabGroup    : !tabGroupEnabled,
+			sortTabsByGroup   : (!tabGroupEnabled/* || !rearrangable*/),
+			highlightGroup    : !tabGroupEnabled,
+//			moveLeft          : !rearrangable,
+//			moveRight         : !rearrangable,
+			lockTab           : getModifiedValue('browser.tabs.opentabfor.anylink', 'chrome://tabextensions/content/pref/pref-tabsLink.xul'),
+			lockTabAll        : getModifiedValue('browser.tabs.opentabfor.anylink', 'chrome://tabextensions/content/pref/pref-tabsLink.xul'),
+			blockReferrer     : !TabbrowserService.getPref('network.http.sendRefererHeader'),
+			blockReferrerAll  : !TabbrowserService.getPref('network.http.sendRefererHeader')
+		};
+	var j, nodes;
+	for (i in disabledItems)
+	{
+		nodes = document.getElementsByAttribute('tabid', i);
+		for (j = 0; j < nodes.length; j++)
+			if (disabledItems[i])
+				nodes[j].setAttribute('disabled', true);
+			else
+				nodes[j].removeAttribute('disabled');
+	}
+
+
+	var tabbarPlace = Number(getModifiedValue('browser.tabs.extensions.tabbar_place', 'chrome://tabextensions/content/pref/pref-tabsAppearanceTabbar.xul'));
+	document.getElementById('tabPrefsDeck').selectedIndex = (tabbarPlace < 0) ? 1 : 0 ;
+
+
+	window.parent.initPanel(location.href);
+
+	onSwitchTabsByWheelChange();
+
+
+	var itemTab     = document.getElementById('onTabMiddleClick'),
+		itemTabbar  = document.getElementById('onTabbarMiddleClick'),
+		labelTab    = document.getElementById('onTabMiddleClickLabel'),
+		labelTabbar = document.getElementById('onTabbarMiddleClickLabel');
+	if (TabbrowserService.getPref('middlemouse.contentLoadURL')) {
+		itemTab.setAttribute('disabled', true);
+		itemTabbar.setAttribute('disabled', true);
+		labelTab.setAttribute('disabled', true);
+		labelTabbar.setAttribute('disabled', true);
+	}
+	else {
+		itemTab.removeAttribute('disabled');
+		itemTabbar.removeAttribute('disabled');
+		labelTab.removeAttribute('disabled');
+		labelTabbar.removeAttribute('disabled');
+	}
+
+
+	gWheelScrollingPrefsData = {
+		wheelRoop : {
+			node : document.getElementById('wheelRoop')
+		},
+		wheelCount : {
+			node : document.getElementById('wheelCount')
+		}
+	};
+
+	gMiscGesturesPrefsData = {
+		delayToFocusTab : {
+			node : document.getElementById('delayToFocusTab')
+		},
+		tabFlipDelay : {
+			node : document.getElementById('tabFlipDelay')
+		},
+		tabFlipRoop : {
+			node : document.getElementById('tabFlipRoop')
+		}
+	};
+
+	controlLinkedItems(document.getElementById('focusPointedTab'));
+}
+
+
+function onSwitchTabsByWheelChange()
+{
+	var group = document.getElementById('switchTabsByWheel');
+	var enableCount = (group.selectedItem.getAttribute('value') == 'true');
+
+	var node = document.getElementById('advancedWheelScrolling');
+	var i;
+	if (enableCount) {
+		node.removeAttribute('disabled');
+	}
+	else {
+		node.setAttribute('disabled', true);
+	}
+}
+
+
+]]></script>
+
+
+
+<deck id="tabPrefsDeck">
+<box orient="vertical">
+
+	<tabbox orient="vertical">
+		<tabs>
+			<tab label="&tabPref.gestures.click.group;"/>
+			<tab label="&tabPref.gestures.click.tabbar.group;"/>
+		</tabs>
+		<tabpanels>
+
+	<tabpanel flex="1">
+		<grid flex="1">
+			<columns>
+				<column flex="1"/>
+				<column flex="1"/>
+				<column flex="1"/>
+			</columns>
+			<rows>
+				<row align="center">
+					<label value="&tabPref.gestures.click.tab.double;"
+						control="onTabDblClick"/>
+					<label value="&tabPref.gestures.click.tab.middle;"
+						id="onTabMiddleClickLabel"
+						control="onTabMiddleClick"/>
+					<label value="&tabPref.gestures.click.tab.right;"
+						control="onTabRightClick"/>
+				</row>
+				<row align="center">
+					<menulist id="onTabDblClick"
+						prefstring="browser.tabs.extensions.ondblclick"
+						template="onTabClickItemsTemplate"
+						datasources="chrome://tabextensions/content/tabsContextMenuItems.rdf"
+						ref="chrome://tabextensions/content/tabsContextMenuItems.rdf#urn:tabsContextMenuItems:root">
+						<menupopup>
+							<menuitem label="&ontabclick.default;" value="0"/>
+							<menuseparator/>
+						</menupopup>
+					</menulist>
+					<menulist id="onTabMiddleClick"
+						prefstring="browser.tabs.extensions.onmiddleclick"
+						template="onTabClickItemsTemplate"
+						datasources="chrome://tabextensions/content/tabsContextMenuItems.rdf"
+						ref="chrome://tabextensions/content/tabsContextMenuItems.rdf#urn:tabsContextMenuItems:root">
+						<menupopup>
+							<menuitem label="&ontabclick.default;" value="0"/>
+							<menuseparator/>
+						</menupopup>
+					</menulist>
+					<menulist id="onTabRightClick"
+						prefstring="browser.tabs.extensions.onrightclick"
+						template="onTabClickItemsTemplate"
+						datasources="chrome://tabextensions/content/tabsContextMenuItems.rdf"
+						ref="chrome://tabextensions/content/tabsContextMenuItems.rdf#urn:tabsContextMenuItems:root">
+						<menupopup>
+							<menuitem label="&ontabclick.showcontextmenu;" value="-1"/>
+							<menuseparator/>
+							<menuitem label="&ontabclick.default;"         value="0"/>
+							<menuseparator/>
+						</menupopup>
+					</menulist>
+				</row>
+				<row align="center">
+					<label value="&tabPref.gestures.click.tab.shift;"
+						control="onTabShiftClick"/>
+					<label value="&tabPref.gestures.click.tab.ctrl;"
+						control="onTabCtrlClick"/>
+					<label value="&tabPref.gestures.click.tab.alt;"
+						control="onTabAltClick"/>
+				</row>
+				<row align="center">
+					<menulist id="onTabShiftClick"
+						prefstring="browser.tabs.extensions.onshiftclick"
+						template="onTabClickItemsTemplate"
+						datasources="chrome://tabextensions/content/tabsContextMenuItems.rdf"
+						ref="chrome://tabextensions/content/tabsContextMenuItems.rdf#urn:tabsContextMenuItems:root">
+						<menupopup>
+							<menuitem label="&ontabclick.default;" value="0"/>
+							<menuseparator/>
+						</menupopup>
+					</menulist>
+					<menulist id="onTabCtrlClick"
+						prefstring="browser.tabs.extensions.onctrlclick"
+						template="onTabClickItemsTemplate"
+						datasources="chrome://tabextensions/content/tabsContextMenuItems.rdf"
+						ref="chrome://tabextensions/content/tabsContextMenuItems.rdf#urn:tabsContextMenuItems:root">
+						<menupopup>
+							<menuitem label="&ontabclick.default;" value="0"/>
+							<menuseparator/>
+						</menupopup>
+					</menulist>
+					<menulist id="onTabAltClick"
+						prefstring="browser.tabs.extensions.onaltclick"
+						template="onTabClickItemsTemplate"
+						datasources="chrome://tabextensions/content/tabsContextMenuItems.rdf"
+						ref="chrome://tabextensions/content/tabsContextMenuItems.rdf#urn:tabsContextMenuItems:root">
+						<menupopup>
+							<menuitem label="&ontabclick.default;"         value="0"/>
+							<menuseparator/>
+						</menupopup>
+					</menulist>
+				</row>
+			</rows>
+		</grid>
+		<data maclabel-for="onTabCtrlClickLabel" value="&tabPref.gestures.click.tab.ctrl.mac;"/>
+	</tabpanel>
+
+	<tabpanel flex="1">
+		<grid flex="1">
+			<columns>
+				<column flex="1"/>
+				<column flex="1"/>
+				<column flex="1"/>
+			</columns>
+			<rows>
+				<row align="center">
+					<label value="&tabPref.gestures.click.tabbar.double;"
+						control="onTabbarDblClick"/>
+					<label value="&tabPref.gestures.click.tabbar.middle;"
+						id="onTabbarMiddleClickLabel"
+						control="onTabbarMiddleClick"/>
+					<label value="&tabPref.gestures.click.tabbar.right;"
+						control="onTabbarRightClick"/>
+				</row>
+				<row align="center">
+					<menulist id="onTabbarDblClick"
+						prefstring="browser.tabs.extensions.tabbar_ondblclick"
+						template="onTabClickItemsTemplate"
+						datasources="chrome://tabextensions/content/tabsContextMenuItems.rdf"
+						ref="chrome://tabextensions/content/tabsContextMenuItems.rdf#urn:tabsContextMenuItems:root">
+						<menupopup>
+							<menuitem label="&ontabclick.default;" value="0"/>
+							<menuseparator/>
+						</menupopup>
+					</menulist>
+					<menulist id="onTabbarMiddleClick"
+						prefstring="browser.tabs.extensions.tabbar_onmiddleclick"
+						template="onTabClickItemsTemplate"
+						datasources="chrome://tabextensions/content/tabsContextMenuItems.rdf"
+						ref="chrome://tabextensions/content/tabsContextMenuItems.rdf#urn:tabsContextMenuItems:root">
+						<menupopup>
+							<menuitem label="&ontabclick.default;" value="0"/>
+							<menuseparator/>
+						</menupopup>
+					</menulist>
+					<menulist id="onTabbarRightClick"
+						prefstring="browser.tabs.extensions.tabbar_onrightclick"
+						template="onTabClickItemsTemplate"
+						datasources="chrome://tabextensions/content/tabsContextMenuItems.rdf"
+						ref="chrome://tabextensions/content/tabsContextMenuItems.rdf#urn:tabsContextMenuItems:root">
+						<menupopup>
+							<menuitem label="&ontabclick.showcontextmenu;" value="-1"/>
+							<menuseparator/>
+							<menuitem label="&ontabclick.default;"         value="0"/>
+							<menuseparator/>
+						</menupopup>
+					</menulist>
+				</row>
+				<row align="center">
+					<label value="&tabPref.gestures.click.tabbar.shift;"
+						control="onTabbarShiftClick"/>
+					<label value="&tabPref.gestures.click.tabbar.ctrl;"
+						control="onTabbarCtrlClick"/>
+					<label value="&tabPref.gestures.click.tabbar.alt;"
+						control="onTabbarAltClick"/>
+				</row>
+				<row align="center">
+					<menulist id="onTabbarShiftClick"
+						prefstring="browser.tabs.extensions.tabbar_onshiftclick"
+						template="onTabClickItemsTemplate"
+						datasources="chrome://tabextensions/content/tabsContextMenuItems.rdf"
+						ref="chrome://tabextensions/content/tabsContextMenuItems.rdf#urn:tabsContextMenuItems:root">
+						<menupopup>
+							<menuitem label="&ontabclick.default;" value="0"/>
+							<menuseparator/>
+						</menupopup>
+					</menulist>
+					<menulist id="onTabbarCtrlClick"
+						prefstring="browser.tabs.extensions.tabbar_onctrlclick"
+						template="onTabClickItemsTemplate"
+						datasources="chrome://tabextensions/content/tabsContextMenuItems.rdf"
+						ref="chrome://tabextensions/content/tabsContextMenuItems.rdf#urn:tabsContextMenuItems:root">
+						<menupopup>
+							<menuitem label="&ontabclick.default;" value="0"/>
+							<menuseparator/>
+						</menupopup>
+					</menulist>
+					<menulist id="onTabbarAltClick"
+						prefstring="browser.tabs.extensions.tabbar_onaltclick"
+						template="onTabClickItemsTemplate"
+						datasources="chrome://tabextensions/content/tabsContextMenuItems.rdf"
+						ref="chrome://tabextensions/content/tabsContextMenuItems.rdf#urn:tabsContextMenuItems:root">
+						<menupopup>
+							<menuitem label="&ontabclick.default;"         value="0"/>
+							<menuseparator/>
+						</menupopup>
+					</menulist>
+				</row>
+			</rows>
+		</grid>
+		<data maclabel-for="onTabbarCtrlClickLabel" value="&tabPref.gestures.click.tabbar.ctrl.mac;"/>
+	</tabpanel>
+
+		</tabpanels>
+	</tabbox>
+
+	<groupbox>
+		<caption label="&tabPref.gestures.wheel.label;"/>
+		<radiogroup id="switchTabsByWheel"
+			prefstring="browser.tabs.extensions.switch_tabs_by_wheel"
+			preftype="bool"
+			orient="vertical"
+			oncommand="onSwitchTabsByWheelChange();">
+			<radio value="false" label="&tabPref.gestures.wheel.scroll;"/>
+			<box orient="horizontal">
+				<radio value="true"  label="&tabPref.gestures.wheel.switch;"/>
+				<button id="advancedWheelScrolling"
+					label="&tabPref.gestures.wheel.switch.go;"
+					oncommand="advancedPrefs('chrome://tabextensions/content/pref/advancedWheelScrolling.xul', gWheelScrollingPrefsData);"/>
+				<box collapsed="true">
+					<checkbox id="wheelRoop"
+						prefstring="browser.tabs.extensions.switch_tabs_by_wheel.roop"/>
+					<textbox id="wheelCount"
+						prefstring="browser.tabs.extensions.switch_tabs_by_wheel.count"
+						preftype="int"/>
+				</box>
+			</box>
+		</radiogroup>
+	</groupbox>
+
+	<groupbox>
+		<caption label="&tabPref.gestures.misc.group;"/>
+		<checkbox id="focusPointedTab"
+			label="&tabPref.gestures.point;"
+			prefstring="browser.tabs.extensions.focus_with_mouseover"
+			flex="1"/>
+		<checkbox id="focusTabOnDrag"
+			label="&tabPref.gestures.focusTabOnDrag;"
+			prefstring="browser.tabs.extensions.focus_with_drag"
+			flex="1"/>
+		<checkbox id="tabFlip"
+			label="&tabPref.gestures.tabFlip.enabled;"
+			prefstring="browser.tabs.extensions.tabFlip"
+			flex="1"/>
+		<box orient="horizontal">
+			<spacer flex="1"/>
+			<button id="advancedMiscGestures"
+				label="&tabPref.gestures.advanced.go;"
+				oncommand="advancedPrefs('chrome://tabextensions/content/pref/advancedMiscGestures.xul', gMiscGesturesPrefsData);"/>
+		</box>
+		<box collapsed="true">
+			<textbox id="delayToFocusTab"
+				prefstring="browser.tabs.extensions.focus_with_mouseover.delay"
+				preftype="int"/>
+			<textbox id="tabFlipDelay"
+				prefstring="browser.tabs.extensions.tabFlip.delay"
+				preftype="int"/>
+			<checkbox id="tabFlipRoop"
+				prefstring="browser.tabs.extensions.tabFlip.roop"/>
+		</box>
+	</groupbox>
+
+</box>
+<box orient="vertical">
+	<description flex="1">
+		&tabPrefsDisabled;
+	</description>
+</box>
+</deck>
+
+	<spacer flex="1"/>
+
+
+	<box id="tabextensionsAboutBox"/>
+
+</page>

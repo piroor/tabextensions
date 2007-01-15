@@ -1,0 +1,23 @@
+<!ENTITY tabPref.close.title       "タブを閉じる時の挙動">
+
+
+<!ENTITY tabPref.closeTab.group  "「タブを閉じる」の動作">
+
+
+<!ENTITY dirOfClosing.label          "現在のタブを閉じた時の挙動">
+
+<!ENTITY dirOfClosing.rtl.horizontal "すぐ左に移る"><!-- 旧デフォルト -->
+<!ENTITY dirOfClosing.rtl.vertical   "すぐ上に移る">
+<!ENTITY dirOfClosing.ltr.horizontal "すぐ右に移る"><!-- 現デフォルト -->
+<!ENTITY dirOfClosing.ltr.vertical   "すぐ下に移る">
+<!ENTITY dirOfClosing.reverse        "閉じたタブよりも前に開いたタブに移る">
+<!ENTITY dirOfClosing.prev           "直前に選択していたタブに移る">
+
+<!ENTITY dirOfClosing.group.go     "詳細...">
+<!ENTITY dirOfClosing.group.title  "タブグループとの連携">
+<!ENTITY dirOfClosing.group        "同じグループのタブに優先的にフォーカスする">
+
+
+
+<!ENTITY closeWindowOnlyForTab.group "&quot;タブを閉じる&quot;の操作">
+<!ENTITY closeWindowOnlyForTab       "閉じられるタブがない場合、ブラウザウィンドウを閉じる">

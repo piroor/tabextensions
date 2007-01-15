@@ -1,0 +1,27 @@
+<!ENTITY tabPref.new.title "新しく開いたタブの初期設定">
+
+<!ENTITY tabPref.new.startup.group "初期ページ">
+
+<!ENTITY tabStartup.blank   "ブランク　ページ">
+<!ENTITY tabStartup.home    "ホーム　ページ">
+<!ENTITY tabStartup.last    "最後に表示したページ">
+<!ENTITY tabStartup.inherit "ブラウザの初期ページ">
+
+
+<!ENTITY tabPref.new.focus.group "「新しいタブ」コマンドの実行時">
+
+<!ENTITY loadInForeground "新しいタブを開く">
+<!ENTITY loadInBackground "新しいバックグラウンドのタブを開く">
+
+
+<!ENTITY tabPref.new.position.group "新しくタブを開く位置">
+<!ENTITY openTabIn.inherit          "デフォルト">
+<!ENTITY openTabIn.start.horizontal "左端">
+<!ENTITY openTabIn.left.horizontal  "すぐ左">
+<!ENTITY openTabIn.right.horizontal "すぐ右">
+<!ENTITY openTabIn.end.horizontal   "右端">
+<!ENTITY openTabIn.start.vertical   "上端">
+<!ENTITY openTabIn.left.vertical    "すぐ上">
+<!ENTITY openTabIn.right.vertical   "すぐ下">
+<!ENTITY openTabIn.end.vertical     "下端">
+<!ENTITY openTabIn.desc             "※タブグループモードではグループ内での位置になります">

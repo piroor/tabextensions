@@ -1,0 +1,24 @@
+<!ENTITY tabPref.location.title "場所ツールバーの挙動">
+
+
+<!ENTITY tabPref.location.load.group   "場所ツールバーの動作">
+<!ENTITY tabPref.location.load.current "現在のタブで開く">
+<!ENTITY tabPref.location.load.newtab  "新しいタブで開く">
+<!ENTITY tabPref.location.load.newtabBackground "新しいバックグラウンドのタブで開く">
+
+<!ENTITY advancedLocationPrefs.go    "詳細...">
+<!ENTITY advancedLocationPrefs.title "場所ツールバーの特殊な動作">
+
+<!ENTITY tabPref.location.modifierKeyEnter.group   "場所ツールバーでの入力をCtrl-Enter（またはMeta-Enter）で確定した場合の動作">
+<!ENTITY tabPref.location.modifierKeyEnter.group.newType   "場所ツールバーでの入力をAlt-Enterで確定した場合の動作">
+<!ENTITY tabPref.location.modifierKeyEnter.none    "何もしない">
+<!ENTITY tabPref.location.modifierKeyEnter.current "現在のタブで開く">
+<!ENTITY tabPref.location.modifierKeyEnter.newtab  "新しいタブで開く">
+<!ENTITY tabPref.location.modifierKeyEnter.newtabBackground "新しいバックグラウンドのタブで開く">
+
+<!ENTITY tabPref.location.foreignDomain.group   "現在のタブと異なるサイトのページを読み込む場合の動作">
+<!ENTITY tabPref.location.foreignDomain.current "通常どおり開く">
+<!ENTITY tabPref.location.foreignDomain.newtab  "新しいタブで開く">
+<!ENTITY tabPref.location.foreignDomain.newtabBackground "新しいバックグラウンドのタブで開く">
+
+

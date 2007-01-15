@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://tabextensions/content/pref/prefOverlay.css" type="text/css"?>
+<?xul-overlay href="chrome://tabextensions/content/globalOverlay.xul"?>
+
+<!DOCTYPE page SYSTEM "chrome://tabextensions/locale/pref/history.dtd">
+
+<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	windowtype="tabextensions:advancedGoToHistoryIndexPrefs"
+	orient="vertical"
+	title="&advancedGoToHistoryIndexPrefs.title;"
+	buttons="accept,cancel"
+	ondialogaccept="apply();"
+	ondialogcancel="cancel();"
+	onload="init();">
+
+
+<script type="application/x-javascript" src="chrome://tabextensions/content/pref/prefOverlay.js"/>
+<script type="application/x-javascript" src="chrome://tabextensions/content/pref/advancedPrefs.js"/>
+
+<box orient="vertical"
+	oncommand="onCommand(event)">
+
+	<groupbox>
+		<caption id="caption"
+			label="&tabPref.goToHistoryIndex.middleClick.group;"/>
+		<radiogroup id="goToHistoryIndexMiddleClickBehavior"
+			orient="horizontal">
+			<box orient="vertical">
+				<radio value="-1" label="&tabPref.goToHistoryIndex.middleClick.none;"/>
+				<spacer flex="1"/>
+			</box>
+			<box orient="vertical">
+				<radio value="0" label="&tabPref.goToHistoryIndex.middleClick.current;"/>
+				<radio value="1" label="&tabPref.goToHistoryIndex.middleClick.newtab;"/>
+				<radio value="2" label="&tabPref.goToHistoryIndex.middleClick.newtabBackground;"/>
+			</box>
+		</radiogroup>
+	</groupbox>
+	<data maclabel-for="caption" value="&tabPref.goToHistoryIndex.middleClick.group.mac;"/>
+
+</box>
+
+
+</dialog>

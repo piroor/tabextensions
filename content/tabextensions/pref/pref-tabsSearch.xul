@@ -1,0 +1,128 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
+<?xul-overlay href="chrome://tabextensions/content/pref/prefOverlay.xul"?>
+
+<!DOCTYPE page SYSTEM "chrome://tabextensions/locale/pref/search.dtd">
+
+<page
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	orient="vertical"
+	headertitle="&tabPref.search.title;"
+	onload="init();">
+
+
+	<script type="application/x-javascript"><![CDATA[
+
+if (!('_elementIDs' in window) || !window._elementIDs)
+	var _elementIDs = [];
+
+_elementIDs = _elementIDs.concat([
+	'contextSearchBehavior',
+	'useSearchBoxForContextSearch',
+	'searchBehavior',
+	'searchModifierKeyEnterBehavior',
+	'searchForeignDomainBehavior'
+]);
+
+var gSearchBoxPrefsData;
+
+function init()
+{
+
+	window.parent.initPanel(location.href);
+
+	var searchBox = document.getElementById('searchBox');
+	var advancedSearch = document.getElementById('advancedSearchBoxPrefs').parentNode;
+	var useCurrentEngine = document.getElementById('useSearchBoxForContextSearch');
+	if (TabbrowserService.isNewTypeBrowser) {
+		searchBox.removeAttribute('collapsed');
+		advancedSearch.removeAttribute('hidden');
+		useCurrentEngine.removeAttribute('hidden');
+	}
+	else {
+		searchBox.setAttribute('collapsed', true);
+		advancedSearch.setAttribute('hidden', true);
+		useCurrentEngine.setAttribute('hidden', true);
+	}
+
+
+	var winHookMode = Number(getModifiedValue('browser.tabs.extensions.window_hook_mode', 'chrome://tabextensions/content/pref/pref-tabsGeneral.xul'));
+	var radio = document.getElementById('contextSearchBehaviorNewWindowItem');
+	if (winHookMode == 2)
+		radio.setAttribute('disabled', true);
+	else
+		radio.removeAttribute('disabled');
+
+
+
+	gSearchBoxPrefsData = {
+		searchModifierKeyEnterBehavior : {
+			node : document.getElementById('searchModifierKeyEnterBehavior')
+		},
+		searchForeignDomainBehavior : {
+			node : document.getElementById('searchForeignDomainBehavior')
+		}
+	};
+}
+
+	]]></script>
+
+	<groupbox id="searchBox">
+		<caption label="&tabPref.search.load.group;"/>
+		<vbox>
+		<radiogroup id="searchBehavior"
+			preftype="int"
+			prefstring="browser.tabs.opentabfor.searchbar.behavior">
+			<radio value="0" label="&tabPref.search.load.current;"/>
+			<radio value="1" label="&tabPref.search.load.newtab;"/>
+			<radio value="2" label="&tabPref.search.load.newtabBackground;"/>
+		</radiogroup>
+		<box orient="horizontal">
+			<spacer flex="1"/>
+			<button id="advancedSearchBoxPrefs"
+				label="&advancedSearchBoxPrefs.go;"
+				oncommand="advancedPrefs('chrome://tabextensions/content/pref/advancedSearchBoxPrefs.xul', gSearchBoxPrefsData);"/>
+			<box collapsed="true">
+				<textbox id="searchModifierKeyEnterBehavior"
+					prefstring="browser.tabs.opentabfor.searchbar.modifierKeyEnterBehavior"
+					preftype="int"/>
+				<textbox id="searchForeignDomainBehavior"
+					prefstring="browser.tabs.opentabfor.searchbar.foreignDomainBehavior"
+					preftype="int"/>
+			</box>
+		</box>
+		</vbox>
+	</groupbox>
+
+	<groupbox>
+		<caption label="&tabPref.search.context.group;"/>
+		<vbox>
+		<radiogroup id="contextSearchBehavior"
+			preftype="int"
+			prefstring="browser.tabs.opentabfor.contextsearch.behavior"
+			orient="horizontal">
+			<box orient="vertical">
+				<radio value="-1" label="&tabPref.search.context.default;"/>
+				<spacer flex="1"/>
+			</box>
+			<box orient="vertical">
+				<radio value="0"  label="&tabPref.search.context.current;"/>
+				<radio value="1"  label="&tabPref.search.context.newtab;"/>
+				<radio value="2"  label="&tabPref.search.context.newtabBackground;"/>
+				<radio value="3"  label="&tabPref.search.context.newwindow;"
+					id="contextSearchBehaviorNewWindowItem"/>
+			</box>
+		</radiogroup>
+		<checkbox id="useSearchBoxForContextSearch"
+			label="&tabPref.search.context.useSearchBox;"
+			prefstring="browser.tabs.opentabfor.contextsearch.useSearchBox"/>
+		</vbox>
+	</groupbox>
+
+	<spacer flex="1"/>
+
+	<box id="tabextensionsAboutBox"/>
+
+</page>

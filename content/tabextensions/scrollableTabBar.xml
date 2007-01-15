@@ -1,0 +1,978 @@
+<?xml version="1.0"?> 
+ 
+<bindings id="scrollableTabBarBindings" 
+	xmlns="http://www.mozilla.org/xbl"
+	xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	xmlns:xbl="http://www.mozilla.org/xbl"
+	xmlns:html="http://www.w3.org/1999/xhtml">
+	
+<binding id="tabbrowser" 
+	extends="chrome://tabextensions/content/tabextensions.xml#tabbrowser">
+	
+	<implementation> 
+	
+<!-- properties --> 
+	
+		<field name="scrollTabbarToEdgeTimeout"> 
+			800
+		</field>
+ 
+		<property name="mScrollbar"> 
+			<getter><![CDATA[
+				if (!this.mScrollbarInternal) return this.mOuterScrollbar;
+
+				var maxPos = this.mScrollbarInternal.getAttribute('maxpos');
+				return (!maxPos || maxPos == '0') ? this.mOuterScrollbar : this.mScrollbarInternal ;
+			]]></getter>
+			<setter><![CDATA[
+				this.mScrollbarInternal = val;
+				return val;
+			]]></setter>
+		</property>
+		<field name="mScrollbarInternal"> 
+			null
+		</field>
+		<field name="mOuterScrollbar">
+			null
+		</field>
+		<field name="mScrollbuttonStart">
+			null
+		</field>
+		<field name="mScrollbuttonEnd">
+			null
+		</field>
+		<field name="scrollboxSpacers">
+			new Array()
+		</field>
+		<field name="mTabbarMouseScrollCounter">
+			0
+		</field>
+ 
+		<property name="tabbarXOffset" readonly="true"> 
+			<getter><![CDATA[
+				return (!this.mScrollbar || this.mTabBox.orient != 'vertical') ? 0 :
+						this.mGetScrollPosition(this.mScrollbar).curPos ;
+			]]></getter>
+		</property>
+ 
+		<property name="tabbarYOffset" readonly="true"> 
+			<getter><![CDATA[
+				return (!this.mScrollbar || this.mTabBox.orient != 'horizontal') ? 0 :
+						this.mGetScrollPosition(this.mScrollbar).curPos ;
+			]]></getter>
+		</property>
+ 
+		<property name="multirowTabbarYOffset" readonly="true"> 
+			<getter><![CDATA[
+				if (this.getAttribute('tabbar-overflow') != 'true')
+					return 0;
+
+				var scrollbar = this.mOuterScrollbar || this.mScrollbar;
+				return (!scrollbar || this.mTabBox.orient != 'vertical') ?
+							0 :
+							this.mGetScrollPosition(scrollbar).curPos ;
+			]]></getter>
+		</property>
+  
+		<method name="mGetScrollPosition"> 
+			<parameter name="aScrollbar"/>
+			<body><![CDATA[
+				var scrollbar    = aScrollbar || this.mScrollbar;
+				var isHorizontal = (this.getAttribute('tab-scrollbar') != 'multirow') && (this.mTabbarPlace < 2);
+
+				var posInfo = {
+						curPos   : -1,
+						maxPos   : -1,
+						posProp  : (isHorizontal ? 'x'     : 'y' ),
+						sizeProp : (isHorizontal ? 'width' : 'height' ),
+						orient   : (isHorizontal ? 'horizontal' : 'vertical' )
+					};
+
+				if (this.mTabContainerInnerBox.scrollBox) {
+					var x = {};
+					var y = {};
+					this.mTabContainerInnerBox.scrollBox.boxObject
+						.QueryInterface(Components.interfaces.nsIScrollBoxObject)
+						.getPosition(x, y);
+
+					posInfo.curPos = (isHorizontal ? x : y ).value;
+				}
+				else {
+					if (!scrollbar) {
+						posInfo.curPos = 0;
+						posInfo.maxPos = 0;
+						return posInfo;
+					}
+
+					posInfo.curPos = scrollbar.getAttribute('curpos');
+					posInfo.maxPos = scrollbar.getAttribute('maxpos');
+
+					if (!posInfo.curPos) {
+						posInfo.curPos = 0;
+					}
+					else {
+						posInfo.curPos = Number(posInfo.curPos);
+					}
+
+					if (!posInfo.maxPos || posInfo.maxPos == '0')
+						posInfo.maxPos = -1;
+					else
+						posInfo.maxPos = Number(posInfo.maxPos);
+				}
+
+
+				if (posInfo.maxPos < 0) {
+					var tabs    = this.evaluateXPath('child::*[local-name() = "tab" and (not(@tab-collapsed) or not(@tab-collapsed="true"))]', this.mTabContainer);
+					var lastTab = tabs.snapshotItem(tabs.snapshotLength-1);
+					posInfo.maxPos = lastTab.boxObject[posInfo.posProp] + lastTab.boxObject[posInfo.sizeProp] - tabs.snapshotItem(0).boxObject[posInfo.posProp] - this.mTabContainerInnerBox.boxObject[posInfo.sizeProp];
+					posInfo.maxPos = Math.max(0, posInfo.maxPos, posInfo.curPos);
+				}
+
+				return posInfo;
+			]]></body>
+		</method>
+		<method name="mSetScrollPosition">
+			<parameter name="aPosition"/>
+			<parameter name="aScrollbar"/>
+			<body><![CDATA[
+				var scrollbar = aScrollbar || this.mScrollbar;
+
+				if (this.mTabContainerInnerBox.scrollBox) {
+					var x = 0,
+						y = 0;
+
+					var info = this.mGetScrollPosition();
+
+					if (info.orient == 'horizontal')
+						x = Math.min(Math.max(0, aPosition), info.maxPos);
+					else
+						y = Math.min(Math.max(0, aPosition), info.maxPos);
+
+					this.mTabContainerInnerBox.scrollBox.boxObject
+						.QueryInterface(Components.interfaces.nsIScrollBoxObject)
+						.scrollTo(x, y);
+				}
+
+				if (scrollbar)
+					scrollbar.setAttribute('curpos', Math.min(Math.max(0, aPosition), Number(scrollbar.getAttribute('maxpos'))));
+			]]></body>
+		</method>
+ 
+		<!-- To get correctly place of tab in "getDropPosition", we have to make a reference to the scrollbar... --> 
+		<method name="updateScrollbarFromEvent">
+			<parameter name="aEvent"/>
+			<body><![CDATA[
+				if (aEvent.originalTarget.localName.search(/^(thumb|slider|scrollbarbutton|scrollbar|nativescrollbar)$/) < 0)
+				return;
+
+				var scrollbar = aEvent.originalTarget;
+				while (scrollbar.localName != 'scrollbar')
+					scrollbar = scrollbar.parentNode;
+
+				if (scrollbar.parentNode == this.mTabContainerInnerBox)
+					this.mScrollbar = scrollbar;
+				else
+					this.mOuterScrollbar = scrollbar;
+			]]></body>
+		</method>
+ 
+		<!-- for tab scrollbar: when fails to handle "onoverflow" and "onunderflow" events --> 
+	
+		<method name="onTabsModified"> 
+			<body><![CDATA[
+				this.checkTabsOverflow(this);
+			]]></body>
+		</method>
+ 
+		<field name="checkTabsOverflowTimer"> 
+			null
+		</field>
+ 
+		<method name="checkTabsOverflow"> 
+			<parameter name="aTabBrowser"/>
+			<body><![CDATA[
+				var b = aTabBrowser || this ;
+
+				if (b.checkTabsOverflowTimer)
+					window.clearTimeout(b.checkTabsOverflowTimer);
+
+				b.checkTabsOverflowTimer = window.setTimeout(function() {
+					b.checkTabsOverflowCallback(b);
+					b = null;
+				}, 100);
+			]]></body>
+		</method>
+		<method name="checkTabsOverflowCallback">
+			<parameter name="aTabBrowser"/>
+			<body><![CDATA[
+				this.checkTabsOverflowTimer = null;
+
+				if (!aTabBrowser.getStripVisibility()) return;
+
+				try { // if the tab is still invisible, this section causes a fatal error.
+					var firstBox = aTabBrowser.mTabs[0].boxObject;
+					var lastBox  = aTabBrowser.mTabs[aTabBrowser.mTabs.length-1].boxObject;
+					var box      = aTabBrowser.mStrip.boxObject;
+
+					var overflow = false;
+					if (aTabBrowser.getAttribute('tab-scrollbar') == 'multirow' &&
+						aTabBrowser.getAttribute('tabs-overflow') == 'true') {
+						overflow = (firstBox.height*3/2 < box.height);
+					}
+					else {
+						if (aTabBrowser.mTabBox.orient == 'horizontal') { // left or right
+							if (firstBox.y < box.y ||
+								lastBox.y+lastBox.height > box.y+box.height)
+								overflow = true;
+						}
+						else {
+							if (firstBox.x < box.x ||
+								lastBox.x+lastBox.width > box.x+box.width)
+								overflow = true;
+						}
+					}
+					aTabBrowser.enterTabsOverflowMode(overflow);
+
+					aTabBrowser.updateScrollButtons();
+				}
+				catch(e) {
+				}
+			]]></body>
+		</method>
+ 
+		<method name="updateScrollButtons"> 
+			<body><![CDATA[
+				var posInfo = this.mGetScrollPosition(this.mScrollbar);
+
+				if (posInfo.curPos == 0)
+					this.mScrollbuttonStart.setAttribute('disabled', true);
+				else
+					this.mScrollbuttonStart.removeAttribute('disabled');
+
+				if (posInfo.curPos == posInfo.maxPos)
+					this.mScrollbuttonEnd.setAttribute('disabled', true);
+				else
+					this.mScrollbuttonEnd.removeAttribute('disabled');
+			]]></body>
+		</method>
+ 
+		<method name="enterTabsOverflowMode"> 
+			<parameter name="aOverflow"/>
+			<body><![CDATA[
+				var b = this;
+				if (aOverflow) {
+					if (b.getAttribute('tabs-overflow') != 'true') {
+						b.setAttribute('tabs-overflow', 'true');
+						window.setTimeout(function() {
+							b.selectedTab.selected = true;
+							b.checkMultirowTabbarOverflow();
+						}, 0);
+					}
+					else
+						b.checkMultirowTabbarOverflow();
+				}
+				else {
+					if (b.getAttribute('tabs-overflow') == 'true') {
+						b.setAttribute('tabs-overflow', 'false');
+						window.setTimeout(function() {
+							b.selectedTab.selected = true;
+						}, 0);
+					}
+					b.checkMultirowTabbarOverflow();
+				}
+			]]></body>
+		</method>
+ 
+		<method name="checkMultirowTabbarOverflow"> 
+			<body><![CDATA[
+					var tabbarBox   = this.mTabContainer.boxObject;
+					var firstTabBox = this.mTabs[0].boxObject;
+					var lastTabBox  = this.mTabs[this.mTabs.length-1].boxObject;
+
+					if (!this.mOneRowHeight || this.mOneRowHeight < firstTabBox.height)
+						this.mOneRowHeight = (firstTabBox.y + firstTabBox.height - tabbarBox.y);
+
+
+					var currentRow = (lastTabBox.y + lastTabBox.height - firstTabBox.y) + (this.mOneRowHeight - firstTabBox.height);
+
+					var maxRow;
+					try {
+						maxRow = this.mPrefs.getIntPref('browser.tabs.extensions.tabbar_max_row');
+					}
+					catch(e) {
+						maxRow = 0;
+					}
+
+					maxRow = this.mOneRowHeight * maxRow;
+
+
+					if (
+						this.getAttribute('tab-scrollbar') != 'multirow' ||
+						this.getAttribute('tabs-overflow') != 'true' ||
+						!maxRow ||
+						currentRow < (maxRow + parseInt(lastTabBox.height/2))
+						) {
+						if (this.getAttribute('tab-scrollbar') != 'multirow' ||
+							this.getAttribute('tabs-overflow') != 'true') {
+							this.mTabContainer.removeAttribute('height');
+							this.mTabContainer.removeAttribute('maxheight');
+						}
+						else {
+							this.mTabContainer.setAttribute('height',    currentRow);
+							this.mTabContainer.setAttribute('maxheight', currentRow);
+						}
+						this.setAttribute('tabbar-overflow', 'false');
+					}
+					else {
+						this.mTabContainer.setAttribute('height',    maxRow);
+						this.mTabContainer.setAttribute('maxheight', maxRow);
+						this.setAttribute('tabbar-overflow', 'true');
+					}
+			]]></body>
+		</method>
+		<field name="mOneRowHeight">
+			0
+		</field>
+  
+		<method name="autoScrollTabbar"> 
+			<parameter name="aEvent"/>
+			<parameter name="aAutoRepeat"/>
+			<body><![CDATA[
+				if (!this.mScrollbar) return;
+
+				var wait         = 80,
+					clientPos,
+					areaStartPos = 0,
+					areaSize     = 40,
+					waitPower    = 1,
+					maxPos;
+				var preventScroll;
+				if ( // multirow
+						this.getAttribute('tab-scrollbar') == 'multirow') {
+					if (this.getAttribute('tabbar-overflow') == 'true') {
+						clientPos    = aEvent.clientY;
+						maxPos       = this.mTabContainer.boxObject.height;
+						areaStartPos = this.mTabContainer.boxObject.y;
+						areaSize     = 15;
+						waitPower    = 0.5;
+					}
+					else
+						preventScroll = true;
+				}
+				else {
+					if (this.mTabBox.orient == 'horizontal') { // left or right
+						clientPos    = aEvent.clientY;
+						areaStartPos = this.mTabContainerInnerBox.boxObject.y;
+						maxPos       = this.mTabContainerInnerBox.boxObject.height;
+					}
+					else { // top or bottom
+						clientPos    = aEvent.clientX;
+						areaStartPos = this.mTabContainerInnerBox.boxObject.x;
+						maxPos       = this.mTabContainerInnerBox.boxObject.width;
+					}
+				}
+				if (!preventScroll) {
+					maxPos = areaStartPos + maxPos;
+
+					if (clientPos > areaStartPos && clientPos < areaStartPos+areaSize) {
+						if (clientPos < (areaSize*0.25))
+							wait = 10;
+						else if (clientPos < (areaSize*0.6))
+							wait = 40;
+						this.scrollTabbarWithDelay(-10, wait*waitPower, { autoRepeat : aAutoRepeat });
+						return;
+					}
+					else if (clientPos > maxPos-areaSize && clientPos < maxPos) {
+						if (clientPos > maxPos-(areaSize*0.25))
+							wait = 10;
+						else if (clientPos > maxPos-(areaSize*0.6))
+							wait = 40;
+						this.scrollTabbarWithDelay(10, wait*waitPower, { autoRepeat : aAutoRepeat });
+						return;
+					}
+				}
+
+				if (this.mAutoScrollTabbarTimer) {
+					window.clearTimeout(this.mAutoScrollTabbarTimer);
+					this.mAutoScrollTabbarTimer = null;
+				}
+			]]></body>
+		</method>
+ 
+		<method name="scrollTabbarWithDelay"> 
+			<parameter name="aCount"/>
+			<parameter name="aWait"/>
+			<parameter name="aInfo"/>
+			<body><![CDATA[
+				if (!aInfo) aInfo = {};
+
+				var b = aInfo.browser || this;
+				var t = (new Date()).getTime();
+				if(aWait === void(0)) aWait = 80;
+				if (
+					!aInfo.repeating &&
+					(
+						(!b.mScrollbar && !b.mOuterScrollbar) ||
+						(
+							b.mScrollLastTime &&
+							(t - b.mScrollLastTime) < aWait
+						)
+					)
+					)
+					return;
+
+				var scrollbar;
+				if (b.getAttribute('tabbar-overflow') != 'true' ||
+					!b.mOuterScrollbar) {
+					scrollbar = b.mScrollbar;
+				}
+				else {
+					scrollbar = b.mOuterScrollbar;
+					aCount = Math.min(aCount, b.selectedTab.boxObject.height);
+				}
+
+				var posInfo = b.mGetScrollPosition(scrollbar);
+				b.mSetScrollPosition(posInfo.curPos+aCount, scrollbar);
+
+				b.mScrollLastTime = t;
+
+				if (scrollbar == b.mScrollbar)
+					b.updateScrollButtons();
+
+
+				if (!aInfo.repeating && b.mAutoScrollTabbarTimer) {
+					window.clearTimeout(b.mAutoScrollTabbarTimer);
+					b.mAutoScrollTabbarTimer = null;
+				}
+				if (aInfo.autoRepeat) {
+					var interval = b.mPrefs.getBoolPref('browser.tabs.extensions.tabbar.smooth_scrolling') ?
+							b.mPrefs.getIntPref('browser.tabs.extensions.tabbar.smooth_scrolling.timeout') :
+							50 ;
+					b.mAutoScrollTabbarTimer = window.setTimeout(
+						arguments.callee,
+						interval,
+						aCount,
+						aWait,
+						{
+							autoRepeat : true,
+							browser    : b,
+							repeating  : true
+						}
+					);
+				}
+			]]></body>
+		</method>
+		<field name="mScrollLastTime">
+			0
+		</field>
+ 
+		<method name="scrollTabbarTo"> 
+			<parameter name="aEnd"/>
+			<body><![CDATA[
+				if (typeof aEnd != 'number') {
+					this.scrollTabbarToTab(aEnd);
+					return;
+				}
+
+
+				if (this.scrollTabbarToTimer) {
+					window.clearInterval(this.scrollTabbarToTimer);
+					this.scrollTabbarToTimer = null;
+				}
+
+				var scrollbar;
+				if (this.getAttribute('tabbar-overflow') != 'true' ||
+					!this.mOuterScrollbar)
+					scrollbar = this.mScrollbar;
+				else
+					scrollbar = this.mOuterScrollbar;
+
+				if (this.mPrefs.getBoolPref('general.smoothScroll') ||
+					this.mPrefs.getBoolPref('browser.tabs.extensions.tabbar.smooth_scrolling'))
+					this.scrollTabbarToTimer = window.setInterval(
+						this.scrollTabbarToCallback,
+						this.mPrefs.getIntPref('browser.tabs.extensions.tabbar.smooth_scrolling.interval'),
+						this,
+						scrollbar,
+						this.mGetScrollPosition(scrollbar).curPos,
+						aEnd,
+						(new Date()).getTime(),
+						this.mPrefs.getIntPref('browser.tabs.extensions.tabbar.smooth_scrolling.timeout')
+					);
+				else
+					this.mSetScrollPosition(aEnd, scrollbar);
+			]]></body>
+		</method>
+		<method name="scrollTabbarToCallback">
+			<parameter name="aTabBrowser"/>
+			<parameter name="aScrollbar"/>
+			<parameter name="aStart"/>
+			<parameter name="aEnd"/>
+			<parameter name="aStartTime"/>
+			<parameter name="aTimeout"/>
+			<body><![CDATA[
+				var posInfo = aTabBrowser.mGetScrollPosition(aScrollbar);
+				var newPos  = aStart + parseInt(
+						(aEnd - aStart) * (((new Date()).getTime() - aStartTime) / aTimeout)
+					);
+
+//dump(aStart + ' > '+aEnd+' : '+posInfo.curPos+' / '+posInfo.maxPos+' / '+(aStart + parseInt(
+//						(aEnd - aStart) * (((new Date()).getTime() - aStartTime) / aTimeout)
+//					))+'\n');
+
+
+				if (
+					aEnd - aStart > 0 ?
+						posInfo.curPos >= Math.min(aEnd, posInfo.maxPos) :
+						posInfo.curPos <= Math.max(aEnd, posInfo.maxPos)
+					) {
+					if (aTabBrowser.scrollTabbarToTimer) {
+						window.clearInterval(aTabBrowser.scrollTabbarToTimer);
+						aTabBrowser.scrollTabbarToTimer = null;
+					}
+					if (aScrollbar == aTabBrowser.mScrollbar)
+						aTabBrowser.updateScrollButtons();
+					return;
+				}
+
+				aTabBrowser.mSetScrollPosition(
+					newPos,
+					aScrollbar
+				);
+			]]></body>
+		</method>
+		<field name="scrollTabbarToTimer">
+			null
+		</field>
+ 
+		<method name="scrollTabbarToTab"> 
+			<parameter name="aTab"/>
+			<body><![CDATA[
+				if (!aTab) return;
+
+				var visibility = aTab.tabVisibility;
+				if (visibility == aTab.TAB_VISIBLE)
+					return;
+
+				var tabBox = aTab.boxObject;
+				var scrollbar = this.mOuterScrollbar || this.mScrollbar ;
+
+				// when the tab bar is not scrollable, do nothing!
+				if ((!this.mTabContainerInnerBox.scrollBox && !scrollbar) ||
+					(this.getAttribute('tabs-overflow') != 'true'))
+					return;
+
+				var posInfo = this.mGetScrollPosition(scrollbar);
+
+				var containerBox = this.mTabContainerInnerBox.boxObject;
+				var targetPos    = tabBox[posInfo.posProp]-containerBox[posInfo.posProp];
+
+				var endPosition = (visibility == aTab.TAB_SCROLLED_OUT_RIGHT || visibility == aTab.TAB_SCROLLED_OUT_BELOW) ?
+						Math.max(targetPos-parseInt(tabBox[posInfo.sizeProp]*0.5), 0) :
+						Math.min(targetPos-containerBox[posInfo.sizeProp]+parseInt(tabBox[posInfo.sizeProp]*1.5), posInfo.maxPos) ;
+
+				this.scrollTabbarTo(endPosition);
+
+				if (scrollbar == this.mScrollbar)
+					this.updateScrollButtons();
+			]]></body>
+		</method>
+		<method name="mGetTabVisibility">
+			<parameter name="aTab"/>
+			<body><![CDATA[
+				while (aTab && aTab.tabCollapsed)
+					aTab = aTab.parentTab;
+
+				if (!aTab) return this.selectedTab.TAB_VISIBLE;
+
+				var posInfo = this.mGetScrollPosition(this.mOuterScrollbar || this.mScrollbar);
+
+				var tabBox       = aTab.boxObject;
+				var containerBox = this.mTabContainerInnerBox.boxObject;
+				var targetPos    = tabBox[posInfo.posProp]-containerBox[posInfo.posProp];
+
+				if (posInfo.curPos > targetPos+tabBox[posInfo.sizeProp]) {
+					return (posInfo.orient == 'horizontal') ? aTab.TAB_SCROLLED_OUT_LEFT : aTab.TAB_SCROLLED_OUT_ABOVE ;
+				}
+				else if (posInfo.curPos+containerBox[posInfo.sizeProp] < targetPos) {
+					return (posInfo.orient == 'horizontal') ? aTab.TAB_SCROLLED_OUT_RIGHT : aTab.TAB_SCROLLED_OUT_BELOW ;
+				}
+
+				return aTab.TAB_VISIBLE;
+			]]></body>
+		</method>
+ 
+		<method name="scrollTabbarToTabGroupOf"> 
+			<parameter name="aTab"/>
+			<parameter name="aThis"/>
+			<body><![CDATA[
+				if (!aTab) return;
+				var b = aThis || this;
+
+				var tabs = aTab.descendantTabs;
+				if (!tabs.length) return;
+
+				var xpathResult = b.evaluateXPath(
+						'child::*[local-name() = "tab" and @tab-collapseExpand-animating = "true"]',
+						b.mTabContainer
+					);
+				if (xpathResult.snapshotLength) {
+					window.setTimeout(arguments.callee, 100, aTab, b);
+					return;
+				}
+
+				tabs.push(aTab);
+				tabs.sort(b.conpareTabOrder);
+
+				var firstTab = tabs[0];
+				var lastTab  = tabs[tabs.length-1];
+
+				var firstTabVisibility = firstTab.tabVisibility;
+				var lastTabVisibility  = lastTab.tabVisibility;
+
+				if (firstTabVisibility == firstTab.TAB_VISIBLE &&
+					lastTabVisibility  == lastTab.TAB_VISIBLE) {
+					return;
+				}
+				else {
+					if (b.getAttribute('tabs-overflow') != 'true') {
+						window.setTimeout(arguments.callee, 100, aTab, b);
+						return;
+					}
+
+					if (firstTabVisibility < 0) {
+						b.scrollTabbarToTab(firstTab);
+					}
+					else {
+						var posProp = (firstTabVisibility % 2) || (lastTabVisibility % 2) ? 'x' : 'y' ;
+						var sizeProp = (posProp == 'x') ? 'width' : 'height' ;
+						var offset  = b.mTabs[0].boxObject[posProp];
+
+						var outOfRange = (b.mTabContainerInnerBox.boxObject[sizeProp] < (lastTab.boxObject[posProp] - firstTab.boxObject[posProp] + firstTab.boxObject[sizeProp]));
+						if (outOfRange) {
+							b.scrollTabbarTo(firstTab.boxObject[posProp]-offset);
+						}
+						else {
+							b.scrollTabbarToTab(lastTab);
+						}
+					}
+				}
+			]]></body>
+		</method>
+ 
+<!-- scroll to top or end --> 
+	
+		<method name="startScrollToEdgeTimer"> 
+			<parameter name="aEvent"/>
+			<body><![CDATA[
+				var tabid = aEvent.target.getAttribute('tabid');
+				var target;
+				var b = this;
+				switch (tabid)
+				{
+					case 'scroll-button-start':
+						target = b.mTabs[0];
+						break;
+					case 'scroll-button-end':
+						target = b.mTabs[b.mTabs.length-1];
+						break;
+					default:
+						return;
+				}
+
+				var shouldMoveFocus = this.mPrefs.getBoolPref('browser.tabs.extensions.switch_tabs_by_wheel');
+				this.mScrollToEdgeTimeoutTimer = window.setTimeout(
+					function()
+					{
+						b.scrollTabbarToTab(target);
+						if (shouldMoveFocus) b.selectedTab = target;
+					},
+					this.scrollTabbarToEdgeTimeout
+				);
+			]]></body>
+		</method>
+	
+		<field name="mScrollToEdgeTimeoutTimer"> 
+			null
+		</field>
+  
+		<method name="clearScrollToEdgeTimer"> 
+			<body><![CDATA[
+				window.clearTimeout(this.mScrollToEdgeTimeoutTimer);
+			]]></body>
+		</method>
+  
+	</implementation> 
+  
+	<handlers> 
+	
+		<!-- catch "onoverflow" dispatched by the tab-bar --> 
+		<handler event="overflow"><![CDATA[
+			try {
+				var eventWrapper = new XPCNativeWrapper(event, 'target', 'originalTarget');
+
+				if (
+					!this.mTabContainerInnerBox ||
+					!(
+						eventWrapper.target == document ||
+						(
+							'ownerDocument' in aEventWrapper.target &&
+							(new XPCNativeWrapper(eventWrapper.target, 'ownerDocument')).ownerDocument == document
+						)
+					) ||
+					this.getAttribute('tabs-overflow') == 'true'
+					)
+					return
+
+				if (eventWrapper.originalTarget) {
+					var win = /^\[object .*Window\]$/.test(String(eventWrapper.originalTarget)) ?
+								eventWrapper.originalTarget :
+							/^\[object .*Document\]$/.test(String(eventWrapper.originalTarget)) ?
+								(new XPCNativeWrapper(eventWrapper.originalTarget, 'defaultView')).defaultView :
+								(new XPCNativeWrapper((new XPCNativeWrapper(eventWrapper.originalTarget, 'ownerDocument')).ownerDocument, 'defaultView')).defaultView ;
+					if (!win) return
+
+					win = (new XPCNativeWrapper(win, 'top')).top;
+					if (win != Components.lookupMethod(window, 'top').call(window))
+						return;
+				}
+			}
+			catch(e) {
+				return;
+			}
+
+			this.checkTabsOverflow(this);
+		]]></handler>
+		<handler event="underflow"><![CDATA[
+			try {
+				var target = (new XPCNativeWrapper(event, 'originalTarget')).originalTarget;
+				if (!this.mTabContainerInnerBox ||
+					this.getAttribute('tabs-overflow') != 'true')
+					return;
+
+				if (target) {
+						var win = /^\[object .*Window\]$/.test(String(target)) ?
+									target :
+								/^\[object .*Document\]$/.test(String(target)) ?
+									(new XPCNativeWrapper(target, 'defaultView')).defaultView :
+									(new XPCNativeWrapper((new XPCNativeWrapper(target, 'ownerDocument')).ownerDocument, 'defaultView')).defaultView ;
+						if (!win) return
+
+						win = (new XPCNativeWrapper(win, 'top')).top;
+						if (win != Components.lookupMethod(window, 'top').call(window))
+							return;
+				}
+			}
+			catch(e) {
+				return;
+			}
+
+			this.checkTabsOverflow(this);
+		]]></handler>
+ 
+		<handler event="DOMMouseScroll"><![CDATA[ 
+			var node = event.originalTarget;
+			while (node.parentNode &&
+				node != this.mTabContainer &&
+				node != this)
+				node = node.parentNode;
+
+			if (node != this.mTabContainer) return;
+
+			var shouldMoveFocus = this.mPrefs.getBoolPref('browser.tabs.extensions.switch_tabs_by_wheel');
+			if (event.altKey)
+				shouldMoveFocus = !shouldMoveFocus;
+
+			if (shouldMoveFocus) {
+				// if the direction changed, reset the counter.
+				if (this.mTabbarMouseScrollCounter * event.detail < 0)
+					this.mTabbarMouseScrollCounter = 0;
+
+				this.mTabbarMouseScrollCounter += (event.detail > 0 ? 1 : -1);
+				if (Math.abs(this.mTabbarMouseScrollCounter/this.mPrefs.getIntPref('browser.tabs.extensions.switch_tabs_by_wheel.count')) >= 1) {
+					this.mTabbarMouseScrollCounter = 0;
+					if (
+						this.mPrefs.getBoolPref('browser.tabs.extensions.switch_tabs_by_wheel.roop') ||
+						(event.detail > 0 ?
+							(this.selectedTab.tabIndex < this.mTabs.length-1) :
+							(this.selectedTab.tabIndex > 0)
+						)
+						) {
+						this.mTabContainer.advanceSelectedTab(event.detail > 0 ? 1 : -1 );
+					}
+				}
+			}
+			else
+				this.scrollTabbarWithDelay(event.detail > 0 ? 50 : -50 , 0);
+		]]></handler>
+ 
+	</handlers> 
+  
+</binding> 
+  
+<!-- scrollbar --> 
+<binding id="scrollbar"
+	extends="chrome://global/content/bindings/scrollbar.xml#scrollbar">
+	<implementation>
+		<constructor><![CDATA[
+			if (navigator.platform.indexOf('Mac') != -1)
+				this.initScrollbar();
+
+			var node = this.parentNode;
+			while (node.localName != 'tabbrowser' && node.parentNode)
+				node = node.parentNode;
+
+			if (node.localName == 'tabbrowser') {
+				if (!node.mScrollbar && this.parentNode.getAttribute('tabs-scrollbox') == 'true')
+					node.mScrollbar = this;
+				else
+					node.mOuterScrollbar = this;
+			}
+		]]></constructor>
+	</implementation>
+</binding>
+ 
+<!-- scroll buttons --> 
+<binding id="scrollbuttons">
+	<content>
+		<children includes="spacer"/>
+		<xul:vbox pack="center">
+			<xul:hbox align="center" tabid="scroll-buttons-container"
+				xbl:inherits="pack=buttonpack">
+				<xul:spacer tabid="scroll-buttons-spacer" flex="1"
+					xbl:inherits="ordinal=spacer-order"/>
+				<xul:hbox align="center" tabid="scroll-buttons"
+					onmousedown="this.parentNode.parentNode.parentNode.mTabBrowser.startScrollToEdgeTimer(event);"
+					onmouseout="this.parentNode.parentNode.parentNode.mTabBrowser.clearScrollToEdgeTimer();"
+					onmouseup="this.parentNode.parentNode.parentNode.mTabBrowser.clearScrollToEdgeTimer();"
+					xbl:inherits="ordinal=scroll-buttons-order">
+					<xul:toolbarbutton tabid="scroll-button-start"
+						class="scroll-button"
+						onclick="this.parentNode.parentNode.parentNode.parentNode.mTabBrowser.scrollTabbarWithDelay(-50);"
+						ondblclick="event.stopPropagation();"
+						onmouseout="this.parentNode.parentNode.parentNode.parentNode.mTabBrowser.clearScrollToEdgeTimer();"/>
+					<xul:toolbarbutton tabid="scroll-button-end"
+						class="scroll-button"
+						onclick="this.parentNode.parentNode.parentNode.parentNode.mTabBrowser.scrollTabbarWithDelay(50);"
+						ondblclick="event.stopPropagation();"/>
+				</xul:hbox>
+				<xul:stack tabid="tabbar-closebox-original-content-box"
+					xbl:inherits="ordinal=closebox-order">
+					<children/>
+				</xul:stack>
+			</xul:hbox>
+			<xul:spacer tabid="tabbar-closebox-spacer" flex="1"/>
+		</xul:vbox>
+	</content>
+	<implementation>
+		<constructor><![CDATA[
+			var node = this.parentNode;
+			while (node.localName != 'tabbrowser')
+				node = node.parentNode;
+
+			this.mTabBrowser = node;
+
+			node.mScrollbuttonStart = document.getAnonymousElementByAttribute(this, 'tabid', 'scroll-button-start');
+			node.mScrollbuttonEnd = document.getAnonymousElementByAttribute(this, 'tabid', 'scroll-button-end');
+		]]></constructor>
+	</implementation>
+</binding>
+ 
+<binding id="scrollbox"> 
+	<content>
+		<xul:stack flex="1">
+			<xul:box flex="1" xbl:inherits="align,orient,dir">
+				<xul:box flex="1" xbl:inherits="orient"/>
+				<!--xul:box flex="100" xbl:inherits="align,orient,dir"-->
+					<children includes="spacer"/>
+				<!--/xul:box-->
+			</xul:box>
+			<xul:scrollbox class="scrollbox-for-scrollable-contents"
+				xbl:inherits="align,orient,dir,pack"
+				flex="1">
+				<children includes="tab"/>
+			</xul:scrollbox>
+		</xul:stack>
+	</content>
+	<implementation>
+		<field name="scrollBox">
+			document.getAnonymousNodes(this)[0].childNodes[1]
+		</field>
+		<field name="spacerBox">
+			document.getAnonymousNodes(this)[0].childNodes[0].firstChild
+		</field>
+
+		<field name="mTabEventHandler"><![CDATA[
+		({
+			handleEvent : function(aEvent)
+			{
+				if (!(aEvent.type == 'XULTabbrowserTabAdded' ||
+					aEvent.type == 'XULTabbrowserTabRemoved' ||
+					aEvent.type == 'XULTabbrowserTabCollapseExpand' ||
+					aEvent.type == 'XULTabbrowserTabLoad' ||
+					aEvent.type == 'resize'))
+					return;
+
+				if (!this.timer)
+					this.timer = window.setTimeout(this.updateSpacer, 0, this);
+			},
+			updateSpacer : function(aThis)
+			{
+try{
+				var tabs = aThis.node.mTabBrowser.mTabs;
+				if (aThis.node.orient == 'horizontal') {
+					var width = tabs[tabs.length-1].boxObject.x+
+						tabs[tabs.length-1].boxObject.width-
+						tabs[0].boxObject.x;
+					aThis.node.spacerBox.setAttribute('width', width);
+					aThis.node.spacerBox.setAttribute('maxwidth', width);
+				}
+				else {
+					var height = tabs[tabs.length-1].boxObject.y+
+						tabs[tabs.length-1].boxObject.height-
+						tabs[0].boxObject.y;
+					aThis.node.spacerBox.setAttribute('height', height);
+					aThis.node.spacerBox.setAttribute('maxheight', height);
+				}
+}
+catch(e) {
+dump(e+'\n');
+}
+				aThis.timer = null;
+			},
+			node  : this,
+			timer : null
+		});
+		]]></field>
+
+		<constructor><![CDATA[
+			this.setAttribute('includes-scrollbox', true);
+
+			var node = this.parentNode;
+			while (node.localName != 'tabbrowser')
+				node = node.parentNode;
+
+			this.mTabBrowser = node;
+
+			this.mTabBrowser.mTabContainer.setAttribute('includes-scrollbox', true);
+
+			this.mTabBrowser.addEventListener('XULTabbrowserTabAdded', this.mTabEventHandler, false);
+			this.mTabBrowser.addEventListener('XULTabbrowserTabRemoved', this.mTabEventHandler, false);
+			this.mTabBrowser.addEventListener('XULTabbrowserTabCollapseExpand', this.mTabEventHandler, false);
+			this.mTabBrowser.addEventListener('XULTabbrowserTabLoad', this.mTabEventHandler, false);
+			window.addEventListener('resize', this.mTabEventHandler, false);
+		]]></constructor>
+
+		<destructor><![CDATA[
+			this.mTabBrowser.removeEventListener('XULTabbrowserTabAdded', this.mTabEventHandler, false);
+			this.mTabBrowser.removeEventListener('XULTabbrowserTabRemoved', this.mTabEventHandler, false);
+			this.mTabBrowser.removeEventListener('XULTabbrowserTabCollapseExpand', this.mTabEventHandler, false);
+			this.mTabBrowser.removeEventListener('XULTabbrowserTabLoad', this.mTabEventHandler, false);
+			window.removeEventListener('resize', this.mTabEventHandler, false);
+			this.mTabBrowser = null;
+		]]></destructor>
+	</implementation>
+</binding>
+  
+</bindings> 
+ 

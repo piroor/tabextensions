@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE overlay SYSTEM "chrome://tabextensions/locale/pref/prefDialog.dtd">
+
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+<treechildren id="panelChildren">
+	<treeitem id="tabextensions-root"
+		insertafter="advancedItem">
+		<treerow>
+			<treecell label="&tabextensions.label;"
+				url="chrome://tabextensions/content/pref/pref-tabsSeaMonkey.xul"/>
+		</treerow>
+	</treeitem>
+</treechildren>
+
+</overlay>

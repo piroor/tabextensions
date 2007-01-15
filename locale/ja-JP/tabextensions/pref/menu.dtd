@@ -1,0 +1,9 @@
+<!ENTITY tabPref.menu.title     "コンテキストメニュー">
+
+<!ENTITY tabPref.menu.links.group     "リンクを選択した時のコンテキストメニュー">
+<!ENTITY openAllLinksInTabs.pref      "「新しいタブですべてのリンクを開く」を使う">
+<!ENTITY openAllLinksInGroup.pref     "「新しいタブのグループですべてのリンクを開く」を使う">
+<!ENTITY bookmarkAllLinksAsGroup.pref "「すべてのリンクをまとめてブックマークする」を使う">
+
+<!ENTITY tabPref.menu.group.group     "グループ化されたタブの中でのコンテキストメニュー">
+<!ENTITY bookmarkTabGroup.pref        "「現在のタブを含むグループをまとめてブックマークする」を使う">

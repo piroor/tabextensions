@@ -1,0 +1,162 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
+<?xul-overlay href="chrome://tabextensions/content/pref/prefOverlay.xul"?>
+
+<!DOCTYPE page SYSTEM "chrome://tabextensions/locale/pref/general.dtd">
+
+<page
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	orient="vertical"
+	headertitle="&tabPref.general.title;"
+	onload="init();">
+
+<script type="application/x-javascript"><![CDATA[
+
+if (!('_elementIDs' in window) || !window._elementIDs)
+	var _elementIDs = [];
+
+_elementIDs = _elementIDs.concat([
+	'winHookMode',
+	'tabbarAutoHide',
+	'lastTabClosing'
+]);
+
+
+var gTabbarAutoHide;
+var gLastTabClosing;
+var gExitTabbedBrowsing;
+var gLastTabBehavior;
+
+var gLastTabClosingData;
+
+function init()
+{
+	gTabbarAutoHide     = document.getElementById('tabbarAutoHide');
+	gLastTabClosing     = document.getElementById('lastTabClosing');
+	gExitTabbedBrowsing = document.getElementById('exitTabbedBrowsing');
+	gLastTabBehavior    = document.getElementById('lastTabBehavior');
+
+	window.parent.initPanel(location.href);
+
+	gLastTabClosingData = {
+		lastTabBehavior : {
+			node : gLastTabBehavior
+		}
+	};
+
+	updateExitTabbedBrowsingChecks();
+}
+
+
+
+function updateExitTabbedBrowsingChecks()
+{
+	var exitTabbedBrowsings = [
+			document.getElementById('exitTabbedBrowsing.auto'),
+			document.getElementById('exitTabbedBrowsing.manual'),
+			document.getElementById('exitTabbedBrowsing.never')
+		];
+	var lastTabBehaviors = gLastTabBehavior.getElementsByTagName('radio');
+
+
+	if (!gLastTabBehavior.selectedItem)
+		gLastTabBehavior.selectedItem = lastTabBehaviors[0];
+
+	if (gTabbarAutoHide.checked) {
+		gExitTabbedBrowsing.selectedItem = exitTabbedBrowsings[0];
+	}
+	else {
+		if (gLastTabClosing.value == 0)
+			gExitTabbedBrowsing.selectedItem = exitTabbedBrowsings[1];
+		else {
+			gExitTabbedBrowsing.selectedItem = exitTabbedBrowsings[2];
+			switch (gLastTabClosing.value)
+			{
+				case '3':
+					gLastTabBehavior.selectedItem = lastTabBehaviors[0];
+					break;
+				case '1':
+					gLastTabBehavior.selectedItem = lastTabBehaviors[1];
+					break;
+				case '4':
+					gLastTabBehavior.selectedItem = lastTabBehaviors[2];
+					break;
+				default:
+					break;
+			}
+		}
+	}
+
+	var advancedButton = document.getElementById('lastTabBehaviorButton');
+	if (gExitTabbedBrowsing.selectedItem == exitTabbedBrowsings[2])
+		advancedButton.removeAttribute('disabled');
+	else
+		advancedButton.setAttribute('disabled', true);
+}
+
+
+
+]]></script>
+
+
+	<groupbox>
+		<caption label="&winHookMode.label;"/>
+		<radiogroup orient="vertical" id="winHookMode"
+			prefstring="browser.tabs.extensions.window_hook_mode"
+			preftype="int"
+			oncommand="onModified(this.getAttribute('prefstring'), Number(this.value));">
+			<radio value="0" label="&winHookMode.normal;"
+				class="image"
+				src="chrome://tabextensions/content/res/wm-multi.png"/>
+			<radio value="1" label="&winHookMode.byOthersAndContent;"
+				src="chrome://tabextensions/content/res/wm-semi.png"/>
+			<radio value="2" label="&winHookMode.byAll;"
+				src="chrome://tabextensions/content/res/wm-single.png"/>
+		</radiogroup>
+	</groupbox>
+
+<groupbox>
+	<caption label="&exitTabbedBrowsing.label;"/>
+	<radiogroup id="exitTabbedBrowsing"
+		oncommand="updateExitTabbedBrowsingChecks();">
+		<box orient="horizontal">
+			<radio label="&exitTabbedBrowsing.never;"
+				id="exitTabbedBrowsing.never"
+				src="chrome://tabextensions/content/res/tab-always.png"
+				oncommand="gTabbarAutoHide.checked = false; gLastTabClosing.value = gLastTabBehavior.value"/>
+			<button id="lastTabBehaviorButton"
+				label="&lastTabBehavior.go;"
+				oncommand="if (advancedPrefs('chrome://tabextensions/content/pref/advancedLastTabClosingPrefs.xul', gLastTabClosingData)) gLastTabClosing.value = gLastTabBehavior.value;"/>
+		</box>
+		<radio label="&exitTabbedBrowsing.auto;"
+			id="exitTabbedBrowsing.auto"
+			flex="1"
+			src="chrome://tabextensions/content/res/tab-auto.png"
+			oncommand="gTabbarAutoHide.checked = true; gLastTabClosing.value = 2"/>
+		<radio label="&exitTabbedBrowsing.manual;"
+			id="exitTabbedBrowsing.manual"
+			flex="1"
+			src="chrome://tabextensions/content/res/tab-manually.png"
+			oncommand="gTabbarAutoHide.checked = false; gLastTabClosing.value = 0"/>
+	</radiogroup>
+	<box collapsed="true">
+		<radiogroup id="lastTabBehavior">
+			<radio value="3" label="&lastTabBehavior.close;"/>
+			<radio value="1" label="&lastTabBehavior.unload;"/>
+			<radio value="4" label="&lastTabBehavior.exit;" />
+		</radiogroup>
+		<checkbox id="tabbarAutoHide"
+			prefstring="browser.tabs.autoHide"/>
+		<textbox id="lastTabClosing"
+			prefstring="browser.tabs.extensions.last_tab_closing"
+			preftype="int"/>
+	</box>
+</groupbox>
+
+	<spacer flex="1"/>
+
+	<box id="tabextensionsAboutBox"/>
+
+</page>

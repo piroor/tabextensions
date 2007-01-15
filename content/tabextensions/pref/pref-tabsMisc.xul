@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
+<?xul-overlay href="chrome://tabextensions/content/pref/prefOverlay.xul"?>
+
+<!DOCTYPE page SYSTEM "chrome://tabextensions/locale/pref/misc.dtd">
+
+<page
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	orient="vertical"
+	headertitle="&tabPref.misc.title;"
+	onload="init();">
+
+	<script type="application/x-javascript"><![CDATA[
+
+if (!('_elementIDs' in window) || !window._elementIDs)
+	var _elementIDs = [];
+
+
+_elementIDs.push('backToAncestor');
+_elementIDs.push('forwardToFollowing');
+
+
+function init()
+{
+	window.parent.initPanel(location.href);
+
+
+	var back = document.getElementById('backToAncestor');
+	var forward = document.getElementById('forwardToFollowing');
+	if (getModifiedValue('browser.tabs.extensions.group.enabled', 'chrome://tabextensions/content/pref/pref-tabsGroup.xul')) {
+		back.removeAttribute('disabled');
+		forward.removeAttribute('disabled');
+	}
+	else {
+		back.setAttribute('disabled', true);
+		forward.setAttribute('disabled', true);
+	}
+
+}
+
+
+	]]></script>
+
+<box orient="vertical" id="miscPrefPanelContainer">
+
+	<groupbox id="miscGroup">
+		<caption label="&tabPref.misc.group;"/>
+		<box orient="vertical" id="miscPrefContainer">
+
+			<checkbox id="backToAncestor"
+				label="&backToAncestor;"
+				prefstring="browser.tabs.extensions.back_to_ancestor"/>
+			<checkbox id="forwardToFollowing"
+				label="&forwardToFollowing;"
+				prefstring="browser.tabs.extensions.forward_to_following"/>
+
+		</box>
+	</groupbox>
+
+</box>
+
+	<spacer flex="1"/>
+
+	<box id="tabextensionsAboutBox"/>
+
+</page>

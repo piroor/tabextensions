@@ -1,0 +1,262 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE overlay SYSTEM "chrome://tabextensions_sessionmanager/locale/">
+
+<overlay
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+<menupopup id="tabMenuPopup">
+	<menuseparator insertbefore="tabsListMenuSep"/>
+	<menuitem tabid="save"
+		insertbefore="tabsListMenuSep"
+		label="&loadTabSession.save.label;"
+		accesskey="&loadTabSession.save.accesskey;"
+		oncommand="TabbrowserSessionManager.saveTabSession(); event.stopPropagation();"
+		key="key_tabextensions_saveTabSession"/>
+	<menu label="&loadTabSession.menu.label;"
+		insertbefore="tabsListMenuSep"
+		accesskey="&loadTabSession.menu.accesskey;"
+		key="key_tabextensions_storedTabSet_openMenu">
+		<menupopup
+			style="max-width:28em"
+			oncommand="TabbrowserSessionManager.loadStoredTabSet(event.target.value);"
+			onclick="if (event.button != 0) TabbrowserSessionManager.renameStoredTabSet(event.target.value, event);"
+			onpopupshowing="TabbrowserSessionManager.initTabSetsMenu(this); event.stopPropagation();"
+			onpopuphiding="event.stopPropagation();">
+			<menu tabid="full"
+				label="&loadTabSession.full.label;"
+				accesskey="&loadTabSession.full.accesskey;">
+				<menupopup id="tabextensions-tabsetMenu-full-sub"
+					onpopupshowing="event.stopPropagation();"
+					onpopuphiding="event.stopPropagation();"/>
+			</menu>
+			<menuseparator tabid="sep"/>
+			<menu tabid="rename"
+				label="&loadTabSession.rename.label;"
+				accesskey="&loadTabSession.rename.accesskey;">
+				<menupopup
+					style="max-width:28em"
+					oncommand="TabbrowserSessionManager.renameStoredTabSet(event.target.value); event.stopPropagation();"
+					onpopupshowing="event.stopPropagation();"
+					onpopuphiding="event.stopPropagation();"/>
+			</menu>
+			<menuseparator tabid="sep-save"/>
+			<menu tabid="delete"
+				label="&loadTabSession.delete.label;"
+				accesskey="&loadTabSession.delete.accesskey;">
+				<menupopup
+					style="max-width:28em"
+					oncommand="TabbrowserSessionManager.removeStoredTabSet(event.target.value); event.stopPropagation();"
+					onpopupshowing="event.stopPropagation();"
+					onpopuphiding="event.stopPropagation();"/>
+			</menu>
+			<menuitem tabid="deleteAll"
+				label="&loadTabSession.deleteAll.label;"
+				accesskey="&loadTabSession.deleteAll.accesskey;"
+				oncommand="TabbrowserSessionManager.removeAllStoredTabSet(); event.stopPropagation();"/>
+		</menupopup>
+	</menu>
+	<menuseparator insertbefore="tabsListMenuSep"/>
+
+	<menu insertafter="tab-item-undoRemoveTab:tabMenu"
+		label="&closedTabsHistory.menu.label;"
+		accesskey="&closedTabsHistory.menu.accesskey;"
+		key="key_tabextensions_closedTabsHistory_openMenu">
+		<menupopup
+			style="max-width:24em"
+			oncommand="TabbrowserSessionManager.reopenTabById(event.target.value, event);"
+			onclick="TabbrowserSessionManager.reopenTabById(event.target.value, event);"
+			onpopupshowing="TabbrowserSessionManager.initClosedTabsHistoryMenu(this); event.stopPropagation();"
+			onpopuphiding="event.stopPropagation();">
+			<menuitem tabid="blank"
+				label="&closedTabsHistory.blank.label;"
+				disabled="true"/>
+			<menu tabid="full"
+				label="&closedTabsHistory.full.label;"
+				accesskey="&closedTabsHistory.full.accesskey;">
+				<menupopup
+					style="max-width:24em"
+					onpopupshowing="event.stopPropagation();"
+					onpopuphiding="event.stopPropagation();"/>
+			</menu>
+			<menuseparator tabid="flush-sep"/>
+			<menuitem tabid="flush-item"
+				label="&closedTabsHistory.flush.label;"
+				accesskey="&closedTabsHistory.flush.accesskey;"
+				oncommand="TabbrowserSessionManager.flushUndoCache(); event.stopPropagation();"
+				disabled="true"/>
+		</menupopup>
+	</menu>
+</menupopup>
+
+<keyset id="mainKeyset">
+	<keyset id="keyset_tabextensions">
+		<key id="key_tabextensions_saveTabSession"
+			key="&loadTabSession.save.key;"
+			oncommand="if (TabbrowserService.isBrowserWindow) TabbrowserSessionManager.saveTabSession(true);"
+			modifiers="accel,shift"/>
+		<key id="key_tabextensions_storedTabSet_openMenu"
+			key="&loadTabSession.menu.key;"
+			oncommand="if (TabbrowserService.isBrowserWindow) TabbrowserService.popupMenu('tabextensions-tabsetMenu-shortcut');"
+			modifiers="alt"/>
+		<key id="key_tabextensions_closedTabsHistory_openMenu"
+			key="&closedTabsHistory.menu.key;"
+			oncommand="if (TabbrowserService.isBrowserWindow &amp;&amp; window.gTSGlobalUndoRemoveTabCache.length) TabbrowserService.popupMenu('tabextensions-closedTabsHistory-shortcut');"
+			modifiers="alt"/>
+	</keyset>
+</keyset>
+
+<popupset id="popupset_tabextensions">
+	<popup id="tabextensions-tabsetMenu-shortcut"
+		style="max-width:28em"
+		oncommand="TabbrowserSessionManager.loadStoredTabSet(event.target.value);"
+		onclick="if (event.button != 0) TabbrowserSessionManager.renameStoredTabSet(event.target.value, event);"
+		onpopupshowing="TabbrowserSessionManager.initTabSetsMenu(this);">
+		<menu tabid="full"
+			label="&loadTabSession.full.label;"
+			accesskey="&loadTabSession.full.accesskey;">
+			<menupopup
+				onpopupshowing="event.stopPropagation();"
+				onpopuphiding="event.stopPropagation();"/>
+		</menu>
+		<menuseparator tabid="sep"/>
+		<menuitem tabid="save"
+			label="&loadTabSession.save.label;"
+			accesskey="&loadTabSession.save.accesskey;"
+			oncommand="TabbrowserSessionManager.saveTabSession(); event.stopPropagation();"
+			key="key_tabextensions_saveTabSession"/>
+		<menu tabid="rename"
+			label="&loadTabSession.rename.label;"
+			accesskey="&loadTabSession.rename.accesskey;">
+			<menupopup 
+				style="max-width:28em"
+				oncommand="TabbrowserSessionManager.renameStoredTabSet(event.target.value); event.stopPropagation();"
+				onpopupshowing="event.stopPropagation();"
+				onpopuphiding="event.stopPropagation();"/>
+		</menu>
+		<menuseparator tabid="sep-save"/>
+		<menu tabid="delete"
+			label="&loadTabSession.delete.label;"
+			accesskey="&loadTabSession.delete.accesskey;">
+			<menupopup
+				style="max-width:28em"
+				oncommand="TabbrowserSessionManager.removeStoredTabSet(event.target.value); event.stopPropagation();"
+				onpopupshowing="event.stopPropagation();"
+				onpopuphiding="event.stopPropagation();"/>
+		</menu>
+		<menuitem tabid="deleteAll"
+			label="&loadTabSession.deleteAll.label;"
+			accesskey="&loadTabSession.deleteAll.accesskey;"
+			oncommand="TabbrowserSessionManager.removeAllStoredTabSet(); event.stopPropagation();"/>
+	</popup>
+
+	<popup id="tabextensions-closedTabsHistory-shortcut"
+		style="max-width:24em"
+		oncommand="TabbrowserSessionManager.reopenTabById(event.target.value, event);"
+		onclick="TabbrowserSessionManager.reopenTabById(event.target.value, event);"
+		onpopupshowing="TabbrowserSessionManager.initClosedTabsHistoryMenu(this);">
+		<menuitem tabid="blank"
+			label="&closedTabsHistory.blank.label;"
+			disabled="true"/>
+		<menu tabid="full"
+			label="&closedTabsHistory.full.label;"
+			accesskey="&closedTabsHistory.full.accesskey;">
+			<menupopup id="tabextensions-closedTabsHistory-full-sub"
+				style="max-width:24em"
+				onpopupshowing="event.stopPropagation();"
+				onpopuphiding="event.stopPropagation();"/>
+		</menu>
+		<menuseparator tabid="flush-sep"/>
+		<menuitem tabid="flush-item"
+			label="&closedTabsHistory.flush.label;"
+			accesskey="&closedTabsHistory.flush.accesskey;"
+			oncommand="TabbrowserSessionManager.flushUndoCache(); event.stopPropagation();"
+			disabled="true"/>
+	</popup>
+</popupset>
+
+
+
+<toolbarpalette id="BrowserToolbarPalette">
+	<toolbarbutton id="tabextensions-loadTabSession-button"
+		label="&loadTabSession.menu.label;"
+		tooltiptext="&loadTabSession.menu.label;"
+		type="menu"
+		class="toolbarbutton-1">
+		<menupopup id="tabextensions-tabsetMenu-button"
+			style="max-width:28em"
+			oncommand="TabbrowserSessionManager.loadStoredTabSet(event.target.value);"
+			onclick="if (event.button != 0) TabbrowserSessionManager.renameStoredTabSet(event.target.value, event);"
+			onpopupshowing="TabbrowserSessionManager.initTabSetsMenu(this); event.stopPropagation();">
+			<menu tabid="full"
+				label="&loadTabSession.full.label;"
+				accesskey="&loadTabSession.full.accesskey;">
+				<menupopup
+					onpopupshowing="event.stopPropagation();"
+					onpopuphiding="event.stopPropagation();"/>
+			</menu>
+			<menuseparator tabid="sep"/>
+			<menuitem tabid="save"
+				label="&loadTabSession.save.label;"
+				accesskey="&loadTabSession.save.accesskey;"
+				oncommand="TabbrowserSessionManager.saveTabSession(); event.stopPropagation();"
+				key="key_tabextensions_saveTabSession"/>
+			<menu tabid="rename"
+				label="&loadTabSession.rename.label;"
+				accesskey="&loadTabSession.rename.accesskey;">
+				<menupopup
+					style="max-width:28em"
+					oncommand="TabbrowserSessionManager.renameStoredTabSet(event.target.value); event.stopPropagation();"
+					onpopupshowing="event.stopPropagation();"
+					onpopuphiding="event.stopPropagation();"/>
+			</menu>
+			<menuseparator tabid="sep-save"/>
+			<menu tabid="delete"
+				label="&loadTabSession.delete.label;"
+				accesskey="&loadTabSession.delete.accesskey;">
+				<menupopup
+					style="max-width:28em"
+					oncommand="TabbrowserSessionManager.removeStoredTabSet(event.target.value); event.stopPropagation();"
+					onpopupshowing="event.stopPropagation();"
+					onpopuphiding="event.stopPropagation();"/>
+			</menu>
+			<menuitem tabid="deleteAll"
+				label="&loadTabSession.deleteAll.label;"
+				accesskey="&loadTabSession.deleteAll.accesskey;"
+				oncommand="TabbrowserSessionManager.removeAllStoredTabSet(); event.stopPropagation();"/>
+		</menupopup>
+	</toolbarbutton>
+	<toolbarbutton id="tabextensions-closedTabsHistory-button"
+		label="&closedTabsHistory.menu.label;"
+		tooltiptext="&closedTabsHistory.menu.label;"
+		type="menu"
+		class="toolbarbutton-1">
+		<menupopup
+			style="max-width:24em"
+			oncommand="TabbrowserSessionManager.reopenTabById(event.target.value, event);"
+			onclick="TabbrowserSessionManager.reopenTabById(event.target.value, event);"
+			onpopupshowing="TabbrowserSessionManager.initClosedTabsHistoryMenu(this); event.stopPropagation();"
+			onpopuphiding="event.stopPropagation();">
+			<menuitem tabid="blank"
+				label="&closedTabsHistory.blank.label;"
+				disabled="true"/>
+			<menu tabid="full"
+				label="&closedTabsHistory.full.label;"
+				accesskey="&closedTabsHistory.full.accesskey;">
+				<menupopup
+					style="max-width:24em"
+					onpopupshowing="event.stopPropagation();"
+					onpopuphiding="event.stopPropagation();"/>
+			</menu>
+			<menuseparator tabid="flush-sep"/>
+			<menuitem tabid="flush-item"
+				label="&closedTabsHistory.flush.label;"
+				accesskey="&closedTabsHistory.flush.accesskey;"
+				oncommand="TabbrowserSessionManager.flushUndoCache(); event.stopPropagation();"
+				disabled="true"/>
+		</menupopup>
+	</toolbarbutton>
+</toolbarpalette>
+
+
+</overlay>

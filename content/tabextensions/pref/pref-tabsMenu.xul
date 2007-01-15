@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
+<?xul-overlay href="chrome://tabextensions/content/pref/prefOverlay.xul"?>
+<?xul-overlay href="chrome://tabextensions/content/pref/contextMenuPrefOverlay.xul"?>
+
+<!DOCTYPE page SYSTEM "chrome://tabextensions/locale/pref/menu.dtd">
+
+<page
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	orient="vertical"
+	headertitle="&tabPref.menu.title;"
+	onload="init();">
+
+
+	<script type="application/x-javascript"><![CDATA[
+
+if (!('_elementIDs' in window) || !window._elementIDs)
+	var _elementIDs = [];
+
+_elementIDs = _elementIDs.concat([
+	'openAllLinksInTabs',
+	'openAllLinksInGroup',
+	'bookmarkAllLinksAsGroup',
+	'bookmarkTabGroup'
+]);
+
+function init()
+{
+	var tabGroupEnabled = getModifiedValue('browser.tabs.extensions.group.enabled', 'chrome://tabextensions/content/pref/pref-tabsGroup.xul');
+
+
+	window.parent.initPanel(location.href);
+
+	var tabGroupPrefs = [
+			'openAllLinksInGroup',
+			'bookmarkTabGroup'
+		],
+		i;
+	if (tabGroupEnabled)
+		for (i in tabGroupPrefs)
+			try {
+				document.getElementById(tabGroupPrefs[i]).removeAttribute('disabled');
+			}
+			catch(e) {
+			}
+	else
+		for (i in tabGroupPrefs)
+			try {
+				document.getElementById(tabGroupPrefs[i]).setAttribute('disabled', true);
+			}
+			catch(e) {
+			}
+
+}
+
+	]]></script>
+
+	<groupbox>
+		<caption label="&tabPref.menu.links.group;"/>
+		<vbox>
+		<checkbox id="openAllLinksInTabs"
+			label="&openAllLinksInTabs.pref;"
+			prefstring="browser.tabs.extensions.show_context.openAllLinksInTabs"/>
+		<checkbox id="openAllLinksInGroup"
+			label="&openAllLinksInGroup.pref;"
+			prefstring="browser.tabs.extensions.show_context.openAllLinksInGroup"/>
+		<checkbox id="bookmarkAllLinksAsGroup"
+			label="&bookmarkAllLinksAsGroup.pref;"
+			prefstring="browser.tabs.extensions.show_context.bookmarkAllLinksAsGroup"/>
+		</vbox>
+	</groupbox>
+
+	<groupbox>
+		<caption label="&tabPref.menu.group.group;"/>
+		<checkbox id="bookmarkTabGroup"
+			label="&bookmarkTabGroup.pref;"
+			prefstring="browser.tabs.extensions.show_context.bookmarkTabGroup"/>
+	</groupbox>
+
+	<box id="tabextensionsAboutBox"/>
+
+</page>

@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://tabextensions/content/pref/prefOverlay.css" type="text/css"?>
+<?xul-overlay href="chrome://tabextensions/content/globalOverlay.xul"?>
+
+<!DOCTYPE page SYSTEM "chrome://tabextensions/locale/pref/appearanceTab.dtd">
+
+<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	windowtype="tabextensions:advancedTabCloseBox"
+	orient="vertical"
+	title="&showTabClosebox.advanced.title;"
+	buttons="accept,cancel"
+	ondialogaccept="apply();"
+	ondialogcancel="cancel();"
+	onload="init();">
+
+
+<script type="application/x-javascript" src="chrome://tabextensions/content/pref/prefOverlay.js"/>
+<script type="application/x-javascript" src="chrome://tabextensions/content/pref/advancedPrefs.js"/>
+
+
+
+<groupbox oncommand="onCommand(event)">
+	<caption label="&showTabClosebox.appearance.group;"/>
+
+	<radiogroup id="closeboxAppearance">
+		<radio value="builtin"  label="&showTabClosebox.appearance.builtin;"
+			src="chrome://tabextensions/content/res/closebox-builtin.png"/>
+		<radio value="winstrip" label="&showTabClosebox.appearance.winstrip;"
+			src="chrome://tabextensions/content/res/closebox-winstrip.png"/>
+		<radio value="default"  label="&showTabClosebox.appearance.default;"
+			src="chrome://tabextensions/content/res/closebox-default.png"/>
+	</radiogroup>
+</groupbox>
+
+<groupbox oncommand="onCommand(event)">
+	<caption label="&showTabClosebox.pointed.delay.group;"
+		id="delayToShowCloseboxGroupLabel"/>
+
+	<box orient="horizontal" align="center">
+		<label id="delayToShowCloseboxLabelBefore"
+			value="&showTabClosebox.pointed.delay.label_before;"
+			control="delayToShowClosebox"/>
+		<textbox id="delayToShowClosebox"
+			size="5"
+			oninput="onCommand(event)"/>
+		<spinbuttons id="delayToShowCloseboxSpinButtons"
+			onup="spinButtonsUpDown(event, 'delayToShowClosebox'); inputToTextField('delayToShowClosebox');"
+			ondown="spinButtonsUpDown(event, 'delayToShowClosebox', 0); inputToTextField('delayToShowClosebox');"/>
+		<label id="delayToShowCloseboxLabelAfter"
+			value="&showTabClosebox.pointed.delay.label_after;"
+			control="delayToShowClosebox"/>
+	</box>
+</groupbox>
+
+
+
+</dialog>

@@ -1,0 +1,153 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
+<?xul-overlay href="chrome://tabextensions/content/pref/prefOverlay.xul"?>
+
+<!DOCTYPE page SYSTEM "chrome://tabextensions/locale/pref/close.dtd">
+
+<page
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	orient="vertical"
+	headertitle="&tabPref.close.title;"
+	onload="init();">
+
+<script type="application/x-javascript"><![CDATA[
+
+if (!('_elementIDs' in window) || !window._elementIDs)
+	var _elementIDs = [];
+
+_elementIDs = _elementIDs.concat([
+	'dirOfClosing',
+	'dirOfClosingGroup',
+	'closeWindowOnlyForTab'
+]);
+
+var gFocusInGroupData;
+
+var gCloseWindowOnlyForTab;
+var gDirOfClosingCheck;
+
+function init()
+{
+	gCloseWindowOnlyForTab = document.getElementById('closeWindowOnlyForTab');
+
+	var dirOfClosingHorizontal = document.getElementById('dirOfClosingHorizontal');
+	var dirOfClosingVertical = document.getElementById('dirOfClosingVertical');
+	var hiddenNode;
+	if (getModifiedValue('browser.tabs.extensions.tabbar_place', 'chrome://tabextensions/content/pref/pref-tabsAppearanceTabbar.xul') < 2) {
+		gDirOfClosingCheck = dirOfClosingHorizontal;
+		hiddenNode = dirOfClosingVertical;
+	}
+	else {
+		gDirOfClosingCheck = dirOfClosingVertical;
+		hiddenNode = dirOfClosingHorizontal;
+	}
+	gDirOfClosingCheck.removeAttribute('collapsed');
+	hiddenNode.setAttribute('collapsed', true);
+
+
+	window.parent.initPanel(location.href);
+
+
+	gFocusInGroupData = {
+		dirOfClosingGroup : {
+			node : gDirOfClosingCheck,
+			get disabled() {
+				return (
+						!getModifiedValue('browser.tabs.extensions.group.enabled', 'chrome://tabextensions/content/pref/pref-tabsGroup.xul')
+					);
+			}
+		}
+	};
+
+	gDirOfClosingCheck.selectedItem = gDirOfClosingCheck.getElementsByAttribute('value', document.getElementById('dirOfClosing').value)[0];
+
+	document.getElementById('closeWindowOnlyForTabCheck').checked = !gCloseWindowOnlyForTab.checked;
+
+	onDirOfClosingChange();
+}
+
+
+function onDirOfClosingChange()
+{
+	document.getElementById('dirOfClosing').value = gDirOfClosingCheck.value;
+
+	var button = gDirOfClosingCheck.getElementsByAttribute('class', 'dirOfClosingGroupButton')[0];
+
+	if (Number(gDirOfClosingCheck.value) > 1)
+		button.setAttribute('disabled', true);
+	else
+		button.removeAttribute('disabled');
+}
+
+]]></script>
+
+
+
+<groupbox
+	oncommand="onDirOfClosingChange()">
+	<caption label="&dirOfClosing.label;"/>
+	<radiogroup id="dirOfClosingHorizontal">
+		<box orient="horizontal">
+			<box orient="horizontal">
+				<radio value="0" label="&dirOfClosing.rtl.horizontal;"/>
+				<radio value="1" label="&dirOfClosing.ltr.horizontal;"/>
+			</box>
+			<box orient="horizontal">
+				<button class="dirOfClosingGroupButton"
+					label="&dirOfClosing.group.go;"
+					oncommand="advancedPrefs('chrome://tabextensions/content/pref/advancedFocusInGroupPrefs.xul', gFocusInGroupData);"/>
+				<box collapsed="true">
+					<checkbox id="dirOfClosingGroup"
+						prefstring="browser.tabs.extensions.direction_of_focusing.in_group"/>
+				</box>
+			</box>
+		</box>
+		<radio value="2" label="&dirOfClosing.reverse;"/>
+		<radio value="3" label="&dirOfClosing.prev;"/>
+	</radiogroup>
+	<radiogroup id="dirOfClosingVertical">
+		<box orient="horizontal">
+			<box orient="horizontal">
+				<radio value="0" label="&dirOfClosing.rtl.vertical;"/>
+				<radio value="1" label="&dirOfClosing.ltr.vertical;"/>
+			</box>
+			<box orient="horizontal">
+				<button class="dirOfClosingGroupButton"
+					label="&dirOfClosing.group.go;"
+					oncommand="advancedPrefs('chrome://tabextensions/content/pref/advancedFocusInGroupPrefs.xul', gFocusInGroupData);"/>
+				<box collapsed="true">
+					<checkbox id="dirOfClosingGroup"
+						prefstring="browser.tabs.extensions.direction_of_focusing.in_group"/>
+				</box>
+			</box>
+		</box>
+		<radio value="2" label="&dirOfClosing.reverse;"/>
+		<radio value="3" label="&dirOfClosing.prev;"/>
+	</radiogroup>
+	<box collapsed="true">
+		<textbox id="dirOfClosing"
+			prefstring="browser.tabs.extensions.direction_of_focusing"
+			preftype="int"/>
+	</box>
+</groupbox>
+
+
+<groupbox>
+	<caption label="&closeWindowOnlyForTab.group;"/>
+	<checkbox id="closeWindowOnlyForTabCheck"
+		label="&closeWindowOnlyForTab;"
+		oncommand="gCloseWindowOnlyForTab.checked = !this.checked"/>
+	<box collapsed="true">
+		<checkbox id="closeWindowOnlyForTab"
+			prefstring="browser.tabs.extensions.close_only_tab"/>
+	</box>
+</groupbox>
+
+
+	<spacer flex="1"/>
+
+	<box id="tabextensionsAboutBox"/>
+
+</page>

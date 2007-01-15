@@ -1,0 +1,33 @@
+<!ENTITY tabPref.history.title "Advanced History">
+
+
+<!ENTITY tabPref.goToHistoryIndex.load.group   "Loading from &quot;Go&quot; Menu, &quot;Back&quot; and &quot;Forward&quot; Buttons">
+<!ENTITY tabPref.goToHistoryIndex.load.current "Open in Current Tab">
+<!ENTITY tabPref.goToHistoryIndex.load.newtab  "Open in New Tab">
+<!ENTITY tabPref.goToHistoryIndex.load.newtabBackground "Open in New Background Tab">
+
+<!ENTITY advancedGoToHistoryIndexPrefs.go    "Advanced...">
+<!ENTITY advancedGoToHistoryIndexPrefs.title "Advance preferences of &quot;Go&quot; Menu, &quot;Back&quot; and &quot;Forward&quot; Buttons">
+
+<!ENTITY tabPref.goToHistoryIndex.middleClick.group   "Middle-click (or Ctrl-click) on &quot;Go&quot; Menu, &quot;Back&quot; and &quot;Forward&quot; Buttons">
+<!ENTITY tabPref.goToHistoryIndex.middleClick.group.mac "Middle-click (or Command-click) on &quot;Go&quot; Menu, &quot;Back&quot; and &quot;Forward&quot; Buttons">
+<!ENTITY tabPref.goToHistoryIndex.middleClick.none    "No reaction">
+<!ENTITY tabPref.goToHistoryIndex.middleClick.current "Open in Current Tab">
+<!ENTITY tabPref.goToHistoryIndex.middleClick.newtab  "Open in New Tab">
+<!ENTITY tabPref.goToHistoryIndex.middleClick.newtabBackground "Open in New Background Tab">
+
+
+<!ENTITY tabPref.history.load.group   "History Loading">
+<!ENTITY tabPref.history.load.current "Open in Current Tab">
+<!ENTITY tabPref.history.load.newtab  "Open in New Tab">
+<!ENTITY tabPref.history.load.newtabBackground "Open in New Background Tab">
+
+<!ENTITY advancedHistoryPrefs.go    "Advanced...">
+<!ENTITY advancedHistoryPrefs.title "Advance preferences of History">
+
+<!ENTITY tabPref.history.middleClick.group   "History Loading for Middle-click (or Ctrl-click)">
+<!ENTITY tabPref.history.middleClick.group.mac "History Loading for Middle-click (or Command-click)">
+<!ENTITY tabPref.history.middleClick.none    "No reaction">
+<!ENTITY tabPref.history.middleClick.current "Open in Current Tab">
+<!ENTITY tabPref.history.middleClick.newtab  "Open in New Tab">
+<!ENTITY tabPref.history.middleClick.newtabBackground "Open in New Background Tab">

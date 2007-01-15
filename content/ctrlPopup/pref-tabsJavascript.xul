@@ -1,0 +1,125 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE overlay SYSTEM "chrome://tabextensions_ctrlpopup/locale/">
+
+<overlay
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+
+<script type="application/x-javascript"><![CDATA[
+
+
+const WindowManager = Components.classes['@mozilla.org/appshell/window-mediator;1'].getService(Components.interfaces.nsIWindowMediator);
+
+
+if (!('onInitCallbackFuncs' in window))
+	window.onInitCallbackFuncs = [];
+if (!('onJavascriptChangedCallbackFuncs' in window))
+	window.onJavascriptChangedCallbackFuncs = [];
+
+
+
+onInitCallbackFuncs[onInitCallbackFuncs.length] = function()
+{
+	var items = document.getElementsByAttribute('class', 'newWindowPrefs');
+	var exceptions = document.getElementById('windowOpenException');
+	var winHookMode = Number(getModifiedValue('browser.tabs.extensions.window_hook_mode', 'chrome://tabextensions/content/pref/pref-tabsGeneral.xul'));
+
+	var i;
+	if (winHookMode == 2) {
+		for (i = 0; i < items.length; i++)
+			items[i].setAttribute('disabled', true);
+		exceptions.setAttribute('disabled', true);
+	}
+	else {
+		for (i = 0; i < items.length; i++)
+			items[i].removeAttribute('disabled');
+		exceptions.removeAttribute('disabled');
+	}
+};
+
+
+onJavascriptChangedCallbackFuncs[onJavascriptChangedCallbackFuncs.length] = function()
+{
+	var js = document.getElementById('javascript');
+	var jsItems = js.getElementsByTagName('radio');
+	var background = document.getElementById('loadInBackgroundJavascript');
+
+
+	var radio = document.getElementById('newWindowRadio');
+	var exception  = document.getElementById('javascript.exception');
+	var exceptionItems = exception.getElementsByTagName('radio');
+	var exceptions = radio.nextSibling.getElementsByAttribute('class', 'newWindowPrefs');
+	var i;
+	if (radio.selected) {
+		for (i = 0; i < exceptions.length; i++)
+			exceptions[i].removeAttribute('disabled');
+
+		if (background.checked)
+			exception.selectedItem = exceptionItems[1];
+		else
+			exception.selectedItem = exceptionItems[0];
+	}
+	else {
+		for (i = 0; i < exceptions.length; i++)
+			exceptions[i].setAttribute('disabled', true);
+
+		exception.selectedItem = exceptionItems[2];
+	}
+
+
+	var button = document.getElementById('windowOpenException');
+	button.label = button.getAttribute(js.selectedItem == jsItems[2] ? 'label-black' : 'label-white') ;
+};
+
+
+function onExceptionChange()
+{
+	var exception  = document.getElementById('javascript.exception');
+	var background = document.getElementById('loadInBackgroundJavascript');
+	if (exception.selectedItem == exception.childNodes[0])
+		background.checked = false;
+	else
+		background.checked = true;
+}
+
+]]></script>
+
+
+
+<radio id="newWindowRadio" class="newWindowPrefs"/>
+
+<box id="exceptionRadioBox" orient="vertical">
+	<box orient="horizontal">
+		<spacer style="width: 1em;"/>
+		<radiogroup id="javascript.exception"
+			oncommand="onExceptionChange();">
+			<radio label="&tabPref.javascript.newwindow.active;"
+				class="newWindowPrefs"/>
+			<radio label="&tabPref.javascript.newwindow.background;"
+				class="newWindowPrefs"/>
+			<radio collapsed="true"/>
+		</radiogroup>
+	</box>
+</box>
+
+<box id="exceptionButtonBox" orient="horizontal">
+	<spacer flex="1"/>
+	<button id="windowOpenException"
+		label-white="&windowOpenException.go.white;"
+		label-black="&windowOpenException.go.black;"
+		oncommand="
+			var js = document.getElementById('javascript');
+			var items = js.getElementsByTagName('radio');
+			var isWhiteList = js.selectedItem != items[2];
+			var dialog = WindowManager.getMostRecentWindow('tabextensions:windowOpenExceptions');
+			if (dialog) {
+				dialog.initList(isWhiteList);
+				dialog.focus();
+			}
+			else
+				window.openDialog('chrome://tabextensions_ctrlpopup/content/windowOpenExceptions.xul', '', 'chrome,dialog=no', null, isWhiteList);
+		"/>
+</box>
+
+</overlay>

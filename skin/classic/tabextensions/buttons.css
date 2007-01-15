@@ -1,0 +1,36 @@
+@namespace url('http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul'); 
+	
+/* toolbar buttons */ 
+	
+#tabextensions-tabslist-button { 
+	list-style-image: url('chrome://tabextensions/skin/list.png');
+}
+toolbar[iconsize="small"] #tabextensions-tabslist-button {
+	list-style-image: url('chrome://tabextensions/skin/list-small.png');
+}
+ 
+#tabextensions-loadTabSession-button { 
+	list-style-image: url('chrome://tabextensions/skin/save.png');
+}
+toolbar[iconsize="small"] #tabextensions-loadTabSession-button {
+	list-style-image: url('chrome://tabextensions/skin/save-small.png');
+}
+ 
+#tabextensions-closedTabsHistory-button { 
+	list-style-image: url('chrome://tabextensions/skin/closed.png');
+}
+toolbar[iconsize="small"] #tabextensions-closedTabsHistory-button {
+	list-style-image: url('chrome://tabextensions/skin/closed-small.png');
+}
+ 
+#tabextensions-tabslist-button, 
+#tabextensions-loadTabSession-button,
+#tabextensions-closedTabsHistory-button {
+	-moz-binding: url('chrome://tabextensions/content/tabextensions.xml#toolbarbutton-menu');
+	-moz-box-orient: horizontal;
+}
+toolbarbutton [anonclass="toolbarbutton-icon-and-text"] {
+	margin: 0;
+	padding: 0;
+}
+   

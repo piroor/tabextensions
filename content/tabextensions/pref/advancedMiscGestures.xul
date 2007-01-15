@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://tabextensions/content/pref/prefOverlay.css" type="text/css"?>
+<?xul-overlay href="chrome://tabextensions/content/globalOverlay.xul"?>
+
+<!DOCTYPE page SYSTEM "chrome://tabextensions/locale/pref/gestures.dtd">
+
+<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	windowtype="tabextensions:advancedMiscGestures"
+	orient="vertical"
+	title="&tabPref.gestures.advanced.title;"
+	buttons="accept,cancel"
+	ondialogaccept="apply();"
+	ondialogcancel="cancel();"
+	onload="init();">
+
+
+<script type="application/x-javascript" src="chrome://tabextensions/content/pref/prefOverlay.js"/>
+<script type="application/x-javascript" src="chrome://tabextensions/content/pref/advancedPrefs.js"/>
+
+<vbox>
+	<groupbox>
+		<caption label="&tabPref.gestures.point.delay.group;"/>
+		<hbox align="center">
+			<label value="&tabPref.gestures.point.delay.label_before;"
+				control="delayToFocusTab"/>
+			<textbox id="delayToFocusTab"
+				size="5"
+				oninput="onCommand(event)"/>
+			<spinbuttons
+				onup="spinButtonsUpDown(event, 'delayToFocusTab'); inputToTextField('delayToFocusTab');"
+				ondown="spinButtonsUpDown(event, 'delayToFocusTab', 0); inputToTextField('delayToFocusTab');"/>
+			<label value="&tabPref.gestures.point.delay.label_after;"
+				control="delayToFocusTab"/>
+		</hbox>
+	</groupbox>
+	<groupbox>
+		<caption label="&tabPref.gestures.tabFlip.group;"/>
+		<vbox>
+			<hbox align="center">
+				<label value="&tabPref.gestures.tabFlip.delay.label_before;"
+					control="tabFlipDelay"/>
+				<textbox id="tabFlipDelay"
+					size="5"
+					oninput="onCommand(event)"/>
+				<spinbuttons
+					onup="spinButtonsUpDown(event, 'tabFlipDelay'); inputToTextField('tabFlipDelay');"
+					ondown="spinButtonsUpDown(event, 'tabFlipDelay', 0); inputToTextField('tabFlipDelay');"/>
+				<label value="&tabPref.gestures.tabFlip.delay.label_after;"
+					control="tabFlipDelay"/>
+			</hbox>
+			<checkbox id="tabFlipRoop"
+				label="&tabPref.gestures.tabFlip.roop;"
+				oninput="onCommand(event)"/>
+		</vbox>
+	</groupbox>
+</vbox>
+
+</dialog>

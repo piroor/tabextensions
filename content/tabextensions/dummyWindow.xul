@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	hidechrome="true"
+	width="0"
+	height="0"
+	screenX="-100"
+	screenY="-100"
+	style="background-color:transparent">
+</window>

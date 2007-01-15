@@ -1,0 +1,35 @@
+<!ENTITY tabPref.appearance.tabbar.title "タブバーの外観">
+
+
+<!ENTITY tabbarPlace.label      "タブバーの位置">
+<!ENTITY tabbarPlace.top        "上">
+<!ENTITY tabbarPlace.bottom     "下">
+<!ENTITY tabbarPlace.left       "左">
+<!ENTITY tabbarPlace.right      "右">
+<!ENTITY tabbarPlace.hidden     "非表示">
+
+
+<!ENTITY tabScroller           "タブが多すぎる時">
+<!ENTITY tabScroller.button    "スクロールボタンでスクロール">
+<!ENTITY tabScroller.scrollbar "スクロールバーでスクロール">
+<!ENTITY tabScroller.never     "暗黙的にスクロール">
+<!ENTITY tabScroller.multirow  "複数行で表示">
+
+<!ENTITY tabScroller.multirow.max.button       "詳細...">
+<!ENTITY tabScroller.multirow.max.title        "タブバーの複数行表示">
+<!ENTITY tabScroller.multirow.max.label_before "タブバーの最大行数：">
+<!ENTITY tabScroller.multirow.max.label_after  "行（それ以上の行は隠す；0=常に全ての行を表示する）">
+
+<!ENTITY tabScroller.auto      "自動で隠す">
+<!ENTITY tabScroller.always    "常に表示">
+
+
+<!ENTITY tabPref.appearance.tabbar.misc.group "その他">
+
+<!ENTITY showTabbarClosebox "「タブを閉じる」ボタンを表示する">
+<!ENTITY showBlankSpaces    "両端にドロップ用のスペースを空ける">
+<!ENTITY narrowTab          "縦置きされたタブを細く表示する">
+
+<!ENTITY dropIndicatorType.label   "タブのドロップ位置の表示：">
+<!ENTITY dropIndicatorType.default "Firefox 1.5スタイル">
+<!ENTITY dropIndicatorType.old     "TBEの組み込みスタイル">

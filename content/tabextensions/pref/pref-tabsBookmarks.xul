@@ -1,0 +1,181 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
+<?xul-overlay href="chrome://tabextensions/content/pref/prefOverlay.xul"?>
+
+<!DOCTYPE page SYSTEM "chrome://tabextensions/locale/pref/bookmarks.dtd">
+
+<page
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	orient="vertical"
+	headertitle="&tabPref.bookmarks.title;"
+	onload="init();">
+
+
+	<script type="application/x-javascript"><![CDATA[
+
+if (!('_elementIDs' in window) || !window._elementIDs)
+	var _elementIDs = [];
+
+_elementIDs = _elementIDs.concat([
+	'bookmarksBehavior',
+	'bookmarksMiddleClickBehavior',
+
+	'useFixedLabelForAnyBookmark',
+	'openChildFolders',
+	'saveBookmarksTextZoom',
+	'saveBookmarksStatus',
+	'saveBookmarksPermissions',
+
+	'showThisTabItemBookmark',
+	'showNewActiveTabItemBookmark',
+
+
+	'livemarkBehavior',
+	'livemarkItemBehavior'
+]);
+
+var gBookmarksPrefsData;
+
+function init()
+{
+	window.parent.initPanel(location.href);
+
+
+	gBookmarksPrefsData = {
+		bookmarksMiddleClickBehavior : {
+			node : document.getElementById('bookmarksMiddleClickBehavior')
+		},
+		useFixedLabelForAnyBookmark : {
+			node : document.getElementById('useFixedLabelForAnyBookmark')
+		},
+		openChildFolders : {
+			node : document.getElementById('openChildFolders')
+		},
+		saveBookmarksTextZoom : {
+			node : document.getElementById('saveBookmarksTextZoom')
+		},
+		saveBookmarksStatus : {
+			node : document.getElementById('saveBookmarksStatus')
+		},
+		saveBookmarksPermissions : {
+			node : document.getElementById('saveBookmarksPermissions')
+		},
+		showThisTabItemBookmark : {
+			node : document.getElementById('showThisTabItemBookmark')
+		},
+		showNewActiveTabItemBookmark : {
+			node : document.getElementById('showNewActiveTabItemBookmark')
+		}
+	};
+
+
+	var livemarkContainer = document.getElementById('livemarkContainer');
+	var newLivemark;
+	try {
+		var LOCALESVC = Components.classes['@mozilla.org/intl/nslocaleservice;1'].getService(Components.interfaces.nsILocaleService);
+		var BUNDLESVC = Components.classes['@mozilla.org/intl/stringbundle;1'].getService(Components.interfaces.nsIStringBundleService);
+		var bookmarksBundle = 'chrome://browser/locale/bookmarks/bookmarks.properties';
+		var bundle = BUNDLESVC.createBundle(bookmarksBundle, LOCALESVC.getApplicationLocale());
+		newLivemark = bundle.GetStringFromName('ile_newlivemark');
+	}
+	catch(e) {
+	}
+	if (newLivemark)
+		livemarkContainer.removeAttribute('collapsed');
+	else
+		livemarkContainer.setAttribute('collapsed', true);
+}
+
+	]]></script>
+
+	<groupbox>
+		<caption label="&tabPref.bookmarks.load.group;"/>
+		<vbox>
+		<radiogroup id="bookmarksBehavior"
+			preftype="int"
+			prefstring="browser.tabs.opentabfor.bookmarks.behavior">
+			<radio value="0" label="&tabPref.bookmarks.load.current;"/>
+			<radio value="1" label="&tabPref.bookmarks.load.newtab;"/>
+			<radio value="2" label="&tabPref.bookmarks.load.newtabBackground;"/>
+		</radiogroup>
+		<box orient="horizontal">
+			<spacer flex="1"/>
+			<button id="advancedBookmarksPrefs"
+				label="&advancedBookmarksPrefs.go;"
+				oncommand="advancedPrefs('chrome://tabextensions/content/pref/advancedBookmarksPrefs.xul', gBookmarksPrefsData);"/>
+			<box collapsed="true">
+				<textbox id="bookmarksMiddleClickBehavior"
+					prefstring="browser.tabs.opentabfor.bookmarks.middleClickBehavior"
+					preftype="int"/>
+
+				<checkbox id="showThisTabItemBookmark"
+					prefstring="browser.tabs.extensions.showThisTabItem.bookmarks"/>
+				<checkbox id="showNewActiveTabItemBookmark"
+					prefstring="browser.tabs.extensions.showNewActiveTabItem.bookmarks"/>
+
+				<checkbox id="useFixedLabelForAnyBookmark"
+					prefstring="browser.tabs.extensions.bookmarks.use_fixed_label"/>
+				<checkbox id="openChildFolders"
+					prefstring="browser.tabs.extensions.bookmarks.open_child_folders"/>
+
+				<checkbox id="saveBookmarksTextZoom"
+					prefstring="browser.tabs.extensions.bookmarks.save_textZoom"/>
+				<checkbox id="saveBookmarksStatus"
+					prefstring="browser.tabs.extensions.bookmarks.save_status"/>
+				<checkbox id="saveBookmarksPermissions"
+					prefstring="browser.tabs.extensions.bookmarks.save_permissions"/>
+			</box>
+		</box>
+		</vbox>
+	</groupbox>
+
+
+	<tabbox orient="vertical" id="livemarkContainer" collapsed="true">
+		<tabs>
+			<tab label="&tabPref.livemark.tab;"/>
+			<tab label="&tabPref.livemarkItem.tab;"/>
+		</tabs>
+		<tabpanels>
+
+			<tabpanel orient="vertical">
+				<groupbox id="livemarkGroup">
+					<caption id="livemarkBehaviorCaption" label="&tabPref.livemark.behavior;"/>
+					<data maclabel-for="livemarkBehaviorCaption" value="&tabPref.livemark.behavior.mac;"/>
+					<radiogroup orient="vertical" id="livemarkBehavior"
+						prefstring="browser.tabs.extensions.livemark.behavior.onMiddleClick"
+						preftype="int">
+						<radio value="0" label="&tabPref.livemark.behavior.current;"/>
+						<radio value="1" label="&tabPref.livemark.behavior.newtab;"/>
+						<radio value="2" label="&tabPref.livemark.behavior.newtabBackground;"/>
+						<radio value="3" label="&tabPref.livemark.behavior.group;"/>
+					</radiogroup>
+				</groupbox>
+				<spacer flex="1"/>
+			</tabpanel>
+
+			<tabpanel orient="vertical">
+				<groupbox id="livemarkItemGroup">
+					<caption id="livemarkItemBehaviorCaption" label="&tabPref.livemarkItem.behavior;"/>
+					<radiogroup orient="vertical" id="livemarkItemBehavior"
+						prefstring="browser.tabs.extensions.livemark.behavior.onItemClick"
+						preftype="int">
+						<radio value="-1" label="&tabPref.livemarkItem.behavior.inherit;"/>
+						<radio value="0" label="&tabPref.livemarkItem.behavior.current;"/>
+						<radio value="1" label="&tabPref.livemarkItem.behavior.newtab;"/>
+						<radio value="2" label="&tabPref.livemarkItem.behavior.newtabBackground;"/>
+					</radiogroup>
+				</groupbox>
+				<spacer flex="1"/>
+			</tabpanel>
+
+		</tabpanels>
+	</tabbox>
+
+
+	<spacer flex="1"/>
+
+	<box id="tabextensionsAboutBox"/>
+
+</page>

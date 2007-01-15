@@ -1,0 +1,23 @@
+<!ENTITY tabPref.location.title "Advanced Location bar">
+
+
+<!ENTITY tabPref.location.load.group   "Location bar Loading">
+<!ENTITY tabPref.location.load.current "Open in Current Tab">
+<!ENTITY tabPref.location.load.newtab  "Open in New Tab">
+<!ENTITY tabPref.location.load.newtabBackground "Open in New Background Tab">
+
+<!ENTITY advancedLocationPrefs.go    "Advanced...">
+<!ENTITY advancedLocationPrefs.title "Advance preferences of the Location bar">
+
+<!ENTITY tabPref.location.modifierKeyEnter.group   "Location bar Loading for Ctrl-Enter (or Meta-Enter)">
+<!ENTITY tabPref.location.modifierKeyEnter.group.newType   "Location bar Loading for Alt-Enter">
+<!ENTITY tabPref.location.modifierKeyEnter.none    "No reaction">
+<!ENTITY tabPref.location.modifierKeyEnter.current "Open in Current Tab">
+<!ENTITY tabPref.location.modifierKeyEnter.newtab  "Open in New Tab">
+<!ENTITY tabPref.location.modifierKeyEnter.newtabBackground "Open in New Background Tab">
+
+<!ENTITY tabPref.location.foreignDomain.group   "Location bar Loading for foreign domain pages">
+<!ENTITY tabPref.location.foreignDomain.current "Open normally">
+<!ENTITY tabPref.location.foreignDomain.newtab  "Open in New Tab">
+<!ENTITY tabPref.location.foreignDomain.newtabBackground "Open in New Background Tab">
+

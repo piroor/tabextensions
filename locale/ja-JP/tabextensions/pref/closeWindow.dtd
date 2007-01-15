@@ -1,0 +1,9 @@
+<!ENTITY tabPref.closeWindow.title "ウィンドウを閉じる時の挙動">
+
+<!ENTITY windowCloseBehavior.label       "ウィンドウを閉じる時の挙動">
+<!ENTITY windowCloseBehavior.confirm     "ウィンドウを閉じてよいかどうか常に問い合わせる">
+<!ENTITY windowCloseBehavior.forbid      "複数のタブを開いているときはウィンドウを閉じるのを禁止する（タブが一つだけのときはウィンドウを閉じる）">
+<!ENTITY windowCloseBehavior.allow       "常に全てのタブとウィンドウを閉じる">
+<!ENTITY windowCloseBehavior.allowOneTab "ウィンドウを閉じる代わりに現在のタブを閉じる">
+
+<!ENTITY confirmOnlyForMultipleTabs      "複数のタブを開いているときのみ問い合わせる">

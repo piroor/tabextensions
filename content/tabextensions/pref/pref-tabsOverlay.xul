@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE overlay [
+<!ENTITY % versionDTD SYSTEM "chrome://tabextensions/content/_version.dtd">
+%versionDTD;
+<!ENTITY % tabextensionsDTD SYSTEM "chrome://tabextensions/locale/">
+%tabextensionsDTD;
+]>
+
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+	<checkbox id="tabStrip"      disabled="true" prefstring="" tooltiptext="&tabPref.ref.close;"/>
+	<checkbox id="tabBackground" disabled="true" prefstring="" tooltiptext="&tabPref.ref.focus;"/>
+	<checkbox id="middleClick"   disabled="true" prefstring="" tooltiptext="&tabPref.ref.advanced;"/>
+	<radiogroup id="loadGroup"   hidden="true" prefstring=""/>
+	<groupbox id="loadGroupPreferences">
+		<description flex="1">&tabPref.ref.tabGroup;</description>
+	</groupbox>
+
+	<script type="application/x-javascript"><![CDATA[
+
+window.onload = function()
+{
+	var top = Components.lookupMethod(window, 'top').call(window);
+	if (top.opener.top.location.href == 'chrome://browser/content/pref/pref.xul' &&
+		top.opener.document.getElementById('extList').selectedItems[0].getAttribute('name') == 'tabextensions' &&
+		document.getElementById('urlBar')) {
+		document.getElementById('urlBar').hidden = true;
+	}
+
+	var autoHide = document.getElementById('tabStrip');
+	if (autoHide)
+		autoHide.setAttribute('oncommand', 'onModified(this.getAttribute(\'prefstring\'), this.checked);');
+
+	if ('_elementIDs' in window) {
+		for (var i = _elementIDs.length-1; i > -1; i--)
+			if (_elementIDs[i] == 'tabStrip' ||
+				_elementIDs[i] == 'tabBackground' ||
+				_elementIDs[i] == 'middleClick' ||
+				_elementIDs[i] == 'loadGroup') {
+				_elementIDs.splice(i, 1);
+			}
+	}
+	else
+		window._elementIDs = [];
+
+	window.parent.initPanel(location.href);
+};
+
+
+	]]></script>
+
+
+</overlay>

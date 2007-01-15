@@ -1,0 +1,34 @@
+<!ENTITY tabPref.search.title "Web検索の挙動">
+
+
+
+<!ENTITY tabPref.search.load.group   "Web検索ボックスの検索結果">
+<!ENTITY tabPref.search.load.current "現在のタブで開く">
+<!ENTITY tabPref.search.load.newtab  "新しいタブで開く">
+<!ENTITY tabPref.search.load.newtabBackground "新しいバックグラウンドのタブで開く">
+
+<!ENTITY advancedSearchBoxPrefs.go    "詳細...">
+<!ENTITY advancedSearchBoxPrefs.title "Web検索ボックスの特殊な動作">
+
+<!ENTITY tabPref.search.modifierKeyEnter.group   "Alt-EnterでWeb検索ボックスを実行した場合の検索結果">
+<!ENTITY tabPref.search.modifierKeyEnter.none    "何もしない（検索を実行しない）">
+<!ENTITY tabPref.search.modifierKeyEnter.current "現在のタブで開く">
+<!ENTITY tabPref.search.modifierKeyEnter.newtab  "新しいタブで開く">
+<!ENTITY tabPref.search.modifierKeyEnter.newtabBackground "新しいバックグラウンドのタブで開く">
+
+<!ENTITY tabPref.search.foreignDomain.group   "Web検索ボックスの検索結果が現在のタブで開いているページと違うサイトの場合">
+<!ENTITY tabPref.search.foreignDomain.current "通常どおり開く">
+<!ENTITY tabPref.search.foreignDomain.newtab  "新しいタブで開く">
+<!ENTITY tabPref.search.foreignDomain.newtabBackground "新しいバックグラウンドのタブで開く">
+
+
+
+<!ENTITY tabPref.search.context.group   "コンテキストメニューからのWeb検索の検索結果">
+<!ENTITY tabPref.search.context.default "制御しない（標準の動作）">
+<!ENTITY tabPref.search.context.current "現在のタブで開く">
+<!ENTITY tabPref.search.context.newtab  "新しいタブで開く">
+<!ENTITY tabPref.search.context.newtabBackground "新しいバックグラウンドのタブで開く">
+<!ENTITY tabPref.search.context.newwindow "新しいウィンドウで開く">
+
+<!ENTITY tabPref.search.context.useSearchBox "Web検索ボックスの現在の検索エンジンを使用する">
+

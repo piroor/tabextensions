@@ -1,0 +1,34 @@
+<!ENTITY tabPref.search.title "Advanced Web Search features">
+
+
+
+<!ENTITY tabPref.search.load.group   "Web Search box results">
+<!ENTITY tabPref.search.load.current "Open in Current Tab">
+<!ENTITY tabPref.search.load.newtab  "Open in New Tab">
+<!ENTITY tabPref.search.load.newtabBackground "Open in New Background Tab">
+
+<!ENTITY advancedSearchBoxPrefs.go    "Advanced...">
+<!ENTITY advancedSearchBoxPrefs.title "Advance preferences of the Web Search box">
+
+<!ENTITY tabPref.search.modifierKeyEnter.group   "Web Search box results for Alt-Enter">
+<!ENTITY tabPref.search.modifierKeyEnter.none    "No reaction (Don't start to search)">
+<!ENTITY tabPref.search.modifierKeyEnter.current "Open in Current Tab">
+<!ENTITY tabPref.search.modifierKeyEnter.newtab  "Open in New Tab">
+<!ENTITY tabPref.search.modifierKeyEnter.newtabBackground "Open in New Background Tab">
+
+<!ENTITY tabPref.search.foreignDomain.group   "Web Search box results for foreign domain pages">
+<!ENTITY tabPref.search.foreignDomain.current "Open normally">
+<!ENTITY tabPref.search.foreignDomain.newtab  "Open in New Tab">
+<!ENTITY tabPref.search.foreignDomain.newtabBackground "Open in New Background Tab">
+
+
+
+<!ENTITY tabPref.search.context.group   "Web Search results from the Context Menu">
+<!ENTITY tabPref.search.context.default "No controlling (default behavior)">
+<!ENTITY tabPref.search.context.current "Open in Current Tab">
+<!ENTITY tabPref.search.context.newtab  "Open in New Tab">
+<!ENTITY tabPref.search.context.newtabBackground "Open in New Background Tab">
+<!ENTITY tabPref.search.context.newwindow "Open in New Window">
+
+<!ENTITY tabPref.search.context.useSearchBox "Use Current Search Engine of the Web Search box">
+

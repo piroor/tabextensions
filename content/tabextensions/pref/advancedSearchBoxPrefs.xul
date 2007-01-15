@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://tabextensions/content/pref/prefOverlay.css" type="text/css"?>
+<?xul-overlay href="chrome://tabextensions/content/globalOverlay.xul"?>
+
+<!DOCTYPE page SYSTEM "chrome://tabextensions/locale/pref/search.dtd">
+
+<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	windowtype="tabextensions:advancedSearchBoxPrefs"
+	orient="vertical"
+	title="&advancedSearchBoxPrefs.title;"
+	buttons="accept,cancel"
+	ondialogaccept="apply();"
+	ondialogcancel="cancel();"
+	onload="init();">
+
+
+<script type="application/x-javascript" src="chrome://tabextensions/content/pref/prefOverlay.js"/>
+<script type="application/x-javascript" src="chrome://tabextensions/content/pref/advancedPrefs.js"/>
+
+
+<box orient="vertical"
+	oncommand="onCommand(event)">
+
+	<groupbox>
+		<caption label="&tabPref.search.modifierKeyEnter.group;"/>
+		<radiogroup id="searchModifierKeyEnterBehavior"
+			orient="horizontal">
+			<box orient="vertical">
+				<radio value="-1" label="&tabPref.search.modifierKeyEnter.none;"/>
+				<spacer flex="1"/>
+			</box>
+			<box orient="vertical">
+				<radio value="0" label="&tabPref.search.modifierKeyEnter.current;"/>
+				<radio value="1" label="&tabPref.search.modifierKeyEnter.newtab;"/>
+				<radio value="2" label="&tabPref.search.modifierKeyEnter.newtabBackground;"/>
+			</box>
+		</radiogroup>
+	</groupbox>
+
+	<groupbox>
+		<caption label="&tabPref.search.foreignDomain.group;"/>
+		<radiogroup id="searchForeignDomainBehavior" orient="vertical">
+			<radio value="-1" label="&tabPref.search.foreignDomain.current;"/>
+			<radio value="1"  label="&tabPref.search.foreignDomain.newtab;"/>
+			<radio value="2"  label="&tabPref.search.foreignDomain.newtabBackground;"/>
+		</radiogroup>
+	</groupbox>
+
+</box>
+
+
+</dialog>

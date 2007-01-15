@@ -1,0 +1,39 @@
+<!ENTITY tabextensions.label    "タブブラウザ拡張">
+
+<!ENTITY prefDialog.title       "タブブラウザ拡張の設定">
+<!ENTITY prefDialog.category    "カテゴリ">
+<!ENTITY prefDialog.size        "width: 57em; height: 44em;">
+<!ENTITY prefDialog.apply       "適用">
+
+
+<!ENTITY tabPref.general.tree        "全般">
+
+<!ENTITY tabPref.new.tree            "新しいタブ">
+<!ENTITY tabPref.close.tree          "タブを閉じる">
+<!ENTITY tabPref.closeWindow.tree    "ウィンドウを閉じる">
+<!ENTITY tabPref.undo.tree           "やり直し">
+
+<!ENTITY tabPref.useTab.tree         "タブの利用">
+
+<!ENTITY tabPref.links.tree          "リンク">
+<!ENTITY tabPref.platformNative.tree "外部リンク">
+<!ENTITY tabPref.javascript.tree     "ポップアップ">
+<!ENTITY tabPref.bookmarks.tree      "ブックマーク">
+<!ENTITY tabPref.history.tree        "履歴">
+<!ENTITY tabPref.location.tree       "場所ツールバー">
+<!ENTITY tabPref.viewSource.tree     "ソースの表示">
+<!ENTITY tabPref.search.tree         "検索の結果">
+
+<!ENTITY tabPref.appearance.tree       "外観">
+
+<!ENTITY tabPref.appearance.tab.tree    "タブ">
+<!ENTITY tabPref.appearance.tabbar.tree "タブバー">
+<!ENTITY tabPref.appearance.thumbnail.tree "縮小画像">
+
+<!ENTITY tabPref.gestures.tree      "ジェスチャ">
+<!ENTITY tabPref.features.tree      "タブの設定">
+<!ENTITY tabPref.group.tree         "タブモード">
+<!ENTITY tabPref.menu.tree          "コンテキストメニュー">
+<!ENTITY tabPref.menuTab.tree       "タブのメニュー">
+
+<!ENTITY tabPref.misc.tree          "その他">

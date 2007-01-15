@@ -1,0 +1,10 @@
+<!ENTITY tabPref.menu.title     "Context Menu">
+
+
+<!ENTITY tabPref.menu.links.group     "Extra menu items when links are selected">
+<!ENTITY openAllLinksInTabs.pref      "Show &quot;Open All Links in New Tabs&quot;">
+<!ENTITY openAllLinksInGroup.pref     "Show &quot;Open All Links in New Tab Group&quot;">
+<!ENTITY bookmarkAllLinksAsGroup.pref  "Show &quot;Bookmark All Links as a Group&quot;">
+
+<!ENTITY tabPref.menu.group.group     "Extra menu items when the tab is in a group">
+<!ENTITY bookmarkTabGroup.pref        "Show &quot;Bookmark Related Group of Tabs&quot;">

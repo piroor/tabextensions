@@ -1,0 +1,74 @@
+<!ENTITY tabPref.links.title           "Behavior of Links in Browser">
+
+<!ENTITY tabPref.links.target.tab     "New Window Links">
+<!ENTITY tabPref.links.target.group   "Loading for Links and HTML forms desinged to open New Window">
+<!ENTITY tabPref.links.target.none    "No controlling">
+<!ENTITY tabPref.links.target.current "Open in Current Tab">
+<!ENTITY tabPref.links.target.newtab  "Open in New Tab">
+<!ENTITY tabPref.links.target.newtabBackground "Open in New Background Tab">
+
+<!ENTITY tabPref.links.middleClick.tab "Middle-click">
+<!ENTITY tabPref.links.middleClick.group "Link Loading for Midlle-Click (or Ctrl-click)">
+<!ENTITY tabPref.links.middleClick.group.mac "Link Loading for Midlle-Click (or Command-click)">
+<!ENTITY tabPref.links.middleClick.none    "No reaction">
+<!ENTITY tabPref.links.middleClick.current "Open in Current Tab">
+<!ENTITY tabPref.links.middleClick.newtab  "Open in New Tab">
+<!ENTITY tabPref.links.middleClick.newtabBackground "Open in New Background Tab">
+
+
+<!ENTITY tabPref.links.block_uri.tab   "Links to Download Files">
+<!ENTITY tabPref.links.block_uri.group "New Tabs from links which download files">
+<!ENTITY tabPref.links.block_uri.none  "No controlling (Open blank tabs for those links)">
+<!ENTITY tabPref.links.block_uri.auto  "Block blank tabs only for links desinged to open New Window">
+<!ENTITY tabPref.links.block_uri.any   "Always block blank tabs">
+
+<!ENTITY tabPref.links.block_uri.rule.tab "Links to Download Files">
+<!ENTITY tabPref.links.block_uri.rule.caption "Blocking for blank tabs from links to download files">
+<!ENTITY tabPref.links.block_uri.rule.label   "Regard the link as downloading files, if the link URI includes one of following parts (*regular expressions available):">
+
+
+
+<!ENTITY tabPref.links.misc.group "Misc">
+
+<!ENTITY showThisTabItemLink "Add &quot;Open in This Tab&quot; to the context menu for new tab links">
+<!ENTITY showNewActiveTabItemLink "Add &quot;Open in New Active Tab&quot; to the context menu for background tab links">
+
+
+
+
+<!ENTITY advancedStateInheritancePrefs.go    "Inheritance of Tab Features...">
+<!ENTITY advancedStateInheritancePrefs.title "Inheritance of Tab Features">
+
+<!ENTITY tabPref.inheritance.group "New Tab from Links">
+
+<!ENTITY inheritTextZoom        "Inhert Text size">
+<!ENTITY inheritLocked          "Inherit Locked state">
+<!ENTITY inheritReferrerBlocked "Inherit HTTP Referrer Blocked state">
+<!ENTITY inheritAllow           "Inherit permission">
+
+<!ENTITY inheritOnlySameSite    "Inherit only from pages in same website">
+
+
+
+<!ENTITY advancedLinksPrefs.go "Advanced Options for Links...">
+<!ENTITY advancedLinksPrefs.title "Advanced Options for Links">
+
+<!ENTITY tabPref.links.newTabActions.tab  "New Tab Action">
+<!ENTITY tabPref.links.newTabPosition.tab "New Tab Position">
+
+<!ENTITY tabPref.links.normal.group   "Normal Links Loading">
+<!ENTITY tabPref.links.normal.current "Open in Current Tab">
+<!ENTITY tabPref.links.normal.newtab  "Open in New Tab">
+<!ENTITY tabPref.links.normal.newtabBackground "Open in New Background Tab">
+
+<!ENTITY tabPref.links.outer.group     "Links which refer to other site">
+<!ENTITY tabPref.links.outer.none      "Operate like as normal links">
+<!ENTITY tabPref.links.outer.newtab    "Open in New Tab">
+<!ENTITY tabPref.links.outer.newtabBackground "Open in New Background Tab">
+<!ENTITY tabPref.links.outer.strict    "Judge strictly whether the linked page is foreign site or not">
+
+<!ENTITY tabPref.links.locked.group    "Links in Locked Tabs">
+<!ENTITY tabPref.links.locked.newtab    "Open in New Tab">
+<!ENTITY tabPref.links.locked.newtabBackground "Open in New Background Tab">
+
+<!ENTITY openTabIn.group "Location of New Tab from Links">

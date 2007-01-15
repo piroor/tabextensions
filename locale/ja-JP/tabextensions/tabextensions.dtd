@@ -1,0 +1,234 @@
+<!ENTITY tabextensions.label    "タブブラウザ拡張">
+
+
+
+
+<!ENTITY tabPref.ref.advanced   "タブブラウザ拡張の設定の「タブの利用」内の「リンク」を参照して下さい">
+<!ENTITY tabPref.ref.close      "タブブラウザ拡張の設定の「タブを閉じる」を参照して下さい">
+<!ENTITY tabPref.ref.focus      "タブブラウザ拡張の設定の「タブの利用」を参照して下さい">
+<!ENTITY tabPref.ref.tabGroup   "タブブラウザ拡張の設定の「グループ化」を参照して下さい">
+
+<!ENTITY tabPref.ref.description.newType  "タブブラウズの詳細な設定を変更するには、タブブラウザ拡張を利用して下さい">
+<!ENTITY tabPref.ref.goPrefs              "タブブラウザ拡張の設定...">
+
+
+
+
+
+<!-- for old versions which has not this entity -->
+<!ENTITY closeOtherTabs.label "他のタブをすべて閉じる">
+
+
+<!ENTITY ontabclick.showcontextmenu "メニューを開く">
+<!ENTITY ontabclick.default     "（何もしない）">
+
+<!ENTITY ontabclick.duplicate   "タブを複製">
+<!ENTITY ontabclick.duplicateInWindow
+                                "タブを新規ウィンドウで複製">
+<!ENTITY ontabclick.setFixedLabelFor "ラベルを付ける">
+<!ENTITY ontabclick.lock        "タブをロック">
+<!ENTITY ontabclick.lockAll     "全てのタブをロック">
+<!ENTITY ontabclick.blockReferrer "リファラを隠す">
+<!ENTITY ontabclick.blockReferrerAll "全てのタブでリファラを隠す">
+<!ENTITY ontabclick.autoreload  "自動リロード...">
+<!ENTITY ontabclick.autoreloadAll "全てのタブを自動リロード...">
+<!ENTITY ontabclick.removeLeft             "左/上のタブを全て閉じる">
+<!ENTITY ontabclick.removeLeft.horizontal  "左のタブを全て閉じる">
+<!ENTITY ontabclick.removeLeft.vertical    "上のタブを全て閉じる">
+<!ENTITY ontabclick.removeRight            "右/下のタブを全て閉じる">
+<!ENTITY ontabclick.removeRight.horizontal "右のタブを全て閉じる">
+<!ENTITY ontabclick.removeRight.vertical   "下のタブを全て閉じる">
+<!ENTITY ontabclick.removeAll            "全てのタブを閉じる">
+<!ENTITY ontabclick.removeVisited        "全ての既読タブを閉じる">
+<!ENTITY ontabclick.removeOther          "&closeOtherTabs.label;">
+<!ENTITY ontabclick.moveLeft             "左/上に移動">
+<!ENTITY ontabclick.moveLeft.horizontal  "左に移動">
+<!ENTITY ontabclick.moveLeft.vertical    "上に移動">
+<!ENTITY ontabclick.moveRight            "右/下に移動">
+<!ENTITY ontabclick.moveRight.horizontal "右に移動">
+<!ENTITY ontabclick.moveRight.vertical   "下に移動">
+<!ENTITY ontabclick.undoRemoveTab "「タブを閉じる」をやり直す">
+<!ENTITY ontabclick.removeTabGroup "タブグループを閉じる">
+<!ENTITY ontabclick.highlightGroup "タブグループをハイライト表示する">
+<!ENTITY ontabclick.collapseExpandGroup "サブグループを開閉する">
+<!ENTITY ontabclick.sortTabsByGroup "タブをグループで並べかえる">
+<!ENTITY ontabclick.setTabColor "タブの色を変更...">
+<!ENTITY ontabclick.editBookmark "このブックマークの編集...">
+<!ENTITY ontabclick.allow       "機能の許可">
+<!ENTITY ontabclick.allowPlugins "プラグインの使用を許可する">
+<!ENTITY ontabclick.allowJavaScript "JavaScriptの使用を許可する">
+<!ENTITY ontabclick.allowMetaRedirects "Refreshによる自動読み込みを許可する">
+<!ENTITY ontabclick.allowSubframes "フレームを表示する">
+<!ENTITY ontabclick.allowImages "画像を読み込む">
+
+<!ENTITY ontabclick.editMenu    "コンテキストメニューの編集...">
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!ENTITY interval.title         "自動リロードの間隔の設定">
+<!ENTITY interval.label_before  "自動リロードの間隔：">
+<!ENTITY interval.label_after   "秒ごと">
+<!ENTITY interval.30            "30">
+<!ENTITY interval.60            "60 (1分)">
+<!ENTITY interval.90            "90">
+<!ENTITY interval.100           "100">
+<!ENTITY interval.120           "120 (2分)">
+<!ENTITY interval.150           "150">
+<!ENTITY interval.180           "180 (3分)">
+<!ENTITY interval.200           "200">
+<!ENTITY interval.600           "600 (10分)">
+<!ENTITY interval.1800          "1800 (30分)">
+<!ENTITY interval.3600          "3600 (1時間)">
+<!ENTITY interval.7200          "7200 (2時間)">
+<!ENTITY interval.10800         "10800 (3時間)">
+<!ENTITY interval.43200         "43200 (12時間)">
+<!ENTITY interval.86400         "86400 (24時間)">
+
+<!ENTITY textZoom.label_before  "表示する文字の大きさ：">
+<!ENTITY textZoom.label_after   "&#37;">
+
+<!ENTITY fixedLabel.title       "タブのラベル">
+<!ENTITY fixedLabel.label       "新しいラベル：">
+<!ENTITY fixedLabel.clear       "ページのタイトルを表示">
+<!ENTITY fixedLabel.shouldSave  "ブックマークの名前として記憶する">
+
+<!ENTITY openAllLinksInTabs.label     "新しいタブですべてのリンクを開く">
+<!ENTITY openAllLinksInTabs.accesskey "s">
+<!ENTITY openAllLinksInGroup.label    "新しいタブのグループですべてのリンクを開く">
+<!ENTITY openAllLinksInGroup.accesskey "g">
+
+<!ENTITY bookmarkAllLinksAsGroup.label "すべてのリンクをまとめてブックマークする">
+<!ENTITY bookmarkAllLinksAsGroup.accesskey "g">
+<!ENTITY bookmarkTabGroup.label       "このタブを含むグループをまとめてブックマークする">
+<!ENTITY bookmarkTabGroup.accesskey   "g">
+
+<!ENTITY openLinkInNewActiveTab.label     "新しいアクティブなタブでリンクを開く">
+<!ENTITY openLinkInNewActiveTab.accesskey "v">
+<!ENTITY openLinkInThisTab.label          "このタブでリンクを開く">
+<!ENTITY openLinkInThisTab.accesskey      "t">
+
+<!ENTITY bookmarkGroup.label                  "このタブのグループにまとめてブックマークを付ける">
+
+
+
+
+
+
+
+
+<!ENTITY bookmarksProperty.extra.title "&quot;&#37;s&quot;の拡張設定">
+<!ENTITY bookmarksProperty.extra.status.label "タブの機能">
+<!ENTITY bookmarksProperty.extra.status.accesskey "F">
+<!ENTITY bookmarksProperty.extra.extra.label "参照元とアイコン">
+<!ENTITY bookmarksProperty.extra.extra.accesskey "R">
+
+<!ENTITY bookmarksProperty.useFixedLabel.label "ブックマークの名前をタブのラベルにする">
+<!ENTITY bookmarksProperty.locked.label "リンクを常に新しいタブで開く（タブのロック）">
+<!ENTITY bookmarksProperty.referrerBlocked.label "リンク先にリファラを通知しない">
+<!ENTITY bookmarksProperty.autoReload.label "一定間隔で自動リロードする（自動リロード）">
+
+<!ENTITY bookmarksProperty.allow.caption "以下の機能を有効にする">
+<!ENTITY bookmarksProperty.allowPlugins.label "プラグインの使用">
+<!ENTITY bookmarksProperty.allowJavascript.label "JavaScriptの使用">
+<!ENTITY bookmarksProperty.allowMetaRedirects.label "Refreshによる自動読み込み">
+<!ENTITY bookmarksProperty.allowSubframes.label "フレームの読み込み">
+<!ENTITY bookmarksProperty.allowImages.label "画像の読み込み">
+
+<!ENTITY bookmarksProperty.iconURI.label     "アイコン：">
+<!ENTITY bookmarksProperty.iconURI.clear     "クリア">
+<!ENTITY bookmarksProperty.iconURI.choose    "参照...">
+<!ENTITY bookmarksProperty.iconURI.description "この設定は、このブックマークと同じ場所を示している他のブックマークにも適用されます。">
+<!ENTITY bookmarksProperty.referrerURI.label "リファラ：">
+
+<!ENTITY bookmarksProperty.disabled.description "このブックマークとタブの状態を関連付けるには、設定を有効にする必要があります。この機能を有効にするには以下のボタンを押してください。">
+<!ENTITY bookmarksProperty.disabled.button "ブックマークとタブを関連付ける">
+
+
+
+
+
+<!ENTITY bookmarkGroup.label     "">
+<!ENTITY bookmarkGroup.accesskey "">
+
+<!ENTITY tabMenu.label             "タブ">
+<!ENTITY tabMenu.accesskey         "A">
+<!ENTITY tabMenu.close.label       "タブをまとめて閉じる">
+<!ENTITY tabMenu.advanced.label    "タブの機能">
+<!ENTITY tabMenu.group.label       "タブグループ">
+<!ENTITY tabMenu.preferences.label "タブブラウザ拡張の設定...">
+
+<!ENTITY tabsList.label   "タブの一覧">
+<!ENTITY tabsList.menu.accesskey "T">
+<!ENTITY tabsList.menu.key       "I">
+<!ENTITY tabsList.tooltip "タブの一覧">
+<!ENTITY tabsList.sorted  "グループ順で見る">
+
+
+
+
+<!ENTITY about.title       "タブブラウザ拡張について">
+<!ENTITY about.name_before "タブブラウザ拡張 Ver.">
+<!ENTITY about.name_after  "">
+<!ENTITY about.ver_before  "Ver.">
+<!ENTITY about.ver_after   "">
+<!ENTITY about.destributed "http://piro.sakura.ne.jp/">
+<!ENTITY about.uninstall   "アンインストール">
+
+
+<!ENTITY operatePrefs   "ユーザ設定の共有">
+<!ENTITY exportPrefs    "設定をファイルに保存する">
+<!ENTITY importPrefs    "保存した設定を読み込む">
+<!ENTITY recallPrefs    "プリセット設定を呼び出す">
+
+
+
+<!ENTITY preset.title    "タブブラウズ拡張機能の設定の呼び出し">
+<!ENTITY preset.desc     "タブブラウズ拡張機能の設定を選択して下さい：">
+<!ENTITY preset.fromList "プリセット設定を使う">
+<!ENTITY preset.fromFile "ファイルから読み込む">
+
+<!ENTITY preset._restore      "&lt;ユーザ設定&gt;">
+<!ENTITY preset._restore.desc "現在の設定をそのまま使い続けます。">
+
+
+<!ENTITY preset.style         "使い方で選ぶ">
+
+<!ENTITY preset.novice        "ライトユーザ向け設定">
+<!ENTITY preset.novice.desc   "最小限のタブブラウズ関連の機能のみを有効にします。ブラウザの使い方をあまり変えたくない方や、タブブラウズ機能に慣れていない方に最適です。">
+
+<!ENTITY preset.professional      "ヘビーユーザ向け設定">
+<!ENTITY preset.professional.desc "タブブラウズ関連の便利な機能を全て有効にします。局面に会わせてブラウザが自動的に挙動を判断しますので、タブブラウズ機能を使いこなしたい方や、ものぐさな方に最適です。">
+
+<!ENTITY preset.mdi           "MDI風設定">
+<!ENTITY preset.mdi.desc      "マルチドキュメントインターフェース形式のアプリケーションに似せた動作にします。タブブラウザを初めて使う方に適しています。">
+
+<!ENTITY preset.tree          "ツリー風設定">
+<!ENTITY preset.tree.desc     "KIKI、Sleipnirのウィンドウ一覧、構造化エディタ、Windowsエクスプローラなどのツリー管理型のアプリケーションに似せた動作にします。多数のタブを開いて使う方にお勧めです。">
+
+<!ENTITY preset.piro          "作者の常用設定">
+<!ENTITY preset.piro.desc     "作者が普段使用している設定です。素人にはおすすめできない。">
+
+
+<!ENTITY preset.compatible    "他のアプリケーションからの乗り換えで選ぶ">
+
+<!ENTITY preset.sleipnir      "Sleipnir互換設定">
+<!ENTITY preset.sleipnir.desc "有名なタブブラウザ「Sleipnir」のデフォルト設定を再現します。（Sleipnirでカスタマイズした設定は引き継がれません）">
+
+<!ENTITY preset.sleipnir-tree      "Sleipnir互換設定（ウィンドウ一覧）">
+<!ENTITY preset.sleipnir-tree.desc "有名なタブブラウザ「Sleipnir」のデフォルト設定で「ウィンドウ一覧」機能を利用した状態を再現します。（Sleipnirでカスタマイズした設定は引き継がれません）">
+
+<!ENTITY preset.irider      "iRider互換設定">
+<!ENTITY preset.irider.desc "独特なスタイルのブラウザ「iRider」のような動作を再現します。（iRiderでカスタマイズした設定は引き継がれません。また、Firefox 1.5以降でのみ有効です）">
+
+
+

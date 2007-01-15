@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
+
+<!DOCTYPE overlay [
+<!ENTITY % tabextensionsDTD SYSTEM "chrome://tabextensions/locale/">
+%tabextensionsDTD;
+]>
+
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+<script type="application/x-javascript" src="chrome://global/content/XPCNativeWrapper.js"/>
+<script type="application/x-javascript" src="chrome://tabextensions/content/pXPCNativeWrapper.js"/>
+<script type="application/x-javascript" src="chrome://tabextensions/content/pRDFData.js"/>
+
+<script type="application/x-javascript" src="chrome://tabextensions/content/globalOverlay.js"/>
+
+<script type="application/x-javascript" src="chrome://tabextensions/content/bookmarks/bookmarksProperty.js"/>
+
+</overlay>

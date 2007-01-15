@@ -1,0 +1,156 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
+<?xul-overlay href="chrome://tabextensions/content/pref/prefOverlay.xul"?>
+
+<!DOCTYPE overlay SYSTEM "chrome://tabextensions_sessionmanager/locale/">
+
+<page id="prefPage"
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	orient="vertical"
+	headertitle="&tabPref.startup.title;"
+	onload="init();">
+
+
+<script type="application/x-javascript" src="chrome://tabextensions_sessionmanager/content/sessionManager.js"/>
+
+<script type="application/x-javascript"><![CDATA[
+
+if (!('_elementIDs' in window) || !window._elementIDs)
+	var _elementIDs = [];
+
+_elementIDs = _elementIDs.concat([
+	'startupActionOverlay',
+	'selectedSession',
+	'selectedSession.onetime',
+	'ignoreStartedWithOpenURLRequests',
+	'backupTabs'
+]);
+
+
+function init()
+{
+	window.parent.initPanel(location.href);
+
+	window.setTimeout(
+		function()
+		{
+			TabbrowserSessionManager.initStoredTabSets();
+			window.setTimeout(
+				function()
+				{
+					var data = TabbrowserSessionManager.storedTabSets;
+					var list = document.getElementById('selectedSession');
+					var popup = list.firstChild;
+
+					var value = list.value;
+
+					var range = document.createRange();
+					range.selectNodeContents(popup);
+					range.deleteContents();
+					range.detach();
+
+					for (var i in data)
+					{
+						popup.appendChild(document.createElement('menuitem'));
+						popup.lastChild.setAttribute('label', data[i].getData(data[i].containerNode, 'Label'));
+						popup.lastChild.setAttribute('value', data[i].containerNode.QueryInterface(TabbrowserSessionManager.service.knsIRDFResource).Value.match(/StoredTabSets:tabset-\d+/)[0]);
+						popup.lastChild.setAttribute('crop', 'end');
+						popup.lastChild.setAttribute('tooltiptext', popup.lastChild.getAttribute('label'));
+
+						if (popup.lastChild.getAttribute('value') == value)
+							list.selectedItem = popup.lastChild;
+					}
+					list.value = value;
+
+					if (popup.hasChildNodes()) {
+						if (!list.selectedItem)
+							list.setAttribute('label', list.getAttribute('label-default'));
+					}
+					else {
+						popup.appendChild(document.createElement('menuitem'));
+						popup.lastChild.setAttribute('label', list.getAttribute('label-noitem'));
+						popup.lastChild.setAttribute('crop', 'end');
+						list.selectedItem = popup.lastChild;
+					}
+				},
+				100
+			);
+		},
+		0
+	);
+
+	onStartupChange();
+}
+
+function onStartupChange()
+{
+	var node = document.getElementById('startupActionOverlay');
+	controlLinkedItems(node, node.value == 0, 'linked-lastSession');
+	controlLinkedItems(node, node.value == 1, 'linked-storedSession');
+}
+
+]]></script>
+
+
+	<groupbox>
+		<caption label="&startupActionOverlay;"/>
+		<radiogroup id="startupActionOverlay"
+			prefstring="browser.tabs.extensions.startup_action_overlay"
+			preftype="int"
+			oncommand="onStartupChange();"
+			linked-lastSession="ignoreStartedWithOpenURLRequests"
+			linked-storedSession="selectedSession-label selectedSession selectedSession.onetime">
+			<radio value="-1" label="&startupActionOverlay.none;"/>
+			<box orient="vertical">
+				<radio value="0" label="&startupActionOverlay.lastSession;"/>
+				<box orient="horizontal">
+					<spacer style="width:2em;"/>
+					<checkbox id="ignoreStartedWithOpenURLRequests"
+						label="&ignoreStartedWithOpenURLRequests;"
+						prefstring="browser.tabs.extensions.startup_action_overlay.ignore_OpenURL_requests"/>
+				</box>
+			</box>
+			<box orient="vertical">
+				<radio value="1" label="&startupActionOverlay.storedSession;"/>
+				<box orient="horizontal">
+					<spacer style="width:2em;"/>
+					<box orient="vertical" flex="1">
+						<box orient="horizontal">
+							<label id="selectedSession-label"
+								control="selectedSession"
+								value="&selectedSession;"/>
+							<menulist id="selectedSession"
+								prefstring="browser.tabs.extensions.startup_action_overlay.selected_session"
+								preftype="string"
+								flex="1"
+								label-default="&selectedSession.default;"
+								label-noitem="&selectedSession.noitem;">
+								<menupopup/>
+							</menulist>
+						</box>
+						<checkbox id="selectedSession.onetime"
+							label="&selectedSession.onetime;"
+							prefstring="browser.tabs.extensions.startup_action_overlay.onece_per_day"/>
+					</box>
+				</box>
+			</box>
+		</radiogroup>
+	</groupbox>
+
+
+
+
+	<groupbox>
+		<caption label="&tabPref.backupTabs.group;"/>
+		<checkbox id="backupTabs"
+			label="&backupTabs;"
+			prefstring="browser.tabs.extensions.backup_tabs"/>
+	</groupbox>
+
+	<spacer flex="1"/>
+
+	<box id="tabextensionsAboutBox"/>
+
+</page>

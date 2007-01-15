@@ -1,0 +1,460 @@
+@import url("chrome://tabextensions/content/scrollableTabBar.css"); 
+ 
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"); 
+ 
+/* tabbrowser */ 
+	
+tabbrowser 
+{
+/*	-moz-binding: url("chrome://tabextensions/content/tabextensions.xml#tabbrowser") !important;*/
+	-moz-binding: url("chrome://tabextensions/content/scrollableTabBar.xml#tabbrowser") !important;
+}
+ 
+tabbrowser .tabbrowser-strip tab 
+{
+	-moz-binding: url("chrome://tabextensions/content/tabextensions.xml#tab") !important;
+}
+  
+tab > image[tabclass="tab-icon-hidden"] 
+{
+	visibility: collapse !important;
+}
+ 
+/* closeboxes in tabs */ 
+	
+tabbrowser tab toolbarbutton.tabs-closebutton.close-button, 
+tabbrowser[tabbrowser-tabbar-closebox-hidden="true"] [tabs-scrollbox-right="true"] .tabs-closebutton.close-button
+{
+	visibility: collapse !important;
+}
+ 
+tabbrowser[tabbrowser-tab-closebox="any"] tab toolbarbutton.tabs-closebutton.close-button.always, 
+tabbrowser[tabbrowser-tab-closebox="current"] tab[selected="true"] toolbarbutton.tabs-closebutton.close-button.showhover,
+tabbrowser[tabbrowser-tab-closebox="pointed"] tab[tab-showclosebox-hover="true"] toolbarbutton.tabs-closebutton.close-button.showhover
+{
+	visibility: visible !important;
+}
+  
+/* progressmeter in tabs */ 
+	
+tab[tab-progress] progressmeter.tab-progress 
+{
+	visibility: visible;
+}
+	
+tab:not([tab-progress]) progressmeter.tab-progress, 
+tab:not([busy="true"]) progressmeter.tab-progress
+{
+	visibility: collapse;
+}
+  
+tab progressmeter.tab-progress 
+{
+	min-width: 0;
+	min-height: 0;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	border: none;
+	-moz-outline: none;
+}
+ 
+#statusbar-progresspanel[tabextensions-progress-hidden="true"], 
+#statusbar-icon[tabextensions-progress-hidden="true"] {
+	visibility: collapse !important;
+}
+  
+/* extra tab icons */ 
+	
+tab .tab-extra-status 
+{
+	list-style-image: none;
+}
+	
+/* 
+tab:not([tab-autoreload="true"]):not([tab-forbidden="true"]):not([tab-locked="true"]):not([tab-referrerblocked="true"]) .tab-extra-status
+{
+	visibility: collapse;
+}
+*/
+  
+/* Hide default icons when extra features enabled 
+	If marge these selectors to above, icons are visibled. Why? :-( */
+tab[tab-autoreload]:not([busy]) .tab-icon :not(.tab-extra-status),
+tab[tab-forbidden]:not([busy]) .tab-icon :not(.tab-extra-status),
+tab[tab-locked]:not([busy]) .tab-icon :not(.tab-extra-status),
+tab[tab-referrerblocked]:not([busy]) .tab-icon :not(.tab-extra-status)
+{
+	visibility: collapse;
+}
+ 
+/* icon overlaying */ 
+	
+tab[tab-autoreload][busy] .tab-extra-status, 
+tab[tab-forbidden][busy] .tab-extra-status,
+tab[tab-locked][busy] .tab-extra-status,
+tab[tab-referrerblocked][busy] .tab-extra-status,
+tab[overlay-icon="true"][tab-autoreload] .tab-extra-status,
+tab[overlay-icon="true"][tab-forbidden] .tab-extra-status,
+tab[overlay-icon="true"][tab-locked] .tab-extra-status,
+tab[overlay-icon="true"][tab-referrerblocked] .tab-extra-status
+{
+	padding-top: 4px;
+	padding-left: 4px;
+}
+ 
+tab[tab-autoreload][busy] .tab-extra-status, 
+tab[tab-forbidden][busy] .tab-extra-status,
+tab[tab-locked][busy] .tab-extra-status,
+tab[tab-referrerblocked][busy] .tab-extra-status
+{
+	-moz-opacity: 0.35;
+}
+ 
+tab[overlay-icon="true"][tab-autoreload] .tab-icon :not(.tab-extra-status), 
+tab[overlay-icon="true"][tab-forbidden] .tab-icon :not(.tab-extra-status),
+tab[overlay-icon="true"][tab-locked] .tab-icon :not(.tab-extra-status),
+tab[overlay-icon="true"][tab-referrerblocked] .tab-icon :not(.tab-extra-status)
+{
+	visibility: visible;
+}
+   
+/* tab groups */ 
+	
+/* highlight group */ 
+	
+tab[group-relation] .tab-text-container 
+{
+	background-repeat: repeat !important;
+}
+ 
+tab[group-relation][tab-color]:not([tab-color="default"]) label 
+{
+	-moz-opacity: 0.5 !important;
+	color: black !important;
+}
+ 
+tab[group-relation="current"] .tab-text-container 
+{
+	background: url(./res/highlight-red.gif) !important;
+}
+ 
+tab[group-relation="child"] .tab-text-container 
+{
+	background: url(./res/highlight-yellow.gif) !important;
+}
+ 
+tab[group-relation="parent"] .tab-text-container 
+{
+	background: url(./res/highlight-green.gif) !important;
+}
+ 
+tab[group-relation="brother"] .tab-text-container 
+{
+	background: url(./res/highlight-blue.gif) !important;
+}
+ 
+tab[group-relation="root"] .tab-text-container 
+{
+	background: url(./res/highlight-gray.gif) !important;
+}
+  
+.tab-collapsed-tree-children-count, 
+.tab-twisty,
+.tab-thumbnail-container {
+	display: none;
+}
+	
+.tab-collapsed-tree-children-count > label 
+{
+	margin: 0;
+	padding: 0;
+	width: auto;
+	min-width: 0;
+}
+ 
+tabbrowser[tab-tree-enabled="true"] tab[tab-childTabs-count][tab-subgroup-collapsed="true"] .tab-collapsed-tree-children-count, 
+tabbrowser[tab-tree-enabled="true"] .tab-twisty,
+tabbrowser[tab-thumbnail-enabled="true"] .tab-thumbnail-container {
+	display: -moz-box;
+}
+ 
+.tab-thumbnail-container { 
+	overflow: hidden;
+}
+  
+tabbrowser[tab-tree-enabled="true"] tab[tab-collapsed="true"]:not([tab-collapseExpand-animating]) 
+{
+	visibility: collapse;
+}
+tabbrowser[tab-tree-enabled="true"] tab[tab-collapseExpand-animating] .tab-text,
+tabbrowser[tab-tree-enabled="true"] tab[tab-collapseExpand-animating] .tab-icon,
+tabbrowser[tab-tree-enabled="true"] tab[tab-collapseExpand-animating] .tab-twisty,
+tabbrowser[tab-tree-enabled="true"] tab[tab-collapseExpand-animating] .tab-text-container,
+tabbrowser[tab-tree-enabled="true"] tab[tab-collapseExpand-animating] .tab-thumbnail-container,
+tabbrowser[tab-tree-enabled="true"] tab[tab-collapseExpand-animating] .tabs-closebutton
+{
+	display: none !important;
+}
+  
+/* blank spaces in the tab bar */ 
+	
+tabbrowser[makeblankspace="true"].tabbrowser-tabbar-top tabs>hbox, 
+tabbrowser[makeblankspace="true"].tabbrowser-tabbar-bottom tabs>hbox
+{
+	margin-left: 1.5em;
+	margin-right: 1.5em;
+}
+ 
+tabbrowser[makeblankspace="true"].tabbrowser-tabbar-top tabs>.tabs-left, 
+tabbrowser[makeblankspace="true"].tabbrowser-tabbar-bottom tabs>.tabs-left,
+tabbrowser[makeblankspace="true"].tabbrowser-tabbar-top tabs>.tabs-right,
+tabbrowser[makeblankspace="true"].tabbrowser-tabbar-bottom tabs>.tabs-right
+{
+	min-width: 1.5em;
+}
+ 
+tabbrowser[makeblankspace="true"].tabbrowser-tabbar-left tabs>hbox, 
+tabbrowser[makeblankspace="true"].tabbrowser-tabbar-right tabs>hbox
+{
+	margin-top: 1.5em;
+	margin-bottom: 1.5em;
+}
+ 
+tabbrowser[makeblankspace="true"].tabbrowser-tabbar-left tabs>.tabs-left, 
+tabbrowser[makeblankspace="true"].tabbrowser-tabbar-right tabs>.tabs-left,
+tabbrowser[makeblankspace="true"].tabbrowser-tabbar-left tabs>.tabs-right,
+tabbrowser[makeblankspace="true"].tabbrowser-tabbar-right tabs>.tabs-right
+{
+	min-height: 1.5em;
+}
+  
+/* Indicate drop position */ 
+	
+[tabid="tab-drop-indicator-bar"] { 
+	visibility: collapse;
+	position: relative !important;
+	z-index: 50;
+}
+
+[tabid="tab-drop-indicator-bar"][dragging="true"] {
+	visibility: visible;
+}
+
+[tabid="tab-drop-indicator"] {
+	position: relative;
+	z-index: 100;
+}
+
+tabbrowser .tabbrowser-strip {
+	position: relative;
+	z-index: 10;
+}
+
+/*
+tabbrowser .tabbrowser-strip {
+	-moz-binding: url("chrome://tabextensions/content/tabextensions.xml#tabbrowser-strip") !important;
+}
+*/
+ 
+/* Firefox 1.1 drop-position indicator for tabs */ 
+#tab-drop-indicator-bar {
+	display: -moz-box !important;
+	visibility: collapse !important;
+}
+#tab-drop-indicator-bar[dragging="true"] {
+	visibility: visible !important;
+}
+  
+tabbrowser[tabbrowser-tabbar-hidden="true"] .tabbrowser-strip 
+{
+	visibility: collapse !important;
+}
+ 
+#tabsListMenu menuitem[style][_moz-menuactive="true"], 
+#tabextensions-tabsListMenu-shortcut menuitem[style][_moz-menuactive="true"],
+#tabextensions-tabslist-button menuitem[style][_moz-menuactive="true"]
+{
+	-moz-outline: solid thin;
+}
+ 
+#tabextensions-alert-popup autorepeatbutton 
+{
+	display: none !important;
+}
+ 
+/* tab bar */ 
+	
+/* side tab bar */ 
+	
+tabbrowser.tabbrowser-tabbar-left .tabbrowser-tabs, 
+tabbrowser.tabbrowser-tabbar-right .tabbrowser-tabs
+{
+	height: auto !important;
+	max-height: none !important;
+}
+  
+/* Tab Bar Splitter */ 
+
+[tabid="tabbar-splitter"] {
+	display: none;
+}
+.tabbrowser-tabbar-left [tabid="tabbar-splitter"],
+.tabbrowser-tabbar-right [tabid="tabbar-splitter"] {
+	display: -moz-box;
+	-moz-box-orient: vertical;
+}
+[tabbar-hidden="true"] [tabid="tabbar-splitter"] {
+	visibility: collapse;
+}
+  
+/* Unread State, Current Tab */ 
+
+
+
+	
+tabbrowser[highlight-unread="true"][unread-style*="italic"] tab[unread="true"] .tab-text-customstyle-target, 
+tabbrowser[highlight-current="true"][current-style*="italic"] tab[selected="true"] .tab-text-customstyle-target
+{
+	font-style: italic !important;
+}
+tabbrowser[highlight-unread="true"][unread-style*="bold"] tab[unread="true"] .tab-text-customstyle-target,
+tabbrowser[highlight-current="true"][current-style*="bold"] tab[selected="true"] .tab-text-customstyle-target
+{
+	font-weight: bold !important;
+}
+tabbrowser[highlight-unread="true"][unread-style*="underline"] tab[unread="true"] .tab-text-customstyle-target,
+tabbrowser[highlight-current="true"][current-style*="underline"] tab[selected="true"] .tab-text-customstyle-target
+{
+	text-decoration: underline !important;
+}
+tabbrowser[highlight-unread="true"][unread-style*="transparent"] tab[unread="true"],
+tabbrowser[highlight-current="true"][current-style*="transparent"] tab[selected="true"]
+{
+	-moz-opacity: 0.6 !important;
+	opacity: 0.6 !important;
+}
+ 
+tabbrowser[highlight-unread="true"][unread-style*="text-red"] tab[unread="true"] .tab-text-customstyle-target, 
+tabbrowser[highlight-current="true"][current-style*="text-red"] tab[selected="true"] .tab-text-customstyle-target
+{
+	color: red !important;
+}
+tabbrowser[highlight-unread="true"][unread-style*="text-blue"] tab[unread="true"] .tab-text-customstyle-target,
+tabbrowser[highlight-current="true"][current-style*="text-blue"] tab[selected="true"] .tab-text-customstyle-target
+{
+	color: blue !important;
+}
+tabbrowser[highlight-unread="true"][unread-style*="text-yellow"] tab[unread="true"] .tab-text-customstyle-target,
+tabbrowser[highlight-current="true"][current-style*="text-yellow"] tab[selected="true"] .tab-text-customstyle-target
+{
+	color: yellow !important;
+}
+tabbrowser[highlight-unread="true"][unread-style*="text-green"] tab[unread="true"] .tab-text-customstyle-target,
+tabbrowser[highlight-current="true"][current-style*="text-green"] tab[selected="true"] .tab-text-customstyle-target
+{
+	color: green !important;
+}
+tabbrowser[highlight-unread="true"][unread-style*="text-purple"] tab[unread="true"] .tab-text-customstyle-target,
+tabbrowser[highlight-current="true"][current-style*="text-purple"] tab[selected="true"] .tab-text-customstyle-target
+{
+	color: purple !important;
+}
+tabbrowser[highlight-unread="true"][unread-style*="text-aqua"] tab[unread="true"] .tab-text-customstyle-target,
+tabbrowser[highlight-current="true"][current-style*="text-aqua"] tab[selected="true"] .tab-text-customstyle-target
+{
+	color: aqua !important;
+}
+
+tabbrowser[highlight-unread="true"][unread-style*="text-white"] tab[unread="true"] .tab-text-customstyle-target,
+tabbrowser[highlight-current="true"][current-style*="text-white"] tab[selected="true"] .tab-text-customstyle-target
+{
+	color: white !important;
+}
+tabbrowser[highlight-unread="true"][unread-style*="text-gray"] tab[unread="true"] .tab-text-customstyle-target,
+tabbrowser[highlight-current="true"][current-style*="text-gray"] tab[selected="true"] .tab-text-customstyle-target
+{
+	color: gray !important;
+}
+tabbrowser[highlight-unread="true"][unread-style*="text-black"] tab[unread="true"] .tab-text-customstyle-target,
+tabbrowser[highlight-current="true"][current-style*="text-black"] tab[selected="true"] .tab-text-customstyle-target
+{
+	color: black !important;
+}
+
+tabbrowser[highlight-unread="true"][unread-style*="text-highlight"] tab[unread="true"] .tab-text-customstyle-target,
+tabbrowser[highlight-current="true"][current-style*="text-highlight"] tab[selected="true"] .tab-text-customstyle-target
+{
+	color: HighlightText !important;
+}
+tabbrowser[highlight-unread="true"][unread-style*="text-info"] tab[unread="true"] .tab-text-customstyle-target,
+tabbrowser[highlight-current="true"][current-style*="text-info"] tab[selected="true"] .tab-text-customstyle-target
+{
+	color: InfoText !important;
+}
+ 
+tabbrowser[highlight-unread="true"][unread-style*="bg-desktop"] tab[unread="true"], 
+tabbrowser[highlight-current="true"][current-style*="bg-desktop"] tab[selected="true"]
+{
+	-moz-appearance: none !important;
+	background-color: Background !important;
+}
+tabbrowser[highlight-unread="true"][unread-style*="bg-highlight"] tab[unread="true"],
+tabbrowser[highlight-current="true"][current-style*="bg-highlight"] tab[selected="true"]
+{
+	-moz-appearance: none !important;
+	background-color: Highlight !important;
+}
+tabbrowser[highlight-unread="true"][unread-style*="bg-3Dhighlight"] tab[unread="true"],
+tabbrowser[highlight-current="true"][current-style*="bg-3Dhighlight"] tab[selected="true"]
+{
+	-moz-appearance: none !important;
+	background-color: ThreeDHighlight !important;
+}
+tabbrowser[highlight-unread="true"][unread-style*="bg-3Dshadow"] tab[unread="true"],
+tabbrowser[highlight-current="true"][current-style*="bg-3Dshadow"] tab[selected="true"]
+{
+	-moz-appearance: none !important;
+	background-color: ThreeDShadow !important;
+}
+tabbrowser[highlight-unread="true"][unread-style*="bg-info"] tab[unread="true"],
+tabbrowser[highlight-current="true"][current-style*="bg-info"] tab[selected="true"]
+{
+	-moz-appearance: none !important;
+	background-color: InfoBackground !important;
+}
+  
+/* Invert */ 
+
+tabbrowser[tab-appearance-inverted="true"] tab .tab-middle,
+tabbrowser[tab-appearance-inverted="true"] tab .tab-middle > * > .tab-closebutton-container
+{
+	direction: rtl;
+}
+tabbrowser[tab-appearance-inverted="true"] tab .tab-middle > *
+{
+	direction: ltr;
+}
+ 
+/* Compatibility to Toolbar Enhancements (tbx) 
+   http://extensionroom.mozdev.org/clav/#tbx
+   http://firefox.geckodev.org/?Toolbar%20Enhancements (with JLP)
+*/
+
+.tbx-toolbox-belowtabs {
+	-moz-box-ordinal-group: 25;
+}
+
+.tabbrowser-tabbar-left .tbx-toolbox-belowtabs,
+.tabbrowser-tabbar-right .tbx-toolbox-belowtabs {
+	-moz-box-orient: horizontal !important;
+}
+
+.tabbrowser-tabbar-left .tbx-toolbox-belowtabs toolbar,
+.tabbrowser-tabbar-right .tbx-toolbox-belowtabs toolbar {
+	-moz-binding: url("chrome://tbx/content/bindings.xml#toolbar") !important;
+	-moz-box-orient: vertical !important;
+	min-width: 5px;
+}
+ 

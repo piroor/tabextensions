@@ -1,0 +1,150 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
+
+<!DOCTYPE page [
+<!ENTITY % versionDTD SYSTEM "chrome://tabextensions/content/_version.dtd">
+%versionDTD;
+<!ENTITY % tabextensionsDTD SYSTEM "chrome://tabextensions/locale/">
+%tabextensionsDTD;
+]>
+
+<page
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	orient="vertical"
+	headertitle="&tabextensions.label;"
+	onload="window.parent.initPanel(location.href);">
+
+<script type="application/x-javascript" src="chrome://global/content/XPCNativeWrapper.js"/>
+<script type="application/x-javascript" src="chrome://tabextensions/content/pXPCNativeWrapper.js"/>
+
+	<script type="application/x-javascript" src="chrome://tabextensions/content/pRDFData.js"/>
+	<script type="application/x-javascript" src="chrome://tabextensions/content/globalOverlay.js"/>
+	<script type="application/x-javascript" src="chrome://tabextensions/content/pref/prefOverlay.js"/>
+	<script type="application/x-javascript"><![CDATA[
+
+function recallPrefs()
+{
+	window.openDialog('chrome://tabextensions/content/loadPresetPrefs.xul', '_blank', 'chrome,dialog,modal,centerscreen', '_switch');
+
+	if (TabbrowserService.getPref('browser.tabs.extensions.default.preset') == '_recall' &&
+		confirm(TabbrowserService.strbundle.GetStringFromName('reset_confirmRestart')))
+		window.openDialog('chrome://tabextensions/content/browserRestarter.xul', '_blank', 'chrome,all,dialog');
+}
+
+
+
+
+function exportPrefs()
+{
+	const DIR = Components.classes['@mozilla.org/file/directory_service;1'].getService(Components.interfaces.nsIProperties);
+	var home = DIR.get('Home', Components.interfaces.nsILocalFile);
+
+	const nsIFilePicker = Components.interfaces.nsIFilePicker;
+	var file = TabbrowserService.chooseFile(
+			TabbrowserService.strbundle.GetStringFromName('exportPrefs_chooseFile'),
+			{
+				defaultString    : 'tabextensions.js',
+				defaultExtension : 'js',
+				displayDirectory : home
+			},
+			[
+				{
+					label   : TabbrowserService.strbundle.GetStringFromName('exportPrefs_chooseFileFilterLabel'),
+					pattern : '*.js'
+				},
+				{ filter : nsIFilePicker.filterAll }
+			],
+			true
+		);
+	if (!file) return;
+
+	TabbrowserService.savePrefsAs(TabbrowserService.getURLSpecFromFile(file));
+
+	alert(TabbrowserService.strbundle.GetStringFromName('exportPrefs_done'));
+}
+
+function importPrefs()
+{
+	const DIR = Components.classes['@mozilla.org/file/directory_service;1'].getService(Components.interfaces.nsIProperties);
+	var home = DIR.get('Home', Components.interfaces.nsILocalFile);
+
+	const nsIFilePicker = Components.interfaces.nsIFilePicker;
+	var file = TabbrowserService.chooseFile(
+			TabbrowserService.strbundle.GetStringFromName('importPrefs_chooseFile'),
+			{
+				displayDirectory : home
+			},
+			[
+				{
+					label   : TabbrowserService.strbundle.GetStringFromName('importPrefs_chooseFileFilterLabel'),
+					pattern : '*.js'
+				},
+				{ filter : nsIFilePicker.filterAll }
+			]
+		);
+	if (!file) return;
+
+
+	var prefs = TabbrowserService.readFromURI(TabbrowserService.getURLSpecFromFile(file));
+	if (!prefs.match(/^\/\/ Tabbrowser Extensions preferences/)) {
+		alert(TabbrowserService.strbundle.GetStringFromName('importPrefs_invalidFile'));
+		return;
+	}
+
+	var pref = function(aPrefstring, aValue) {
+		TabbrowserService.setPref(aPrefstring, aValue);
+	}
+	eval(prefs);
+
+	if (confirm(TabbrowserService.strbundle.GetStringFromName('importPrefs_confirmRestart')))
+		window.openDialog('chrome://tabextensions/content/browserRestarter.xul', '_blank', 'chrome,all,dialog');
+}
+
+
+
+	]]></script>
+
+
+
+	<groupbox>
+		<caption label="&operatePrefs;"/>
+		<vbox>
+			<button label="&importPrefs;"
+				oncommand="importPrefs();"/>
+			<button label="&exportPrefs;"
+				oncommand="exportPrefs();"/>
+			<separator/>
+			<button label="&recallPrefs;"
+				oncommand="recallPrefs();"/>
+		</vbox>
+	</groupbox>
+	<spacer flex="1"/>
+	<box orient="horizontal">
+		<spacer flex="1"/>
+		<box orient="vertical"
+			onclick="window.openDialog('chrome://tabextensions/content/pref/about.xul', '_blank', 'chrome,dialog,modal');"
+			style="cursor:pointer">
+			<image src="chrome://tabextensions/content/res/logo.png"/>
+			<box orient="horizontal">
+				<spacer flex="1"/>
+				<description value="&about.ver_before;&version;&about.ver_after;"/>
+			</box>
+		</box>
+		<spacer flex="1"/>
+	</box>
+	<box orient="horizontal">
+		<spacer flex="1"/>
+		<box orient="vertical">
+			<button flex="1"
+				label="&about.title;"
+				oncommand="window.openDialog('chrome://tabextensions/content/pref/about.xul', '_blank', 'chrome,dialog,modal');"/>
+		</box>
+		<spacer flex="1"/>
+	</box>
+
+	<spacer flex="1"/>
+
+
+</page>

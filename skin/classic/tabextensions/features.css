@@ -1,0 +1,37 @@
+checkbox.tab-locked .checkbox-icon {
+	list-style-image: url('chrome://tabextensions/skin/tab-l.png');
+}
+
+checkbox.tab-referrerblocked .checkbox-icon {
+	list-style-image: url('chrome://tabextensions/skin/tab-r.png');
+}
+
+checkbox.tab-autoreload .checkbox-icon {
+	list-style-image: url('chrome://tabextensions/skin/tab-a.png');
+}
+
+checkbox.tab-locked .checkbox-icon,
+checkbox.tab-referrerblocked .checkbox-icon,
+checkbox.tab-autoreload .checkbox-icon {
+	-moz-opacity: 0.3;
+	opacity: 0.3;
+}
+checkbox.tab-locked[checked="true"] .checkbox-icon,
+checkbox.tab-referrerblocked[checked="true"] .checkbox-icon,
+checkbox.tab-autoreload[checked="true"] .checkbox-icon {
+	-moz-opacity: 1;
+	opacity: 1;
+}
+
+
+checkbox.tab-allow .checkbox-icon {
+	list-style-image: url('chrome://tabextensions/skin/tab-f.png');
+}
+checkbox.tab-allow .checkbox-icon {
+	-moz-opacity: 1;
+	opacity: 1;
+}
+checkbox.tab-allow[checked="true"] .checkbox-icon {
+	-moz-opacity: 0.3;
+	opacity: 0.3;
+}

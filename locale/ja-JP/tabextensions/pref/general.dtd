@@ -1,0 +1,26 @@
+<!ENTITY tabPref.general.title "全般">
+
+<!ENTITY winHookMode.label      "ウィンドウモード">
+<!ENTITY winHookMode.normal     "複数のウィンドウを開く">
+<!ENTITY winHookMode.byOthersAndContent "自分で開いた時だけ複数のウィンドウを開く">
+<!ENTITY winHookMode.byAll      "常にウィンドウを一つだけ開く（シングルウィンドウモード）">
+
+<!ENTITY tabPref.general.group "全般的な動作">
+
+<!ENTITY cancelWindowClose.label   "複数のページを開いたままウィンドウを閉じる時：">
+<!ENTITY cancelWindowClose.confirm "ウィンドウを閉じるかどうか問い合わせる">
+<!ENTITY cancelWindowClose.allow   "確認なしでウィンドウを閉じる">
+<!ENTITY cancelWindowClose.forbid  "ウィンドウを閉じるのを禁止する">
+
+
+<!ENTITY exitTabbedBrowsing.label  "ウィンドウ内で開いているページが一つだけの時">
+<!ENTITY exitTabbedBrowsing.auto   "タブバーを自動的に隠して、ページ表示領域を広くする（Firefox初期設定）">
+<!ENTITY exitTabbedBrowsing.manual "手動でタブを閉じたときにタブバーを隠して、ページ表示領域を広くする">
+<!ENTITY exitTabbedBrowsing.never  "何もしない（推奨）">
+
+<!ENTITY lastTabBehavior.go     "詳細...">
+<!ENTITY lastTabBehavior.title  "全てのタブを閉じた後">
+<!ENTITY lastTabBehavior.label  "全てのタブを閉じた後">
+<!ENTITY lastTabBehavior.close  "空のウィンドウを残す">
+<!ENTITY lastTabBehavior.unload "ウィンドウの中に空のタブを一つだけ残す">
+<!ENTITY lastTabBehavior.exit   "一緒にウィンドウも閉じる">

@@ -1,0 +1,338 @@
+<?xml version="1.0"?>
+<!DOCTYPE RDF [
+<!ENTITY % tabBrowserDTD SYSTEM "chrome://global/locale/tabbrowser.dtd">
+%tabBrowserDTD;
+<!ENTITY % tabextensionsDTD SYSTEM "chrome://tabextensions/locale/">
+%tabextensionsDTD;
+]>
+<RDF:RDF xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+		xmlns:EXT="http://white.sakura.ne.jp/~piro/rdf#">
+	<RDF:Seq ID="urn:tabsContextMenuItems:root">
+		<RDF:li>
+			<RDF:Description about="urn:tabsContextMenuItems:newTab"
+				EXT:Id="newTab"
+				EXT:Type="item"
+				EXT:Label="&newTab.label;"
+				EXT:Value="1"/>
+		</RDF:li>
+		<RDF:li>
+			<RDF:Description about="urn:tabsContextMenuItems:separatorNew"
+				EXT:Id="separatorNew"
+				EXT:Type="separator"/>
+		</RDF:li>
+		<RDF:li>
+			<RDF:Description about="urn:tabsContextMenuItems:reloadTab"
+				EXT:Id="reloadTab"
+				EXT:Type="item"
+				EXT:Label="&reloadTab.label;"
+				EXT:Value="2"/>
+		</RDF:li>
+		<RDF:li>
+			<RDF:Description about="urn:tabsContextMenuItems:reloadAll"
+				EXT:Id="reloadAll"
+				EXT:Type="item"
+				EXT:Label="&reloadAllTabs.label;"
+				EXT:Value="3"/>
+		</RDF:li>
+		<RDF:li>
+			<RDF:Description about="urn:tabsContextMenuItems:separatorReload"
+				EXT:Id="separatorReload"
+				EXT:Type="separator"/>
+		</RDF:li>
+		<RDF:li>
+			<RDF:Description about="urn:tabsContextMenuItems:moveLeft"
+				EXT:Id="moveLeft"
+				EXT:Type="item"
+				EXT:Label="&ontabclick.moveLeft;"
+				EXT:LabelForHorizontalTabbar="&ontabclick.moveLeft.horizontal;"
+				EXT:LabelForVerticalTabbar="&ontabclick.moveLeft.vertical;"
+				EXT:Value="107"/>
+		</RDF:li>
+		<RDF:li>
+			<RDF:Description about="urn:tabsContextMenuItems:moveRight"
+				EXT:Id="moveRight"
+				EXT:Type="item"
+				EXT:Label="&ontabclick.moveRight;"
+				EXT:LabelForHorizontalTabbar="&ontabclick.moveRight.horizontal;"
+				EXT:LabelForVerticalTabbar="&ontabclick.moveRight.vertical;"
+				EXT:Value="108"/>
+		</RDF:li>
+		<RDF:li>
+			<RDF:Description about="urn:tabsContextMenuItems:separatorMove"
+				EXT:Id="separatorMove"
+				EXT:Type="separator"/>
+		</RDF:li>
+		<RDF:li>
+			<RDF:Description about="urn:tabsContextMenuItems:duplicateTab"
+				EXT:Id="duplicateTab"
+				EXT:Type="item"
+				EXT:Label="&ontabclick.duplicate;"
+				EXT:Value="101"/>
+		</RDF:li>
+		<RDF:li>
+			<RDF:Description about="urn:tabsContextMenuItems:duplicateInWindow"
+				EXT:Id="duplicateInWindow"
+				EXT:Type="item"
+				EXT:Label="&ontabclick.duplicateInWindow;"
+				EXT:Value="106"/>
+		</RDF:li>
+		<RDF:li>
+			<RDF:Description about="urn:tabsContextMenuItems:setFixedLabelFor"
+				EXT:Id="setFixedLabelFor"
+				EXT:Type="item"
+				EXT:Label="&ontabclick.setFixedLabelFor;"
+				EXT:Value="118"/>
+		</RDF:li>
+		<RDF:li>
+			<RDF:Description about="urn:tabsContextMenuItems:lockTab"
+				EXT:Id="lockTab"
+				EXT:Type="item"
+				EXT:Label="&ontabclick.lock;"
+				EXT:Value="102"/>
+		</RDF:li>
+		<RDF:li>
+			<RDF:Description about="urn:tabsContextMenuItems:blockReferrer"
+				EXT:Id="blockReferrer"
+				EXT:Type="item"
+				EXT:Label="&ontabclick.blockReferrer;"
+				EXT:Value="115"/>
+		</RDF:li>
+		<RDF:li>
+			<RDF:Description about="urn:tabsContextMenuItems:autoreload"
+				EXT:Id="autoreload"
+				EXT:Type="item"
+				EXT:Label="&ontabclick.autoreload;"
+				EXT:Value="103"/>
+		</RDF:li>
+		<RDF:li>
+			<RDF:Description about="urn:tabsContextMenuItems:allow"
+				EXT:Id="allow"
+				EXT:Type="separator"
+				EXT:Label="&ontabclick.allow;"
+				EXT:Submenu="true"/>
+		</RDF:li>
+		<RDF:li>
+			<RDF:Description about="urn:tabsContextMenuItems:allowPlugins"
+				EXT:Id="allowPlugins"
+				EXT:Type="item"
+				EXT:Submenu="true"
+				EXT:Label="&ontabclick.allowPlugins;"
+				EXT:Value="200"/>
+		</RDF:li>
+		<RDF:li>
+			<RDF:Description about="urn:tabsContextMenuItems:allowJavaScript"
+				EXT:Id="allowJavaScript"
+				EXT:Type="item"
+				EXT:Submenu="true"
+				EXT:Label="&ontabclick.allowJavaScript;"
+				EXT:Value="201"/>
+		</RDF:li>
+		<RDF:li>
+			<RDF:Description about="urn:tabsContextMenuItems:allowMetaRedirects"
+				EXT:Id="allowMetaRedirects"
+				EXT:Type="item"
+				EXT:Submenu="true"
+				EXT:Label="&ontabclick.allowMetaRedirects;"
+				EXT:Value="202"/>
+		</RDF:li>
+		<RDF:li>
+			<RDF:Description about="urn:tabsContextMenuItems:allowSubframes"
+				EXT:Id="allowSubframes"
+				EXT:Type="item"
+				EXT:Submenu="true"
+				EXT:Label="&ontabclick.allowSubframes;"
+				EXT:Value="203"/>
+		</RDF:li>
+		<RDF:li>
+			<RDF:Description about="urn:tabsContextMenuItems:allowImages"
+				EXT:Id="allowImages"
+				EXT:Type="item"
+				EXT:Submenu="true"
+				EXT:Label="&ontabclick.allowImages;"
+				EXT:Value="204"/>
+		</RDF:li>
+		<RDF:li>
+			<RDF:Description about="urn:tabsContextMenuItems:separatorAdvanced"
+				EXT:Id="separatorAdvanced"
+				EXT:Type="separator"/>
+		</RDF:li>
+		<RDF:li>
+			<RDF:Description about="urn:tabsContextMenuItems:lockTabAll"
+				EXT:Id="lockTabAll"
+				EXT:Type="item"
+				EXT:Label="&ontabclick.lockAll;"
+				EXT:Value="300"/>
+		</RDF:li>
+		<RDF:li>
+			<RDF:Description about="urn:tabsContextMenuItems:blockReferrerAll"
+				EXT:Id="blockReferrerAll"
+				EXT:Type="item"
+				EXT:Label="&ontabclick.blockReferrerAll;"
+				EXT:Value="301"/>
+		</RDF:li>
+		<RDF:li>
+			<RDF:Description about="urn:tabsContextMenuItems:autoreloadAll"
+				EXT:Id="autoreloadAll"
+				EXT:Type="item"
+				EXT:Label="&ontabclick.autoreloadAll;"
+				EXT:Value="302"/>
+		</RDF:li>
+		<RDF:li>
+			<RDF:Description about="urn:tabsContextMenuItems:separatorAdvancedAll"
+				EXT:Id="separatorAdvancedAll"
+				EXT:Type="separator"/>
+		</RDF:li>
+		<RDF:li>
+			<RDF:Description about="urn:tabsContextMenuItems:removeTab"
+				EXT:Id="removeTab"
+				EXT:Type="item"
+				EXT:Label="&closeTab.label;"
+				EXT:Value="4"/>
+		</RDF:li>
+		<RDF:li>
+			<RDF:Description about="urn:tabsContextMenuItems:removeTabGroup"
+				EXT:Id="removeTabGroup"
+				EXT:Type="item"
+				EXT:Label="&ontabclick.removeTabGroup;"
+				EXT:Value="109"/>
+		</RDF:li>
+		<RDF:li>
+			<RDF:Description about="urn:tabsContextMenuItems:separatorRemove"
+				EXT:Id="separatorRemove"
+				EXT:Type="separator"/>
+		</RDF:li>
+		<RDF:li>
+			<RDF:Description about="urn:tabsContextMenuItems:removeLeft"
+				EXT:Id="removeLeft"
+				EXT:Type="item"
+				EXT:Label="&ontabclick.removeLeft;"
+				EXT:LabelForHorizontalTabbar="&ontabclick.removeLeft.horizontal;"
+				EXT:LabelForVerticalTabbar="&ontabclick.removeLeft.vertical;"
+				EXT:Value="104"/>
+		</RDF:li>
+		<RDF:li>
+			<RDF:Description about="urn:tabsContextMenuItems:removeRight"
+				EXT:Id="removeRight"
+				EXT:Type="item"
+				EXT:Label="&ontabclick.removeRight;"
+				EXT:LabelForHorizontalTabbar="&ontabclick.removeRight.horizontal;"
+				EXT:LabelForVerticalTabbar="&ontabclick.removeRight.vertical;"
+				EXT:Value="105"/>
+		</RDF:li>
+		<RDF:li>
+			<RDF:Description about="urn:tabsContextMenuItems:separatorRemoveLR"
+				EXT:Id="separatorRemoveLR"
+				EXT:Type="separator"/>
+		</RDF:li>
+		<RDF:li>
+			<RDF:Description about="urn:tabsContextMenuItems:removeAll"
+				EXT:Id="removeAll"
+				EXT:Type="item"
+				EXT:Label="&ontabclick.removeAll;"
+				EXT:Value="117"/>
+		</RDF:li>
+		<RDF:li>
+			<RDF:Description about="urn:tabsContextMenuItems:removeVisited"
+				EXT:Id="removeVisited"
+				EXT:Type="item"
+				EXT:Label="&ontabclick.removeVisited;"
+				EXT:Value="119"/>
+		</RDF:li>
+		<RDF:li>
+			<RDF:Description about="urn:tabsContextMenuItems:separatorRemoveAll"
+				EXT:Id="separatorRemoveAll"
+				EXT:Type="separator"/>
+		</RDF:li>
+		<RDF:li>
+			<RDF:Description about="urn:tabsContextMenuItems:removeOther"
+				EXT:Id="removeOther"
+				EXT:Type="item"
+				EXT:Label="&closeOtherTabs.label;"
+				EXT:Value="5"/>
+		</RDF:li>
+		<RDF:li>
+			<RDF:Description about="urn:tabsContextMenuItems:separatorRemoveOther"
+				EXT:Id="separatorRemoveOther"
+				EXT:Type="separator"/>
+		</RDF:li>
+		<RDF:li>
+			<RDF:Description about="urn:tabsContextMenuItems:undoRemoveTab"
+				EXT:Id="undoRemoveTab"
+				EXT:Type="item"
+				EXT:Label="&ontabclick.undoRemoveTab;"
+				EXT:Value="113"/>
+		</RDF:li>
+		<RDF:li>
+			<RDF:Description about="urn:tabsContextMenuItems:separatorUndo"
+				EXT:Id="separatorUndo"
+				EXT:Type="separator"/>
+		</RDF:li>
+		<RDF:li>
+			<RDF:Description about="urn:tabsContextMenuItems:collapseExpandGroup"
+				EXT:TestLabel="label-&ontabclick.collapseExpandGroup;"
+				EXT:Id="collapseExpandGroup"
+				EXT:Type="item"
+				EXT:Label="&ontabclick.collapseExpandGroup;"
+				EXT:Value="400"/>
+		</RDF:li>
+		<RDF:li>
+			<RDF:Description about="urn:tabsContextMenuItems:sortTabsByGroup"
+				EXT:Id="sortTabsByGroup"
+				EXT:Type="item"
+				EXT:Label="&ontabclick.sortTabsByGroup;"
+				EXT:Value="110"/>
+		</RDF:li>
+		<RDF:li>
+			<RDF:Description about="urn:tabsContextMenuItems:highlightGroup"
+				EXT:Id="highlightGroup"
+				EXT:Type="item"
+				EXT:Label="&ontabclick.highlightGroup;"
+				EXT:Value="111"/>
+		</RDF:li>
+		<RDF:li>
+			<RDF:Description about="urn:tabsContextMenuItems:setTabColorFor"
+				EXT:Id="setTabColorFor"
+				EXT:Type="item"
+				EXT:Label="&ontabclick.setTabColor;"
+				EXT:Value="112"/>
+		</RDF:li>
+		<RDF:li>
+			<RDF:Description about="urn:tabsContextMenuItems:separatorGroup"
+				EXT:Id="separatorGroup"
+				EXT:Type="separator"/>
+		</RDF:li>
+		<RDF:li>
+			<RDF:Description about="urn:tabsContextMenuItems:bookmarkGroup"
+				EXT:TestLabel="label-&bookmarkGroup.label;"
+				EXT:Id="bookmarkGroup"
+				EXT:Type="item"
+				EXT:Label="&bookmarkGroup.label;"
+				EXT:Value="6"/>
+		</RDF:li>
+		<RDF:li>
+			<RDF:Description about="urn:tabsContextMenuItems:separatorBookmarkGroup"
+				EXT:TestLabel="label-&bookmarkGroup.label;"
+				EXT:Id="separatorBookmarkGroup"
+				EXT:Type="separator"/>
+		</RDF:li>
+		<RDF:li>
+			<RDF:Description about="urn:tabsContextMenuItems:editBookmark"
+				EXT:Id="editBookmark"
+				EXT:Type="item"
+				EXT:Label="&ontabclick.editBookmark;"
+				EXT:Value="114"/>
+		</RDF:li>
+		<RDF:li>
+			<RDF:Description about="urn:tabsContextMenuItems:separatorEditMenu"
+				EXT:Id="separatorEditMenu"
+				EXT:Type="separator"/>
+		</RDF:li>
+		<RDF:li>
+			<RDF:Description about="urn:tabsContextMenuItems:editMenu"
+				EXT:Id="editMenu"
+				EXT:Type="item"
+				EXT:Label="&ontabclick.editMenu;"
+				EXT:Value="116"/>
+		</RDF:li>
+	</RDF:Seq>
+</RDF:RDF>

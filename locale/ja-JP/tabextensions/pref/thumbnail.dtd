@@ -1,0 +1,22 @@
+<!ENTITY tabPref.appearance.thumbnail.title "タブの縮小画像">
+
+
+
+<!ENTITY thumbnail.enabled           "縮小画像を表示する（※Firefox 1.5以降でのみ有効）">
+<!ENTITY thumbnail.caption           "縮小画像">
+<!ENTITY thumbnail.width             "幅：">
+<!ENTITY thumbnail.width.auto        "自動">
+<!ENTITY thumbnail.width.fix         "固定">
+<!ENTITY thumbnail.width.fix.before  "">
+<!ENTITY thumbnail.width.fix.after   "ピクセル">
+<!ENTITY thumbnail.height            "高さ：">
+<!ENTITY thumbnail.height.auto       "自動">
+<!ENTITY thumbnail.height.fix        "固定">
+<!ENTITY thumbnail.height.fix.before "">
+<!ENTITY thumbnail.height.fix.after  "ピクセル">
+<!ENTITY thumbnail.power.before      "タブ幅の">
+<!ENTITY thumbnail.power.after       "&#37;に調整">
+
+
+<!ENTITY thumbnail.dummy.tabLabel "（無題）">
+<!ENTITY thumbnail.dummy.desc     "上のボックスの縁をドラッグすると縮小画像の表示サイズを変更できます。">

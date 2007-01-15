@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+
+<RDF:RDF xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+		xmlns:chrome="http://www.mozilla.org/rdf/chrome#">
+
+	<!-- list all the packages being supplied by this jar -->
+	<RDF:Seq about="urn:mozilla:package:root">
+		<RDF:li resource="urn:mozilla:package:tabextensions_ctrlpopup"/>
+	</RDF:Seq>
+
+	<!-- package information -->
+	<RDF:Description about="urn:mozilla:package:tabextensions_ctrlpopup"
+		chrome:name="tabextensions_ctrlpopup"
+		chrome:displayName="Tabbrowser Extensions:Popup Controller Module"
+		chrome:author="SHIMODA Hiroshi"
+		chrome:authorURL="http://piro.sakura.ne.jp/"
+		chrome:extension="true"
+		chrome:description="Provides advanced contol of popups for &quot;Tabbrowser Extensions&quot;."/>
+
+
+	<!-- overlay information -->
+	<RDF:Seq about="urn:mozilla:overlays">
+		<RDF:li resource="chrome://tabextensions/content/globalOverlay.xul"/>
+
+		<RDF:li resource="chrome://tabextensions/content/pref/pref-tabsJavascript.xul"/>
+	</RDF:Seq>
+
+
+	<RDF:Seq about="chrome://tabextensions/content/globalOverlay.xul">
+		<RDF:li>chrome://tabextensions_ctrlpopup/content/globalOverlay.xul</RDF:li>
+	</RDF:Seq>
+	<RDF:Seq about="chrome://tabextensions/content/pref/pref-tabsJavascript.xul">
+		<RDF:li>chrome://tabextensions_ctrlpopup/content/pref-tabsJavascript.xul</RDF:li>
+	</RDF:Seq>
+
+</RDF:RDF>

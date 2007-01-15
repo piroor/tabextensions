@@ -1,0 +1,7 @@
+<!ENTITY tabPref.misc.title  "Misc">
+
+<!ENTITY tabPref.misc.group  "Miscellaneous">
+
+
+<!ENTITY backToAncestor      "Use &quot;Back&quot; for the original tab the current tab is opened from">
+<!ENTITY forwardToFollowing  "Use &quot;Forward&quot; for the tab opened from the current tab">

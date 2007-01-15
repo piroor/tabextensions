@@ -1,0 +1,15 @@
+<!ENTITY tabPref.platformNative.title     "External Links from Other Applications">
+
+<!ENTITY tabPref.platformNative.group     "Links in Other Applications">
+<!ENTITY tabPref.platformNative.normal    "No controlling">
+<!ENTITY tabPref.platformNative.current   "Open in Current Tab">
+<!ENTITY tabPref.platformNative.newtab    "Open in New Tab">
+<!ENTITY tabPref.platformNative.newtabBackground "Open in New Background Tab">
+<!ENTITY tabPref.platformNative.newwindow "Open in New Window">
+
+<!ENTITY tabPref.platformNative.allowWindowForHomePage "">
+<!ENTITY tabPref.platformNative.focus.backgroundWindow "Keep browser in the background">
+
+<!ENTITY advancedPlatformNativePrefs.go    "Advanced...">
+<!ENTITY advancedPlatformNativePrefs.title "Advance preferences of Other Applications">
+<!ENTITY loadInBackgroundPlatformNative   "Load new tab opened from other applications in the background">

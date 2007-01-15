@@ -1,0 +1,240 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
+<?xul-overlay href="chrome://tabextensions/content/pref/prefOverlay.xul"?>
+
+<!DOCTYPE page [
+<!ENTITY % tabextensionsDTD SYSTEM "chrome://tabextensions/locale/">
+%tabextensionsDTD;
+<!ENTITY % tabextensionsLinksDTD SYSTEM "chrome://tabextensions/locale/pref/links.dtd">
+%tabextensionsLinksDTD;
+]>
+
+<page
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	orient="vertical"
+	headertitle="&tabPref.links.title;"
+	onload="init();">
+
+
+<script type="application/x-javascript"><![CDATA[
+
+if (!('_elementIDs' in window) || !window._elementIDs)
+	var _elementIDs = [];
+
+_elementIDs = _elementIDs.concat([
+	'linkBehavior',
+	'linkTargetBehavior',
+	'linkOuterBehavior',
+	'opentabforOuterLinkLevel',
+	'linkMiddleClickBehavior',
+	'linkLockedBehavior',
+
+	'blockURIType',
+	'blockURIRule',
+
+	'openTabInLink',
+	'showThisTabItemLink',
+	'showNewActiveTabItemLink',
+	'loadInBackgroundMiddleClick',
+
+	'inheritTextZoom',
+	'inheritLocked',
+	'inheritReferrerBlocked',
+	'inheritAllow',
+	'inheritOnlySameSite'
+]);
+
+
+var gLinksPrefsData;
+var gStateInheritancePrefsData;
+
+function init()
+{
+	initMacLabel();
+
+
+	window.parent.initPanel(location.href);
+
+
+	var tabTreeEnabled = getModifiedValue('browser.tabs.extensions.group.enabled', 'chrome://tabextensions/content/pref/pref-tabsGroup.xul') &&
+				getModifiedValue('browser.tabs.extensions.group.tree.enabled', 'chrome://tabextensions/content/pref/pref-tabsGroup.xul');
+
+
+	gLinksPrefsData = {
+		linkBehavior : {
+			node : document.getElementById('linkBehavior')
+		},
+		linkOuterBehavior : {
+			node : document.getElementById('linkOuterBehavior')
+		},
+		linkLockedBehavior : {
+			node : document.getElementById('linkLockedBehavior')
+		},
+		opentabforOuterLinkLevel : {
+			node : document.getElementById('opentabforOuterLinkLevel')
+		},
+		openTabInLink : {
+			node : document.getElementById('openTabInLink'),
+			orient : (getModifiedValue('browser.tabs.extensions.tabbar_place', 'chrome://tabextensions/content/pref/pref-tabsAppearanceTabbar.xul') < 2) ? 'horizontal' : 'vertical',
+			disabled : tabTreeEnabled
+		},
+		blockURIRule : {
+			node : document.getElementById('blockURIRule')
+		}
+	};
+
+	gStateInheritancePrefsData = {
+		inheritTextZoom : {
+			node : document.getElementById('inheritTextZoom')
+		},
+		inheritLocked : {
+			node : document.getElementById('inheritLocked')
+		},
+		inheritReferrerBlocked : {
+			node : document.getElementById('inheritReferrerBlocked')
+		},
+		inheritAllow : {
+			node : document.getElementById('inheritAllow')
+		},
+		inheritOnlySameSite : {
+			node : document.getElementById('inheritOnlySameSite')
+		}
+	};
+
+}
+
+]]></script>
+
+	<tabbox orient="vertical">
+		<tabs orient="horizontal">
+			<tab label="&tabPref.links.target.tab;" />
+			<tab label="&tabPref.links.middleClick.tab;" />
+			<tab label="&tabPref.links.block_uri.tab;" />
+		</tabs>
+		<tabpanels>
+			<tabpanel orient="vertical">
+				<groupbox>
+					<caption label="&tabPref.links.target.group;"/>
+					<radiogroup id="linkTargetBehavior"
+						prefstring="browser.tabs.opentabfor.links.targetBehavior"
+						preftype="int"
+						orient="horizontal">
+						<box orient="vertical">
+							<radio value="-1" label="&tabPref.links.target.none;"/>
+							<spacer flex="1"/>
+						</box>
+						<box orient="vertical">
+							<radio value="0"  label="&tabPref.links.target.current;"/>
+							<radio value="1"  label="&tabPref.links.target.newtab;"/>
+							<radio value="2"  label="&tabPref.links.target.newtabBackground;"/>
+						</box>
+					</radiogroup>
+				</groupbox>
+			</tabpanel>
+			<tabpanel orient="vertical">
+				<groupbox>
+					<caption id="linkMiddleClickBehaviorCaption"
+						label="&tabPref.links.middleClick.group;"/>
+					<radiogroup id="linkMiddleClickBehavior"
+						prefstring="browser.tabs.opentabfor.links.middleClickBehavior"
+						preftype="int"
+						orient="horizontal">
+						<box orient="vertical">
+							<radio value="-1" label="&tabPref.links.middleClick.none;"/>
+							<spacer flex="1"/>
+						</box>
+						<box orient="vertical">
+							<radio value="0" label="&tabPref.links.middleClick.current;"/>
+							<radio value="1" label="&tabPref.links.middleClick.newtab;"/>
+							<radio value="2" label="&tabPref.links.middleClick.newtabBackground;"/>
+						</box>
+					</radiogroup>
+				</groupbox>
+				<data maclabel-for="linkMiddleClickBehaviorCaption"
+					value="&tabPref.links.middleClick.group.mac;"/>
+			</tabpanel>
+			<tabpanel orient="vertical">
+				<groupbox>
+					<caption label="&tabPref.links.block_uri.group;"/>
+					<radiogroup id="blockURIType"
+						prefstring="browser.tabs.opentabfor.links.block_uri.type"
+						preftype="int"
+						orient="vertical">
+						<radio value="0" label="&tabPref.links.block_uri.none;"/>
+						<radio value="1" label="&tabPref.links.block_uri.auto;"/>
+						<radio value="2" label="&tabPref.links.block_uri.any;"/>
+					</radiogroup>
+				</groupbox>
+			</tabpanel>
+		</tabpanels>
+	</tabbox>
+
+
+	<groupbox>
+		<caption label="&tabPref.links.misc.group;"/>
+		<vbox>
+
+		<checkbox id="showThisTabItemLink"
+			label="&showThisTabItemLink;"
+			prefstring="browser.tabs.extensions.showThisTabItem.links"/>
+		<checkbox id="showNewActiveTabItemLink"
+			label="&showNewActiveTabItemLink;"
+			prefstring="browser.tabs.extensions.showNewActiveTabItem.links"/>
+
+		<box orient="horizontal">
+			<button id="advancedStateInheritancePrefs"
+				label="&advancedStateInheritancePrefs.go;"
+				oncommand="advancedPrefs('chrome://tabextensions/content/pref/advancedStateInheritancePrefs.xul', gStateInheritancePrefsData);"/>
+			<spacer flex="1"/>
+		</box>
+		<box orient="horizontal">
+			<spacer flex="1"/>
+			<button id="advancedLinksPrefs"
+				label="&advancedLinksPrefs.go;"
+				oncommand="advancedPrefs('chrome://tabextensions/content/pref/advancedLinksPrefs.xul', gLinksPrefsData);"/>
+		</box>
+		<box collapsed="true">
+			<checkbox id="inheritTextZoom"
+				prefstring="browser.tabs.extensions.inherit.textZoom"/>
+			<checkbox id="inheritLocked"
+				prefstring="browser.tabs.extensions.inherit.locked"/>
+			<checkbox id="inheritReferrerBlocked"
+				prefstring="browser.tabs.extensions.inherit.referrerBlocked"/>
+			<checkbox id="inheritAllow"
+				prefstring="browser.tabs.extensions.inherit.allow"/>
+			<checkbox id="inheritOnlySameSite"
+				prefstring="browser.tabs.extensions.inherit.onlySameSite"/>
+
+			<textbox id="linkBehavior"
+				prefstring="browser.tabs.opentabfor.links.behavior"
+				preftype="int"/>
+			<textbox id="linkOuterBehavior"
+				prefstring="browser.tabs.opentabfor.links.outerBehavior"
+				preftype="int"/>
+			<textbox id="linkLockedBehavior"
+				prefstring="browser.tabs.opentabfor.links.lockedBehavior"
+				preftype="int"/>
+			<textbox id="opentabforOuterLinkLevel"
+				prefstring="browser.tabs.opentabfor.outerlink.level"
+				preftype="int"/>
+
+			<textbox id="openTabInLink"
+				prefstring="browser.tabs.extensions.open_tab_in_link"
+				preftype="int"/>
+
+			<textbox id="blockURIRule"
+				prefstring="browser.tabs.opentabfor.links.block_uri.rule"
+				preftype="string"/>
+		</box>
+
+		</vbox>
+	</groupbox>
+
+
+	<spacer flex="1"/>
+
+	<box id="tabextensionsAboutBox"/>
+
+</page>

@@ -1,0 +1,235 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://tabextensions/content/pref/prefOverlay.css" type="text/css"?>
+<?xml-stylesheet href="chrome://tabextensions/content/bookmarks/bm-props-extra.css" type="text/css"?>
+
+<!DOCTYPE page [
+<!ENTITY % tabextensionsDTD SYSTEM "chrome://tabextensions/locale/">
+%tabextensionsDTD;
+]>
+
+<dialog id="bmExtraPropsWindow"
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	title="&bookmarksProperty.extra.title;"
+	orient="vertical"
+	buttons="accept,cancel"
+	style="width: 40em;"
+	ondialogaccept="return onAccept();">
+
+
+<tabbox orient="vertical" flex="1">
+	<tabs>
+		<tab label="&bookmarksProperty.extra.status.label;"
+			accesskey="&bookmarksProperty.extra.status.accesskey;"/>
+		<tab label="&bookmarksProperty.extra.extra.label;"
+			accesskey="&bookmarksProperty.extra.extra.accesskey;"/>
+	</tabs>
+	<tabpanels flex="1">
+		<tabpanel orient="vertical" flex="1">
+			<checkbox id="UseFixedLabel"
+				label="&bookmarksProperty.useFixedLabel.label;"
+				oncommand="updateDescription('useFixedLabel', this.checked);"/>
+
+			<box orient="horizontal" id="TextZoom-box">
+				<label id="TextZoom-label-before"
+					value="&textZoom.label_before;"
+					control="TextZoom"/>
+				<textbox id="TextZoom"
+					value="100"
+					style="width: 3em;"
+					oninput="
+						var zoom = Number(String(this.value).replace(/[^0-9\.]/g, ''));
+						zoom = Math.min(Math.max(zoom, TabbrowserService.ZOOM_MIN), TabbrowserService.ZOOM_MAX);
+						updateDescription('textZoom', zoom);
+					"/>
+				<spinbuttons id="TextZoom-spinButtons"
+					onup="spinButtonsUpDown(event, 'TextZoom', 2000);"
+					ondown="spinButtonsUpDown(event, 'TextZoom', 1);"/>
+				<label id="TextZoom-label-after"
+					value="&textZoom.label_after;"
+					control="TextZoom"/>
+			</box>
+
+			<separator/>
+
+
+			<box orient="vertical" id="description-disabled">
+				<box orient="horizontal" align="start">
+					<image class="message-icon"/>
+					<spacer style="width:0.5em;"/>
+					<description flex="1">
+						&bookmarksProperty.disabled.description;
+					</description>
+				</box>
+				<box orient="horizontal">
+					<spacer flex="1"/>
+					<button style="text-align: center"
+						oncommand="activateRelationOfBookmarksAndTabs();"
+						label="&bookmarksProperty.disabled.button;"/>
+					<spacer flex="1"/>
+				</box>
+			</box>
+
+			<box orient="vertical" id="status-groupbox">
+				<checkbox id="Locked"
+					label="&bookmarksProperty.locked.label;"
+					oncommand="updateDescription('locked', this.checked);"
+					class="tab-locked"/>
+				<checkbox id="AutoReload"
+					label="&bookmarksProperty.autoReload.label;"
+					oncommand="controlLinkedItems(this, window); updateDescription('autoreloadInterval', !this.checked ? 0 : Numbrer(document.getElementById('AutoReloadInterval').value));"
+					linked="AutoReloadInterval-label-before AutoReloadInterval-label-after AutoReloadInterval AutoReloadInterval-spinButtons"
+					class="tab-autoreload"/>
+				<box orient="horizontal">
+					<spacer style="width:1em;"/>
+					<label id="AutoReloadInterval-label-before"
+						value="&interval.label_before;"
+						control="AutoReloadInterval"/>
+					<menulist id="AutoReloadInterval"
+						editable="true"
+						label=""
+						style="min-width: 8em;"
+						oncommand="this.label = this.value = this.selectedItem.value"
+						oninput="updateDescription('autoreloadInterval', Number(String(this.value).replace(/[^0-9\.]/g, '')));">
+						<menupopup>
+							<menuitem value="0"     label="0"/>
+							<menuitem value="30"    label="&interval.30;"/>
+							<menuitem value="60"    label="&interval.60;"/>
+							<menuitem value="90"    label="&interval.90;"/>
+							<menuitem value="100"   label="&interval.100;"/>
+							<menuitem value="120"   label="&interval.120;"/>
+							<menuitem value="150"   label="&interval.150;"/>
+							<menuitem value="180"   label="&interval.180;"/>
+							<menuitem value="200"   label="&interval.200;"/>
+							<menuitem value="600"   label="&interval.600;"/>
+							<menuitem value="1800"  label="&interval.1800;"/>
+							<menuitem value="3600"  label="&interval.3600;"/>
+							<menuitem value="7200"  label="&interval.7200;"/>
+							<menuitem value="10800" label="&interval.10800;"/>
+							<menuitem value="43200" label="&interval.43200;"/>
+							<menuitem value="86400" label="&interval.86400;"/>
+						</menupopup>
+					</menulist>
+					<spinbuttons id="AutoReloadInterval-spinButtons"
+						onup="spinButtonsUpDown(event, 'AutoReloadInterval');"
+						ondown="spinButtonsUpDown(event, 'AutoReloadInterval', 0);"/>
+					<label id="AutoReloadInterval-label-after"
+						value="&interval.label_after;"
+						control="AutoReloadInterval"/>
+				</box>
+				<checkbox id="ReferrerBlocked"
+					label="&bookmarksProperty.referrerBlocked.label;"
+					oncommand="updateDescription('referrerBlocked', this.checked);"
+					class="tab-referrerblocked"/>
+			</box>
+
+			<groupbox id="allow-groupbox">
+				<caption id="allow"
+					label="&bookmarksProperty.allow.caption;"/>
+				<grid>
+					<rows>
+						<row/>
+						<row/>
+						<row/>
+					</rows>
+					<columns>
+						<column>
+							<checkbox id="AllowPlugins"
+								label="&bookmarksProperty.allowPlugins.label;"
+								oncommand="updateDescription('allowPlugins', this.checked);"
+								class="tab-allow"/>
+							<checkbox id="AllowJavascript"
+								label="&bookmarksProperty.allowJavascript.label;"
+								oncommand="updateDescription('allowJavascript', this.checked);"
+								class="tab-allow"/>
+							<checkbox id="AllowMetaRedirects"
+								label="&bookmarksProperty.allowMetaRedirects.label;"
+								oncommand="updateDescription('allowMetaRedirects', this.checked);"
+								class="tab-allow"/>
+						</column>
+						<column>
+							<checkbox id="AllowSubframes"
+								label="&bookmarksProperty.allowSubframes.label;"
+								oncommand="updateDescription('allowSubframes', this.checked);"
+								class="tab-allow"/>
+							<checkbox id="AllowImages"
+								label="&bookmarksProperty.allowImages.label;"
+								oncommand="updateDescription('allowImages', this.checked);"
+								class="tab-allow"/>
+							<spacer/>
+						</column>
+					</columns>
+				</grid>
+			</groupbox>
+		</tabpanel>
+		<tabpanel orient="vertical" flex="1">
+			<grid>
+				<columns>
+					<column/>
+					<column flex="1"/>
+				</columns>
+				<rows>
+					<row align="center">
+						<label id="ReferrerURI-label"
+							value="&bookmarksProperty.referrerURI.label;"
+							control="ReferrerURI"/>
+						<textbox id="ReferrerURI" flex="1"
+							oninput="updateDescription('referrerURI', this.value);"/>
+					</row>
+				</rows>
+			</grid>
+
+			<spacer style="height:1em;"/>
+			<separator/>
+			<spacer style="height:1em;"/>
+
+			<box orient="horizontal" align="start" id="">
+				<description flex="1">
+					&bookmarksProperty.iconURI.description;
+				</description>
+			</box>
+			<grid>
+				<columns>
+					<column/>
+					<column flex="1"/>
+				</columns>
+				<rows>
+					<row align="center">
+						<label id="IconURI-label"
+							value="&bookmarksProperty.iconURI.label;"
+							control="IconURI"/>
+						<textbox id="IconURI" flex="1"/>
+					</row>
+					<row align="center">
+						<spacer/>
+						<box orient="horizontal">
+							<spacer flex="1"/>
+							<button label="&bookmarksProperty.iconURI.clear;"
+								oncommand="document.getElementById('IconURI').value = '';"/>
+							<button label="&bookmarksProperty.iconURI.choose;"
+								oncommand="chooseIcon();"/>
+						</box>
+					</row>
+				</rows>
+			</grid>
+		</tabpanel>
+	</tabpanels>
+</tabbox>
+
+<textbox id="description"
+	multiline="true"
+	wrap="virtual"
+	value=""
+	hidden="true"/>
+
+<script type="application/x-javascript" src="chrome://global/content/XPCNativeWrapper.js"/>
+<script type="application/x-javascript" src="chrome://tabextensions/content/pXPCNativeWrapper.js"/>
+
+<script type="application/x-javascript" src="chrome://tabextensions/content/pRDFData.js"/>
+
+<script type="application/x-javascript" src="chrome://tabextensions/content/globalOverlay.js"/>
+<script type="application/x-javascript" src="chrome://tabextensions/content/bookmarks/bookmarksProperty.js"/>
+<script type="application/x-javascript" src="chrome://tabextensions/content/bookmarks/bm-props-extra.js"/>
+
+</dialog>

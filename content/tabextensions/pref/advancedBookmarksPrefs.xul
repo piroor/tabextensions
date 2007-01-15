@@ -1,0 +1,88 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://tabextensions/content/pref/prefOverlay.css" type="text/css"?>
+<?xul-overlay href="chrome://tabextensions/content/globalOverlay.xul"?>
+
+<!DOCTYPE page SYSTEM "chrome://tabextensions/locale/pref/bookmarks.dtd">
+
+<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	windowtype="tabextensions:advancedBookmarksPrefs"
+	orient="vertical"
+	title="&advancedBookmarksPrefs.title;"
+	buttons="accept,cancel"
+	ondialogaccept="apply();"
+	ondialogcancel="cancel();"
+	onload="init();">
+
+
+<script type="application/x-javascript" src="chrome://tabextensions/content/pref/prefOverlay.js"/>
+<script type="application/x-javascript" src="chrome://tabextensions/content/pref/advancedPrefs.js"/>
+
+<box orient="vertical"
+	oncommand="onCommand(event)">
+
+	<groupbox>
+		<caption id="bookmarksMiddleClickBehaviorCaption"
+			 label="&tabPref.bookmarks.middleClick.group;"/>
+		<vbox>
+			<radiogroup id="bookmarksMiddleClickBehavior"
+				orient="horizontal">
+				<box orient="vertical">
+					<radio value="-1" label="&tabPref.bookmarks.middleClick.none;"/>
+					<spacer flex="1"/>
+				</box>
+				<box orient="vertical">
+					<radio value="0" label="&tabPref.bookmarks.middleClick.current;"/>
+					<radio value="1" label="&tabPref.bookmarks.middleClick.newtab;"/>
+					<radio value="2" label="&tabPref.bookmarks.middleClick.newtabBackground;"/>
+				</box>
+			</radiogroup>
+			<data maclabel-for="bookmarksMiddleClickBehaviorCaption" value="&tabPref.bookmarks.middleClick.group.mac;"/>
+
+			<checkbox id="openChildFolders"
+				label="&openChildFolders;"
+				flex="1"/>
+		</vbox>
+	</groupbox>
+
+	<groupbox>
+		<caption label="&advancedBookmarksPrefs.menu.group;"/>
+		<vbox>
+			<checkbox id="showThisTabItemBookmark"
+				label="&showThisTabItemBookmark;"/>
+			<checkbox id="showNewActiveTabItemBookmark"
+				label="&showNewActiveTabItemBookmark;"/>
+		</vbox>
+	</groupbox>
+
+	<groupbox>
+		<caption label="&tabPref.bookmarks.appearance.group;"/>
+		<checkbox id="useFixedLabelForAnyBookmark"
+			label="&useFixedLabelForAnyBookmark;"
+			flex="1"/>
+	</groupbox>
+
+	<groupbox>
+		<caption label="&tabPref.bookmarks.tabs.group;"/>
+		<vbox>
+			<box orient="vertical">
+				<checkbox id="saveBookmarksTextZoom"
+					label="&saveBookmarksTextZoom;"/>
+			</box>
+			<checkbox id="saveBookmarksStatus"
+				label="&saveBookmarksStatus;"
+				oncommand="controlLinkedItems(this);"
+				linked="saveBookmarksPermissions"/>
+			<box orient="horizontal">
+				<spacer style="width:1em;"/>
+				<checkbox id="saveBookmarksPermissions"
+					label="&saveBookmarksPermissions;"/>
+			</box>
+		</vbox>
+	</groupbox>
+
+</box>
+
+
+</dialog>

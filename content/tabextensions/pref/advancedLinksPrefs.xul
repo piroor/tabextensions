@@ -1,0 +1,164 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://tabextensions/content/pref/prefOverlay.css" type="text/css"?>
+<?xul-overlay href="chrome://tabextensions/content/globalOverlay.xul"?>
+
+<!DOCTYPE page [
+<!ENTITY % linksDTD SYSTEM "chrome://tabextensions/locale/pref/links.dtd">
+%linksDTD;
+<!ENTITY % newTabDTD SYSTEM "chrome://tabextensions/locale/pref/new.dtd">
+%newTabDTD;
+]>
+
+<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	windowtype="tabextensions:advancedLinksPrefs"
+	orient="vertical"
+	title="&advancedLinksPrefs.title;"
+	buttons="accept,cancel"
+	ondialogaccept="apply();"
+	ondialogcancel="cancel();"
+	onload="init(); initChecks(); onOuterLinkChanged(); initOpenInRadio();">
+
+
+<script type="application/x-javascript" src="chrome://tabextensions/content/pref/prefOverlay.js"/>
+<script type="application/x-javascript" src="chrome://tabextensions/content/pref/advancedPrefs.js"/>
+
+<box orient="vertical"
+	oncommand="onCommand(event)">
+
+<tabbox orient="vertical">
+<tabs orient="horizontal">
+	<tab label="&tabPref.links.newTabActions.tab;"/>
+	<tab label="&tabPref.links.newTabPosition.tab;"/>
+	<tab label="&tabPref.links.block_uri.rule.tab;"/>
+</tabs>
+<tabpanels>
+	<tabpanel orient="vertical">
+		<groupbox>
+			<caption label="&tabPref.links.normal.group;"/>
+			<radiogroup id="linkBehavior" orient="vertical">
+				<radio value="0" label="&tabPref.links.normal.current;"/>
+				<radio value="1" label="&tabPref.links.normal.newtab;"/>
+				<radio value="2" label="&tabPref.links.normal.newtabBackground;"/>
+			</radiogroup>
+		</groupbox>
+
+		<groupbox>
+			<caption label="&tabPref.links.outer.group;"/>
+			<vbox>
+				<radiogroup id="linkOuterBehavior"
+					preftype="int"
+					oncommand="onOuterLinkChanged()">
+					<radio value="-1" label="&tabPref.links.outer.none;"/>
+					<radio value="1"  label="&tabPref.links.outer.newtab;"/>
+					<radio value="2"  label="&tabPref.links.outer.newtabBackground;"/>
+				</radiogroup>
+				<checkbox id="opentabforOuterLinkStrict"
+					oncommand="onOuterLinkChanged(); event.stopPropagation();"
+					label="&tabPref.links.outer.strict;"/>
+				<box collapsed="true">
+					<textbox id="opentabforOuterLinkLevel"/>
+				</box>
+			</vbox>
+		</groupbox>
+
+		<groupbox>
+			<caption label="&tabPref.links.locked.group;"/>
+			<radiogroup id="linkLockedBehavior" orient="vertical">
+				<radio value="1"  label="&tabPref.links.locked.newtab;"/>
+				<radio value="2"  label="&tabPref.links.locked.newtabBackground;"/>
+			</radiogroup>
+		</groupbox>
+	</tabpanel>
+
+	<tabpanel orient="vertical">
+		<groupbox>
+			<caption label="&openTabIn.group;"/>
+			<radiogroup id="openTabInLink" orient="vertical">
+				<radio value="-1"
+					label="&openTabIn.inherit;"/>
+				<box orient="horizontal">
+					<radio value="0"
+						label-horizontal="&openTabIn.start.horizontal;"
+						label-vertical="&openTabIn.start.vertical;"/>
+					<radio value="1"
+						label-horizontal="&openTabIn.left.horizontal;"
+						label-vertical="&openTabIn.left.vertical;"/>
+					<radio value="2"
+						label-horizontal="&openTabIn.right.horizontal;"
+						label-vertical="&openTabIn.right.vertical;"/>
+					<radio value="3"
+						label-horizontal="&openTabIn.end.horizontal;"
+						label-vertical="&openTabIn.end.vertical;"/>
+				</box>
+			</radiogroup>
+			<description flex="1">&openTabIn.desc;</description>
+		</groupbox>
+	</tabpanel>
+
+	<tabpanel orient="vertical">
+		<groupbox orient="vertical">
+			<caption label="&tabPref.links.block_uri.rule.caption;"/>
+			<description style="max-width: 30em;">&tabPref.links.block_uri.rule.label;</description>
+			<textbox id="blockURIRule"
+				oninput="onCommand(event)"/>
+		</groupbox>
+	</tabpanel>
+</tabpanels>
+
+</tabbox>
+
+
+
+
+
+<script type="application/x-javascript"><![CDATA[
+
+function onOuterLinkChanged()
+{
+	var behavior = document.getElementById('linkOuterBehavior').value;
+	var strict   = document.getElementById('opentabforOuterLinkStrict');
+
+	if (behavior == '-1') {
+		strict.setAttribute('disabled', true);
+	}
+	else {
+		strict.removeAttribute('disabled');
+	}
+
+	var level         = document.getElementById('opentabforOuterLinkLevel');
+	var originalLevel = level.value;
+
+	if (strict.checked)
+		level.value = 2;
+	else
+		level.value = 1;
+
+	if (level.value != originalLevel)
+		onCommand({
+			target : level
+		});
+}
+
+function initChecks()
+{
+	var strict = document.getElementById('opentabforOuterLinkStrict');
+	var level  = document.getElementById('opentabforOuterLinkLevel');
+	strict.checked = (level.value == 2);
+}
+
+function initOpenInRadio()
+{
+	var openInOrient = gData.openTabInLink.orient;
+	var openTabIn = document.getElementById('openTabInLink');
+	var nodes = openTabIn.lastChild.childNodes;
+	for (i = 0; i < nodes.length; i++)
+		nodes[i].setAttribute('label', nodes[i].getAttribute('label-'+openInOrient));
+}
+
+]]></script>
+
+</box>
+
+</dialog>

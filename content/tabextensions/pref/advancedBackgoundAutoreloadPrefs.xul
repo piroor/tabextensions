@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://tabextensions/content/pref/prefOverlay.css" type="text/css"?>
+<?xul-overlay href="chrome://tabextensions/content/globalOverlay.xul"?>
+
+<!DOCTYPE page SYSTEM "chrome://tabextensions/locale/pref/features.dtd">
+
+<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	windowtype="tabextensions:advancedBackgoundAutoreloadPrefs"
+	orient="vertical"
+	title="&advancedBackgoundAutoreloadPrefs.title;"
+	buttons="accept,cancel"
+	ondialogaccept="apply();"
+	ondialogcancel="cancel();"
+	onload="init();">
+
+
+<script type="application/x-javascript" src="chrome://tabextensions/content/pref/prefOverlay.js"/>
+<script type="application/x-javascript" src="chrome://tabextensions/content/pref/advancedPrefs.js"/>
+
+
+<box orient="horizontal" align="center">
+	<label value="&slowAutoreloadBackgoundTabs_rate_before;"
+		control="slowAutoreloadBackgoundTabs_rate"/>
+	<textbox id="slowAutoreloadBackgoundTabs_rate"
+		size="4"
+		oninput="if (Number(this.value) &lt; 1) this.value = 1; onCommand(event)"/>
+	<spinbuttons
+		onup="spinButtonsUpDown(event, 'slowAutoreloadBackgoundTabs_rate'); inputToTextField('slowAutoreloadBackgoundTabs_rate');"
+		ondown="spinButtonsUpDown(event, 'slowAutoreloadBackgoundTabs_rate', 1); inputToTextField('slowAutoreloadBackgoundTabs_rate');"/>
+	<label value="&slowAutoreloadBackgoundTabs_rate_after;"
+		control="slowAutoreloadBackgoundTabs_rate"/>
+</box>
+
+
+</dialog>

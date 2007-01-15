@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
+<!DOCTYPE dialog SYSTEM "chrome://tabextensions/locale/">
+<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+		id="SetTabAutoReloadIntervalDialog"
+		windowtype="tabextensions:set_interval"
+		title="&interval.title;"
+		buttons="accept,cancel"
+		buttonpack="center"
+		buttonalign="center"
+		ondialogaccept="apply();"
+		ondialogcancel="window.close();"
+		orient="vertical"
+		onload="init();">
+
+<script type="application/x-javascript" src="chrome://tabextensions/content/pref/prefOverlay.js"/>
+<script type="application/x-javascript"><![CDATA[
+
+	const pref = Components.classes['@mozilla.org/preferences;1'].getService(Components.interfaces.nsIPrefBranch);
+
+	function init()
+	{
+		var menulist = document.getElementById('interval');
+		menulist.label = menulist.value = pref.getIntPref('browser.tabs.extensions.autoreload.lastInterval');
+		menulist.focus();
+	}
+
+	function apply()
+	{
+		var menulist = document.getElementById('interval');
+		var value = Number(menulist.value.replace(/[^0-9\.]/g, ''));
+		pref.setIntPref('browser.tabs.extensions.autoreload.lastInterval', value)
+		window.arguments[0].value = parseInt(value*1000);
+		window.close();
+	}
+
+]]></script>
+
+<box orient="horizontal" align="center" flex="1">
+	<label control="interval" value="&interval.label_before;"/>
+	<menulist editable="true" id="interval"
+		flex="1"
+		style="min-width: 6em;"
+		label=""
+		oncommand="this.label = this.value = this.selectedItem.value">
+		<menupopup>
+			<menuitem value="0"     label="0"/>
+			<menuitem value="30"    label="&interval.30;"/>
+			<menuitem value="60"    label="&interval.60;"/>
+			<menuitem value="90"    label="&interval.90;"/>
+			<menuitem value="100"   label="&interval.100;"/>
+			<menuitem value="120"   label="&interval.120;"/>
+			<menuitem value="150"   label="&interval.150;"/>
+			<menuitem value="180"   label="&interval.180;"/>
+			<menuitem value="200"   label="&interval.200;"/>
+			<menuitem value="600"   label="&interval.600;"/>
+			<menuitem value="1800"  label="&interval.1800;"/>
+			<menuitem value="3600"  label="&interval.3600;"/>
+			<menuitem value="7200"  label="&interval.7200;"/>
+			<menuitem value="10800" label="&interval.10800;"/>
+			<menuitem value="43200" label="&interval.43200;"/>
+			<menuitem value="86400" label="&interval.86400;"/>
+		</menupopup>
+	</menulist>
+	<spinbuttons
+		onup="spinButtonsUpDown(event, 'interval');"
+		ondown="spinButtonsUpDown(event, 'interval', 0);"/>
+	<label control="interval" value="&interval.label_after;"/>
+</box>
+
+</dialog>

@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://tabextensions/content/pref/prefOverlay.css" type="text/css"?>
+<?xul-overlay href="chrome://tabextensions/content/globalOverlay.xul"?>
+
+<!DOCTYPE page SYSTEM "chrome://tabextensions/locale/pref/general.dtd">
+
+<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	windowtype="tabextensions:advancedLastTabClosingPrefs"
+	orient="vertical"
+	title="&lastTabBehavior.title;"
+	buttons="accept,cancel"
+	ondialogaccept="apply();"
+	ondialogcancel="cancel();"
+	onload="init();">
+
+
+<script type="application/x-javascript" src="chrome://tabextensions/content/pref/prefOverlay.js"/>
+<script type="application/x-javascript" src="chrome://tabextensions/content/pref/advancedPrefs.js"/>
+
+<groupbox
+	oncommand="onCommand(event)">
+	<caption label="&lastTabBehavior.label;"/>
+	<radiogroup id="lastTabBehavior">
+		<radio value="3"
+			src="chrome://tabextensions/content/res/tab-blankwindow.png"
+			label="&lastTabBehavior.close;"/>
+		<radio value="1"
+			src="chrome://tabextensions/content/res/tab-blanktab.png"
+			label="&lastTabBehavior.unload;"/>
+		<radio value="4"
+			src="chrome://tabextensions/content/res/tab-close.png"
+			label="&lastTabBehavior.exit;" />
+	</radiogroup>
+</groupbox>
+
+
+
+</dialog>

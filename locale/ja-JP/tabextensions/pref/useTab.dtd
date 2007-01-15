@@ -1,0 +1,25 @@
+<!ENTITY tabPref.useTab.title   "タブの利用">
+
+
+<!ENTITY tabPref.useTab.focus.group "新しく開いたタブの挙動">
+
+<!ENTITY loadInForeground           "タブを最前面にして読み込む">
+<!ENTITY loadInBackground           "バックグラウンドのままで読み込む">
+<!ENTITY loadInBackground.desc      "※注：個別の設定がこの設定に優先します">
+
+<!ENTITY backgroundWindow "ウィンドウをアクティブにしないで読み込む">
+
+
+<!ENTITY tabPref.useTab.misc.group "全般的な動作">
+
+<!ENTITY preventSameURITab           "同じURIのタブを複数開くことを禁止する">
+<!ENTITY preventSameURITab.showAlert "タブを開く操作がブロックされたことをポップアップで通知する">
+<!ENTITY tabsLimit                   "一つのウィンドウ内で開くタブの最大数(0=無制限)：">
+
+
+<!ENTITY advancedUseTabPrefs.go    "詳細...">
+<!ENTITY advancedUseTabPrefs.title "タブの利用の詳細設定">
+
+<!ENTITY reuseCurrentBlankTab   "現在のタブが空の時、新しくタブを開く代わりにタブを再利用する">
+<!ENTITY ignoreTarget           "フレームを除いて、リンクやJavaScriptの読み込み先ウィンドウ/タブの指定を無視する">
+<!ENTITY tabsLimit.overflow     "制限を超えた分のタブを別ウィンドウで開く">

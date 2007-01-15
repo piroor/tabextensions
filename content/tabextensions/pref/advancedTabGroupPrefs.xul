@@ -1,0 +1,111 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://tabextensions/content/pref/prefOverlay.css" type="text/css"?>
+<?xul-overlay href="chrome://tabextensions/content/globalOverlay.xul"?>
+
+<!DOCTYPE page SYSTEM "chrome://tabextensions/locale/pref/group.dtd">
+
+<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	windowtype="tabextensions:advancedTabGroupPrefs"
+	orient="vertical"
+	title="&advancedTabGroupPrefs.title;"
+	buttons="accept,cancel"
+	ondialogaccept="apply();"
+	ondialogcancel="cancel();"
+	onload="init();">
+
+
+<script type="application/x-javascript" src="chrome://tabextensions/content/pref/prefOverlay.js"/>
+<script type="application/x-javascript" src="chrome://tabextensions/content/pref/advancedPrefs.js"/>
+
+<box orient="vertical"
+	oncommand="onCommand(event)">
+
+	<tabbox orient="vertical">
+		<tabs>
+			<tab label="&advancedTabGroupPrefs.group.tab;"/>
+			<tab label="&advancedTabGroupPrefs.tree.tab;"/>
+		</tabs>
+		<tabpanels>
+			<tabpanel orient="vertical">
+
+	<groupbox orient="vertical">
+		<caption label="&advancedTabGroupPrefs.group.caption;"/>
+		<checkbox id="openGroupAsTabGroup"
+			label="&openGroupAsTabGroup;"/>
+		<checkbox id="autoPurge"
+			label="&autoPurge;"/>
+		<checkbox id="autoSetGroupColor"
+			label="&autoSetGroupColor;"/>
+		<checkbox id="editGroupBySimpleDragDrop"
+			label="&editGroupBySimpleDragDrop;"/>
+
+		<groupbox>
+			<caption label="&advancedTabGroupPrefs.inheritance.caption;"/>
+			<grid>
+				<rows>
+					<row/>
+					<row/>
+				</rows>
+				<columns>
+					<column>
+						<checkbox id="inheritTextZoom"
+							label="&inheritTextZoom;"/>
+						<checkbox id="inheritLocked"
+							label="&inheritLocked;"/>
+					</column>
+					<column>
+						<checkbox id="inheritReferrerBlocked"
+							label="&inheritReferrerBlocked;"/>
+						<checkbox id="inheritAllow"
+							label="&inheritAllow;"/>
+					</column>
+				</columns>
+			</grid>
+		</groupbox>
+	</groupbox>
+
+			</tabpanel>
+
+			<tabpanel orient="vertical">
+
+	<groupbox orient="vertical">
+		<caption label="&advancedTabGroupPrefs.tree.caption;"/>
+
+		<hbox align="center">
+			<label control="treeMaxLevel" value="&treeMaxLevel.label_before;"/>
+			<textbox id="treeMaxLevel"
+				size="4"
+				oninput="onCommand(event)"/>
+			<spinbuttons
+				onup="spinButtonsUpDown(event, 'treeMaxLevel'); inputToTextField('treeMaxLevel');"
+				ondown="spinButtonsUpDown(event, 'treeMaxLevel', 0); inputToTextField('treeMaxLevel');"/>
+			<label control="treeMaxLevel" value="&treeMaxLevel.label_after;"/>
+		</hbox>
+
+		<checkbox id="animateCollapseExpand"
+			label="&animateCollapseExpand;"/>
+		<checkbox id="simpleOperation"
+			label="&simpleOperation;"/>
+
+		<groupbox orient="vertical">
+			<caption label="&onSubgroupRootRemoved.group;"/>
+			<radiogroup orient="horizontal" id="onSubgroupRootRemoved">
+				<radio value="1" label="&onSubgroupRootRemoved.keep;"/>
+				<radio value="2" label="&onSubgroupRootRemoved.remove;"/>
+			</radiogroup>
+			<description flex="1" style="max-width: 30em;">&onSubgroupRootRemoved.desc;</description>
+		</groupbox>
+	</groupbox>
+
+			</tabpanel>
+		</tabpanels>
+	</tabbox>
+
+
+</box>
+<data maclabel-for="editGroupBySimpleDragDrop" value="&editGroupBySimpleDragDrop.mac;"/>
+
+
+</dialog>

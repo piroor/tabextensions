@@ -1,0 +1,8 @@
+<!ENTITY tabPref.javascript.title "Behavior of Popups">
+
+<!ENTITY tabPref.javascript.group  "Requested Popups from scripts in webpages">
+<!ENTITY tabPref.javascript.newtab           "Open in New Tab">
+<!ENTITY tabPref.javascript.newtabBackground "Open in New Background Tab">
+<!ENTITY tabPref.javascript.newwindow        "Open in New Window">
+
+<!ENTITY tabPref.javascript.newtab.desc      "Whitelisted pages are opened in new windows">

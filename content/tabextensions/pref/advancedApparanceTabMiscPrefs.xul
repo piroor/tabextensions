@@ -1,0 +1,334 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://tabextensions/content/pref/prefOverlay.css" type="text/css"?>
+<?xul-overlay href="chrome://tabextensions/content/globalOverlay.xul"?>
+
+<!DOCTYPE page SYSTEM "chrome://tabextensions/locale/pref/appearanceTab.dtd">
+
+<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	windowtype="tabextensions:advancedApparanceTabMiscPrefs"
+	orient="vertical"
+	title="&tabPref.appearance.tab.misc.title;"
+	buttons="accept,cancel"
+	ondialogaccept="apply();"
+	ondialogcancel="cancel();"
+	onload="initDialog();">
+
+
+<script type="application/x-javascript" src="chrome://tabextensions/content/pref/prefOverlay.js"/>
+<script type="application/x-javascript" src="chrome://tabextensions/content/pref/advancedPrefs.js"/>
+
+<script type="application/x-javascript"><![CDATA[
+
+
+var gStyle = {
+		current : {},
+		unread  : {}
+	};
+
+
+function initDialog()
+{
+	init();
+
+	gStyle.current.data        = document.getElementById('highlightCurrentTabStyle');
+	gStyle.current.italic      = document.getElementById('current-style-italic');
+	gStyle.current.bold        = document.getElementById('current-style-bold');
+	gStyle.current.underline   = document.getElementById('current-style-underline');
+	gStyle.current.transparent = document.getElementById('current-style-transparent');
+	gStyle.current.color       = document.getElementById('current-style-color-type');
+	gStyle.current.colorCheck  = document.getElementById('current-style-color');
+	gStyle.current.bg          = document.getElementById('current-style-bg-type');
+	gStyle.current.bgCheck     = document.getElementById('current-style-bg');
+
+
+	gStyle.unread.data        = document.getElementById('highlightUnreadTabStyle');
+	gStyle.unread.italic      = document.getElementById('unread-style-italic');
+	gStyle.unread.bold        = document.getElementById('unread-style-bold');
+	gStyle.unread.underline   = document.getElementById('unread-style-underline');
+	gStyle.unread.transparent = document.getElementById('unread-style-transparent');
+	gStyle.unread.color       = document.getElementById('unread-style-color-type');
+	gStyle.unread.colorCheck  = document.getElementById('unread-style-color');
+	gStyle.unread.bg          = document.getElementById('unread-style-bg-type');
+	gStyle.unread.bgCheck     = document.getElementById('unread-style-bg');
+
+
+	initStyle('current');
+	initStyle('unread');
+
+	toggleColorRadio('current');
+	toggleColorRadio('unread');
+
+	toggleBGRadio('current');
+	toggleBGRadio('unread');
+
+
+}
+
+
+function initStyle(aType)
+{
+
+	gStyle[aType].italic.checked = gStyle[aType].data.value.indexOf('italic') > -1;
+	gStyle[aType].bold.checked = gStyle[aType].data.value.indexOf('bold') > -1;
+	gStyle[aType].underline.checked = gStyle[aType].data.value.indexOf('underline') > -1;
+	gStyle[aType].transparent.checked = gStyle[aType].data.value.indexOf('transparent') > -1;
+
+	var color = gStyle[aType].data.value.match(/text-(red|blue|yellow|green|white|gray|black|purple|aqua|highlight|info)/) || '';
+	if (typeof color != 'string') color = color[0];
+	gStyle[aType].color.value = color;
+	gStyle[aType].colorCheck.checked = color != '';
+	if (!color) gStyle[aType].color.value = 'text-red';
+	gStyle[aType].color.selectedItem = gStyle[aType].color.getElementsByAttribute('value', gStyle[aType].color.value)[0];
+
+	var bg = gStyle[aType].data.value.match(/bg-(desktop|highlight|3Dhighlight|3Dshadow|info)/) || '';
+	if (typeof bg != 'string') bg = bg[0];
+	gStyle[aType].bg.value = bg;
+	gStyle[aType].bgCheck.checked = bg != '';
+	if (!bg) gStyle[aType].bg.value = 'bg-desktop';
+	gStyle[aType].bg.selectedItem = gStyle[aType].bg.getElementsByAttribute('value', gStyle[aType].bg.value)[0];
+}
+
+
+function toggleColorRadio(aType)
+{
+	var radio = gStyle[aType].color.getElementsByTagName('radio');
+	var max = radio.length;
+	for (var i = 0; i < max; i++)
+		radio[i].disabled = !gStyle[aType].colorCheck.checked;
+}
+
+function toggleBGRadio(aType)
+{
+	var radio = gStyle[aType].bg.getElementsByTagName('radio');
+	var max = radio.length;
+	for (var i = 0; i < max; i++)
+		radio[i].disabled = !gStyle[aType].bgCheck.checked;
+}
+
+
+function updateStyle(aType)
+{
+	var styles = [];
+	if (gStyle[aType].italic.checked)      styles.push('italic');
+	if (gStyle[aType].bold.checked)        styles.push('bold');
+	if (gStyle[aType].underline.checked)   styles.push('underline');
+	if (gStyle[aType].transparent.checked) styles.push('transparent');
+
+	if (gStyle[aType].colorCheck.checked) styles.push(gStyle[aType].color.value);
+	if (gStyle[aType].bgCheck.checked)    styles.push(gStyle[aType].bg.value);
+
+	toggleColorRadio(aType);
+	toggleBGRadio(aType);
+
+	gStyle[aType].data.value = styles.join(' ');
+
+	updateValue(gStyle[aType].data.id, gStyle[aType].data.value);
+}
+
+
+
+]]></script>
+
+<vbox oncommand="onCommand(event)">
+	<checkbox id="showLinkTextAsLabel"
+		label="&showLinkTextAsLabel;"
+		prefstring="browser.tabs.extensions.show_link_text_as_label"
+		oncommand="controlLinkedItems(this);"
+		linked="showLinkTextAsLabelPermanently"/>
+	<box orient="horizontal" id="showLinkTextAsLabelPermanentlyBox">
+		<spacer style="width:1em"/>
+		<checkbox id="showLinkTextAsLabelPermanently"
+			label="&showLinkTextAsLabelPermanently;"
+			prefstring="browser.tabs.extensions.show_link_text_as_label_permanently"/>
+	</box>
+	<checkbox id="overlayIcon"
+		label="&overlayIcon;"/>
+
+
+	<groupbox
+		oncommand="updateStyle('current')">
+		<caption label="&highlightCurrentTab.style.group;"/>
+		<vbox>
+			<hbox>
+				<checkbox id="current-style-italic" label="&highlightCurrentTab.style.italic;"/>
+				<checkbox id="current-style-bold" label="&highlightCurrentTab.style.bold;"/>
+				<checkbox id="current-style-underline" label="&highlightCurrentTab.style.underline;"/>
+				<checkbox id="current-style-transparent" label="&highlightCurrentTab.style.transparent;"/>
+			</hbox>
+			<checkbox id="current-style-color" label="&highlightCurrentTab.style.color.label;"/>
+			<radiogroup id="current-style-color-type" orient="horizontal"
+				style="margin-left: 1em;" class="groupbox">
+				<grid>
+					<columns>
+						<column/>
+						<column/>
+						<column/>
+						<column/>
+						<column/>
+						<column/>
+					</columns>
+					<rows>
+						<row>
+							<radio label="&highlightCurrentTab.style.color.red;"
+								value="text-red"
+								style="color: red !important;"/>
+							<radio label="&highlightCurrentTab.style.color.blue;"
+								value="text-blue"
+								style="color: blue !important;"/>
+							<radio label="&highlightCurrentTab.style.color.yellow;"
+								value="text-yellow"
+								style="color: yellow !important;"/>
+							<radio label="&highlightCurrentTab.style.color.green;"
+								value="text-green"
+								style="color: green !important;"/>
+							<radio label="&highlightCurrentTab.style.color.purple;"
+								value="text-purple"
+								style="color: purple !important;"/>
+							<radio label="&highlightCurrentTab.style.color.aqua;"
+								value="text-aqua"
+								style="color: aqua !important;"/>
+						</row>
+						<row>
+							<radio label="&highlightCurrentTab.style.color.white;"
+								value="text-white"
+								style="color: white !important;"/>
+							<radio label="&highlightCurrentTab.style.color.gray;"
+								value="text-gray"
+								style="color: gray !important;"/>
+							<radio label="&highlightCurrentTab.style.color.black;"
+								value="text-black"
+								style="color: black !important;"/>
+							<radio label="&highlightCurrentTab.style.color.highlight;"
+								value="text-highlight"
+								style="color: HighlightText !important;"/>
+							<radio label="&highlightCurrentTab.style.color.info;"
+								value="text-info"
+								style="color: InfoText !important;"/>
+							<spacer/>
+						</row>
+					</rows>
+				</grid>
+			</radiogroup>
+			<checkbox id="current-style-bg" label="&highlightCurrentTab.style.bg.label;"/>
+			<radiogroup id="current-style-bg-type" orient="horizontal"
+				style="margin-left: 1em;" class="groupbox">
+				<spacer style="width: 1em;"/>
+				<radio label="&highlightCurrentTab.style.bg.desktop;"
+					value="bg-desktop"
+					style="background-color: Background !important;"/>
+				<radio label="&highlightCurrentTab.style.bg.highlight;"
+					value="bg-highlight"
+					style="color: HighlightText; background-color: Highlight !important;"/>
+				<radio label="&highlightCurrentTab.style.bg.3Dhighlight;"
+					value="bg-3Dhighlight"
+					style="color: ThreeDDarkShadow; background-color: ThreeDHighlight !important;"/>
+				<radio label="&highlightCurrentTab.style.bg.3Dshadow;"
+					value="bg-3Dshadow"
+					style="color: ThreeDHighlight; background-color: ThreeDShadow !important;"/>
+				<radio label="&highlightCurrentTab.style.bg.info;"
+					value="bg-info"
+					style="color: InfoText; background-color: InfoBackground !important;"/>
+			</radiogroup>
+			<box collapsed="true">
+				<textbox id="highlightCurrentTabStyle"/>
+			</box>
+		</vbox>
+	</groupbox>
+
+	<groupbox
+		oncommand="updateStyle('unread')">
+		<caption label="&highlightUnreadTab.style.group;"/>
+		<vbox>
+			<hbox>
+				<checkbox id="unread-style-italic" label="&highlightUnreadTab.style.italic;"/>
+				<checkbox id="unread-style-bold" label="&highlightUnreadTab.style.bold;"/>
+				<checkbox id="unread-style-underline" label="&highlightUnreadTab.style.underline;"/>
+				<checkbox id="unread-style-transparent" label="&highlightUnreadTab.style.transparent;"/>
+			</hbox>
+			<checkbox id="unread-style-color" label="&highlightUnreadTab.style.color.label;"/>
+			<radiogroup id="unread-style-color-type" orient="horizontal"
+				style="margin-left: 1em;" class="groupbox">
+				<grid>
+					<columns>
+						<column/>
+						<column/>
+						<column/>
+						<column/>
+						<column/>
+						<column/>
+					</columns>
+					<rows>
+						<row>
+							<radio label="&highlightUnreadTab.style.color.red;"
+								value="text-red"
+								style="color: red !important;"/>
+							<radio label="&highlightUnreadTab.style.color.blue;"
+								value="text-blue"
+								style="color: blue !important;"/>
+							<radio label="&highlightUnreadTab.style.color.yellow;"
+								value="text-yellow"
+								style="color: yellow !important;"/>
+							<radio label="&highlightUnreadTab.style.color.green;"
+								value="text-green"
+								style="color: green !important;"/>
+							<radio label="&highlightUnreadTab.style.color.purple;"
+								value="text-purple"
+								style="color: purple !important;"/>
+							<radio label="&highlightUnreadTab.style.color.aqua;"
+								value="text-aqua"
+								style="color: aqua !important;"/>
+						</row>
+						<row>
+							<radio label="&highlightUnreadTab.style.color.white;"
+								value="text-white"
+								style="color: white !important;"/>
+							<radio label="&highlightUnreadTab.style.color.gray;"
+								value="text-gray"
+								style="color: gray !important;"/>
+							<radio label="&highlightUnreadTab.style.color.black;"
+								value="text-black"
+								style="color: black !important;"/>
+							<radio label="&highlightUnreadTab.style.color.highlight;"
+								value="text-highlight"
+								style="color: HighlightText !important;"/>
+							<radio label="&highlightUnreadTab.style.color.info;"
+								value="text-info"
+								style="color: InfoText !important;"/>
+							<spacer/>
+						</row>
+					</rows>
+				</grid>
+			</radiogroup>
+			<checkbox id="unread-style-bg" label="&highlightUnreadTab.style.bg.label;"/>
+			<radiogroup id="unread-style-bg-type" orient="horizontal"
+				style="margin-left: 1em;" class="groupbox">
+				<spacer style="width: 1em;"/>
+				<radio label="&highlightUnreadTab.style.bg.desktop;"
+					value="bg-desktop"
+					style="background-color: Background !important;"/>
+				<radio label="&highlightUnreadTab.style.bg.highlight;"
+					value="bg-highlight"
+					style="color: HighlightText; background-color: Highlight !important;"/>
+				<radio label="&highlightUnreadTab.style.bg.3Dhighlight;"
+					value="bg-3Dhighlight"
+					style="color: ThreeDDarkShadow; background-color: ThreeDHighlight !important;"/>
+				<radio label="&highlightUnreadTab.style.bg.3Dshadow;"
+					value="bg-3Dshadow"
+					style="color: ThreeDHighlight; background-color: ThreeDShadow !important;"/>
+				<radio label="&highlightUnreadTab.style.bg.info;"
+					value="bg-info"
+					style="color: InfoText; background-color: InfoBackground !important;"/>
+			</radiogroup>
+			<box collapsed="true">
+				<textbox id="highlightUnreadTabStyle"/>
+			</box>
+		</vbox>
+	</groupbox>
+
+</vbox>
+
+
+
+</dialog>

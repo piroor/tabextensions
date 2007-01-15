@@ -1,0 +1,26 @@
+<!ENTITY tabPref.javascript.newwindow.active "例外を新しいタブで開く">
+<!ENTITY tabPref.javascript.newwindow.background "例外を新しいバックグラウンドのタブで開く">
+
+
+<!ENTITY windowOpenException.go.white "ポップアップを許容する例外...">
+<!ENTITY windowOpenException.go.black "ポップアップを防ぐ例外...">
+
+
+
+
+<!ENTITY windowOpenException.title.white "タブの例外 - タブで開かずポップアップするWebページ">
+<!ENTITY windowOpenException.title.black "タブの例外 - ポップアップせずタブで開くWebページ">
+<!ENTITY windowOpenException.description.white "JavaScriptでポップアップを開く際、このリストのURIを含むWebページのポップアップ表示を許可します（通常は全てのページをタブで開きます）">
+<!ENTITY windowOpenException.description.black "JavaScriptでポップアップを開く際、このリストのURIを含むWebページのポップアップ表示を禁止して、代わりにタブで開きます（通常は全てのページをポップアップします）">
+<!ENTITY windowOpenException.note.white "※例えば foobar.com から foobar.com/popup のページのみをポップアップ表示させたい場合、 foobar.com/popup を登録して下さい">
+<!ENTITY windowOpenException.note.black "※例えば foobar.com から foobar.com/popup のページのみをタブで開きたい場合、 foobar.com/popup を登録して下さい">
+<!ENTITY windowOpenException.sites  "URI（部分一致）">
+<!ENTITY windowOpenException.add.label "追加">
+<!ENTITY windowOpenException.add.accesskey "A">
+<!ENTITY windowOpenException.remove.label "削除">
+<!ENTITY windowOpenException.remove.accesskey "R">
+<!ENTITY windowOpenException.removeAll.label "すべてを削除">
+<!ENTITY windowOpenException.removeAll.accesskey "E">
+
+<!ENTITY windowOpenException.exceptionsForAnyWebPage.group "すべてのサイトについてポップアップウィンドウの表示を許可する例外">
+<!ENTITY windowOpenException.allowPopupWithOption.label "オプション指定のあるポップアップウィンドウの表示を許可する">

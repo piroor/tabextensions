@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
+<!DOCTYPE dialog SYSTEM "chrome://tabextensions/locale/">
+<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+		id="SetTabFixedLabelDialog"
+		windowtype="tabextensions:set_fixed_label"
+		title="&fixedLabel.title;"
+		buttons="accept,cancel,extra1"
+		buttonpack="center"
+		buttonalign="center"
+		ondialogaccept="apply();"
+		ondialogcancel="window.close();"
+		ondialogextra1="clear();"
+		orient="vertical"
+		onload="init();">
+
+<script type="application/x-javascript" src="chrome://tabextensions/content/pref/prefOverlay.js"/>
+<script type="application/x-javascript"><![CDATA[
+
+	function init()
+	{
+		document.documentElement.getButton('extra1').label = document.getElementById('extra1-label').getAttribute('label');
+
+		var save = document.getElementById('shouldSave');
+		if (!window.arguments[0].isBookmarked)
+			save.setAttribute('hidden', true);
+		else
+			save.removeAttribute('hidden');
+
+		var textbox = document.getElementById('fixedLabel');
+		textbox.value = window.arguments[0].value;
+		textbox.focus();
+		textbox.select();
+	}
+
+	function apply()
+	{
+		window.arguments[0].modified   = true;
+		window.arguments[0].value      = document.getElementById('fixedLabel').value;
+		window.arguments[0].shouldSave = (document.getElementById('shouldSave').getAttribute('checked') == 'true');
+		window.close();
+	}
+
+	function clear()
+	{
+		document.getElementById('fixedLabel').value = '';
+		window.arguments[0].useTitle = true;
+		apply();
+	}
+
+]]></script>
+
+<data id="extra1-label" label="&fixedLabel.clear;"/>
+
+<box orient="horizontal" align="center" flex="1">
+	<label control="fixedLabel" value="&fixedLabel.label;"/>
+	<textbox id="fixedLabel" flex="1"/>
+</box>
+<box orient="horizontal" align="center" flex="1">
+	<spacer flex="1"/>
+	<checkbox id="shouldSave"
+		label="&fixedLabel.shouldSave;"
+		checked="true"
+		persist="checked"/>
+	<spacer flex="1"/>
+</box>
+
+</dialog>

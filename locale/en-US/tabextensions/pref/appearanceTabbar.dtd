@@ -1,0 +1,36 @@
+<!ENTITY tabPref.appearance.tabbar.title "Appearance of the Tab bar">
+
+
+<!ENTITY tabbarPlace.label      "Position of the Tab bar">
+<!ENTITY tabbarPlace.top        "Top">
+<!ENTITY tabbarPlace.bottom     "Bottom">
+<!ENTITY tabbarPlace.left       "Left">
+<!ENTITY tabbarPlace.right      "Right">
+<!ENTITY tabbarPlace.hidden     "Hide">
+
+
+<!ENTITY tabScroller           "For too many tabs">
+<!ENTITY tabScroller.button    "Scrollable with Scroll Buttons">
+<!ENTITY tabScroller.scrollbar "Scrollable with Scroll Bar">
+<!ENTITY tabScroller.never     "Silently Scrollable">
+<!ENTITY tabScroller.multirow  "Multi-row">
+
+<!ENTITY tabScroller.multirow.max.button       "Advanced...">
+<!ENTITY tabScroller.multirow.max.title        "Multi-row Tab Bar">
+<!ENTITY tabScroller.multirow.max.label_before "Max rows of the tab bar:">
+<!ENTITY tabScroller.multirow.max.label_after  "rows (too many rows are hidden; 0=show all rows anytime)">
+
+<!ENTITY tabScroller.auto      "Auto">
+<!ENTITY tabScroller.always    "Always">
+
+
+<!ENTITY tabPref.appearance.tabbar.misc.group "Miscellaneous">
+
+<!ENTITY showTabbarClosebox "Show &quot;Close Current Tab&quot; button">
+<!ENTITY showBlankSpaces    "Leave some space beside the Tab Bar for something dropped by mouse">
+<!ENTITY narrowTab          "Make vertical tabs Narrow">
+
+<!ENTITY dropIndicatorType.label   "Drop position indicator:">
+<!ENTITY dropIndicatorType.default "Firefox 1.5 style">
+<!ENTITY dropIndicatorType.old     "TBE built-in style">
+
