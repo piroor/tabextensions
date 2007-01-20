@@ -234,7 +234,14 @@ catch(e) { if (TS.debug) dump('contentAreaClick => doLinkAction:\n'+e+'\n'); }
 	computeActionForLink : function(aLinkInfo, aEvent) 
 	{
 		var topWin = Components.lookupMethod(aLinkInfo.window, 'top').call(aLinkInfo.window);
-		var tab;
+
+		var tab = null;
+		if (aLinkInfo.browser.localName == 'tabbrowser') {
+			if ('getTabByTabId' in aLinkInfo.browser)
+				tab = aLinkInfo.browser.getTabByTabId(aLinkInfo.tabId);
+			else
+				tab = aLinkInfo.browser.selectedTab;
+		}
 
 		aLinkInfo.behavior = -1;
 
@@ -260,7 +267,7 @@ catch(e) { if (TS.debug) dump('contentAreaClick => doLinkAction:\n'+e+'\n'); }
 		aLinkInfo.newTabActionLocked = (
 				aLinkInfo.browser &&
 				aLinkInfo.browser.localName == 'tabbrowser' &&
-				(tab = aLinkInfo.browser.getTabByTabId(aLinkInfo.tabId)) &&
+				tab &&
 				tab.locked &&
 				tab.mBrowser.contentDocument &&
 				tab.mBrowser.contentWindow == topWin
