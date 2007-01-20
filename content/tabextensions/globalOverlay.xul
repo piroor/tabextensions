@@ -33,6 +33,7 @@
 <script type="application/x-javascript" src="chrome://tabextensions/content/modules/miscOverlay.js"/>
 
 <script type="application/x-javascript" src="chrome://tabextensions/content/modules/compatibility/autohide.js"/>
+<script type="application/x-javascript" src="chrome://tabextensions/content/modules/compatibility/splitbrowser.js"/>
 
 <script type="application/x-javascript" src="chrome://tabextensions/content/pRDFData.js"/>
 

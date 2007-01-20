@@ -51,13 +51,14 @@ var TBEClickEventService =
 		var TS   = TabbrowserService,
 			CES  = TBEClickEventService,
 			nav  = ('__tabextensions__browserWindow' in aEvent ? aEvent.__tabextensions__browserWindow : TS.browserWindow ),
-			b    = (nav ? nav.TabbrowserService.browser : null ),
 			node = (
 					TS.findParentNodeWithLocalName(aEvent.target, 'a') ||
 					TS.findParentNodeWithLocalName(aEvent.target, 'area') ||
 					TS.findParentNodeWithLocalName(aEvent.target, 'link') ||
 					null
 				);
+
+		var b = CES.getBrowserForContentAreaClick(aEvent, nav);
 
 
 		var eventInfo = {
@@ -151,6 +152,11 @@ catch(e) { if (TS.debug) dump('contentAreaClick => doLinkAction:\n'+e+'\n'); }
 		return retVal;
 	},
 	
+	getBrowserForContentAreaClick : function(aEvent, aBrowserWindow) 
+	{
+		return (aBrowserWindow ? aBrowserWindow.TabbrowserService.browser : null );
+	},
+ 
 	blockSameURLTab : function(aLinkInfo) 
 	{
 		if (!this.service.preventSameURLTab) return false;
@@ -648,7 +654,14 @@ if (this.service.debug) dump('doLinkAction: load normally\n');
 					info.openIn = openIn;
 			}
 
-			var newTab = b.addTabInternal(uri, aLinkInfo.referrer, info);
+			var newTab;
+
+			if ('addTabInternal' in b) {
+				newTab = b.addTabInternal(uri, aLinkInfo.referrer, info);
+			}
+			else {
+				newTab = b.addTab(uri, aLinkInfo.referrer);
+			}
 
 			var contentWindow = new XPCNativeWrapper(newTab.mBrowser.contentWindow,
 					'opener',
