@@ -4,13 +4,13 @@
  
 /* tabbrowser */ 
 	
-tabbrowser 
+tabbrowser#content 
 {
 /*	-moz-binding: url("chrome://tabextensions/content/tabextensions.xml#tabbrowser") !important;*/
 	-moz-binding: url("chrome://tabextensions/content/scrollableTabBar.xml#tabbrowser") !important;
 }
  
-tabbrowser .tabbrowser-strip tab 
+tabbrowser#content .tabbrowser-strip tab 
 {
 	-moz-binding: url("chrome://tabextensions/content/tabextensions.xml#tab") !important;
 }
