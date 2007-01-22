@@ -17,12 +17,12 @@ var TBECompatibilityServiceSplitBrowser =
 		if (!aBrowserWindow) return null;
 
 		var d = aEvent.target.ownerDocument;
-		var b = aBrowserWindow.SplitBrowser.getBrowserFromFrame(d.defaultView.top);
+		var b = aBrowserWindow.SplitBrowser.getSubBrowserFromFrame(d.defaultView.top);
 		if (b) {
 			return b.browser;
 		}
 
-		return (aBrowserWindow ? aBrowserWindow.TabbrowserService.browser : null );
+		return aBrowserWindow.TabbrowserService.browser;
 	}
    
 }; 
