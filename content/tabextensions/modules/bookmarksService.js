@@ -86,7 +86,7 @@ var TBEBookmarksService =
 					// TBE extra feature
 					try {
 						var TS = TabbrowserService;
-						var b  = if ('SplitBrowser' in window) ? SplitBrowser.activeBrowser : TS.browser ;
+						var b  = ('SplitBrowser' in window) ? SplitBrowser.activeBrowser : TS.browser ;
 						var t  = b.selectedTab;
 						if (!t.getAttribute('tab-bookmarkID') ||
 							t.getAttribute('tab-bookmarkURI') != t.getAttribute('tab-loadingURI') ||
